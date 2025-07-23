@@ -1,6 +1,6 @@
 package com.aicontact.backend.user.dto;
 
-import com.aicontact.backend.user.entity.UserEntity.CoupleStatus;
+import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
 import lombok.Getter;
 import lombok.Setter;
 

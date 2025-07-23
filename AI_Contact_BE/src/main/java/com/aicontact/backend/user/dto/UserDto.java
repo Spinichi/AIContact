@@ -1,10 +1,11 @@
 package com.aicontact.backend.user.dto;
 
+import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
 import com.aicontact.backend.user.entity.UserEntity;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Getter
 public class UserDto {
@@ -13,7 +14,7 @@ public class UserDto {
     private String name;
     private String profileImageUrl;
     private LocalDate birthDate;
-    private UserEntity.CoupleStatus coupleStatus;
+    private CoupleStatus coupleStatus;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
