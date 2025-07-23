@@ -1,10 +1,12 @@
 package com.aicontact.backend.user.entity;
 
+import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDate;
+
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -53,7 +55,4 @@ public class UserEntity {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
 
-    public enum CoupleStatus {
-        SINGLE, PENDING, COUPLED
-    }
 }
