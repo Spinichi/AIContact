@@ -1,5 +1,6 @@
 package com.aicontact.backend.global.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -14,5 +15,6 @@ import java.time.LocalDateTime;
 public abstract class BaseCreatedEntity {
 
     @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 }
