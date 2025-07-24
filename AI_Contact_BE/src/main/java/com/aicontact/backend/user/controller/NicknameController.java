@@ -18,6 +18,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
+//2
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/nicknames")
