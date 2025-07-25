@@ -1,0 +1,43 @@
+.baby-container {
+    display: flex;      /* 내부 요소를 가로 방향 플렉스로 배치 */
+    justify-content: center;    /* 가로 방향 가운데 정렬 */
+    align-items: center;        /* 세로 방향 가운데 정렬 */
+    flex-direction: column;
+    height: 100%;               /* 부모 요소 높이 모두 차지(세로정렬하려고) */
+    width: 100%;
+}
+
+.baby-image {
+    width: 500px;       /* 애기 사진 가로 크기 */
+    height: 500px;      /* 애기 사진 세로 크기 */
+    border-radius: 20%;     /* 원형 이미지 */
+    object-fit: cover;      /* 이미지 비율 유지한 상태로 박스에 꽉 채우기 */
+}
+
+
+/* 애기 이름 */
+.baby-avatar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 가운데 정렬 */
+  justify-content: center;
+  margin-top: 50px;
+  width: 100%;
+}
+
+.baby-name {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px; /* 이미지와의 간격 */
+}
+
+.baby-stats {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 20px;
+  color: #444;
+}
+.baby-stats strong {
+  font-weight: bold;
+  color: #222;
+}

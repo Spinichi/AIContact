@@ -1,0 +1,32 @@
+.right-icons {
+  position: fixed; 
+  top: 200px;
+  right: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.right-icons button {
+  /* background: transparent; 배경색 제거하는 거래 */
+  /* background: none; 배경색 제거하는 거래 */
+  background: transparent; 
+  /* background: none; */
+  border: none;
+  /* border-radius: 12px; */
+  padding: 0px;
+  /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+  cursor: pointer;
+  /* transition: all 0.2s ease; */
+}
+
+.right-icons button:hover {
+  background-color: #f0e8ff;
+  transform: translateY(-2px);
+}
+
+.right-icons img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
