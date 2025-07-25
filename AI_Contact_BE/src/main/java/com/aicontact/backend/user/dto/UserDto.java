@@ -4,8 +4,8 @@ import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
 import com.aicontact.backend.user.entity.UserEntity;
 import lombok.Getter;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 public class UserDto {
@@ -15,8 +15,8 @@ public class UserDto {
     private String profileImageUrl;
     private LocalDate birthDate;
     private CoupleStatus coupleStatus;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public UserDto(UserEntity entity) {
         this.id = entity.getId();
