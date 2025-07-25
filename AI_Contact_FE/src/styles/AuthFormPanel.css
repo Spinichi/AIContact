@@ -1,0 +1,20 @@
+.auth-form-panel {
+    position: fixed;
+    top: 0;
+    width: 50vw;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    z-index: 10000;
+}
+
+.auth-form-panel.left {
+    left: 0;
+}
+
+.auth-form-panel.right {
+    left: 50vw;
+}
