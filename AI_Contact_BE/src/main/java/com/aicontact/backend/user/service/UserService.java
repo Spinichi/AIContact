@@ -10,6 +10,8 @@ import com.aicontact.backend.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+
 @Service
 public class UserService {
 
@@ -38,6 +40,13 @@ public class UserService {
         user.setCoupleStatus(joinDto.getCoupleStatus() != null ? joinDto.getCoupleStatus() : CoupleStatus.SINGLE);
         user.setBirthDate(joinDto.getBirthDate());
         user.setProfileImageUrl(joinDto.getProfileImageUrl());
+
+        // 3) 랜덤 코드 생성 & 중복 방지
+        String code;
+        do {
+            code = SecureRandomCodeGenerator.generateCode();
+        } while (userRepository.existsByVerificationCode(code));
+        user.setVerificationCode(code);
 
         userRepository.save(user);
         return true;
@@ -68,5 +77,19 @@ public class UserService {
         userRepository.delete(user);
     }
 
+
+    public static class SecureRandomCodeGenerator {
+        private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        private static final SecureRandom random = new SecureRandom();
+
+        public static String generateCode() {
+            StringBuilder sb = new StringBuilder(6);
+            for (int i = 0; i < 6; i++) {
+                int index = random.nextInt(CHARACTERS.length());
+                sb.append(CHARACTERS.charAt(index));
+            }
+            return sb.toString();
+        }
+    }
 
 }
