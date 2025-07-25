@@ -10,8 +10,6 @@ import com.aicontact.backend.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-
 @Service
 public class UserService {
 
@@ -38,8 +36,6 @@ public class UserService {
         user.setPassword(bCryptPasswordEncoder.encode(password));
         user.setName(name);
         user.setCoupleStatus(joinDto.getCoupleStatus() != null ? joinDto.getCoupleStatus() : CoupleStatus.SINGLE);
-        user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         user.setBirthDate(joinDto.getBirthDate());
         user.setProfileImageUrl(joinDto.getProfileImageUrl());
 

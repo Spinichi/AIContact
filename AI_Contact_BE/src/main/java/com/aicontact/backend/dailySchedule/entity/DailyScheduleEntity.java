@@ -1,11 +1,11 @@
 package com.aicontact.backend.dailySchedule.entity;
 
 import com.aicontact.backend.couple.entity.CoupleEntity;
+import com.aicontact.backend.global.entity.BaseTimeEntity;
 import com.aicontact.backend.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "daily_schedules",
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DailyScheduleEntity {
+public class DailyScheduleEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,21 +43,5 @@ public class DailyScheduleEntity {
     @Lob
     private String memo;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = this.createdAt;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 }
 

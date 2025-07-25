@@ -1,18 +1,18 @@
 package com.aicontact.backend.user.entity;
 
+import com.aicontact.backend.global.entity.BaseTimeEntity;
 import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "users")
-public class UserEntity {
+public class UserEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,23 +36,5 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     @Column(name= "couple_status", length = 10)
     private CoupleStatus coupleStatus = CoupleStatus.SINGLE;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Timestamp createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private Timestamp updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = new Timestamp(System.currentTimeMillis());
-    }
 
 }
