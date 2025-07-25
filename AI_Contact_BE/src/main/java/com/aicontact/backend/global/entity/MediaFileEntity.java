@@ -1,18 +1,23 @@
-package com.aicontact.backend.global.domain;
+package com.aicontact.backend.global.entity;
 
 import com.aicontact.backend.couple.entity.CoupleEntity;
-import com.aicontact.backend.global.entity.BaseTimeEntity;
 import com.aicontact.backend.global.entity.enumeration.FileType;
 import com.aicontact.backend.user.entity.UserEntity;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
+@Builder
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "media_files")
-public class MediaFileEntity extends BaseTimeEntity {
+public class MediaFileEntity extends BaseCreatedEntity {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,14 +39,15 @@ public class MediaFileEntity extends BaseTimeEntity {
 
     private String originalFilename;
 
-    @Column(length = 500)
+    @Column(length = 500, name = "s3_key")
     private String s3Key;
 
     @Column(length = 500)
     private String thumbnailUrl;
 
+    @Setter
     @Column(nullable = false)
-    private boolean isFavorite = false;
+    private boolean isFavorite;
 
     @Column(nullable = false)
     private LocalDate uploadDate;
