@@ -1,7 +1,7 @@
 package com.aicontact.backend.global.service;
 
 import com.aicontact.backend.couple.entity.CoupleEntity;
-import com.aicontact.backend.couple.entity.repository.CoupleRepository;
+import com.aicontact.backend.couple.repository.CoupleRepository;
 import com.aicontact.backend.global.dto.MediaFileDto;
 import com.aicontact.backend.global.dto.MediaThumbnailDto;
 import com.aicontact.backend.global.dto.response.FavoriteResponse;

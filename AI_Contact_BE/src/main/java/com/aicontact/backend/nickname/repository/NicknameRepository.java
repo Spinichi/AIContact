@@ -1,8 +1,8 @@
-package com.aicontact.backend.user.repository;
+package com.aicontact.backend.nickname.repository;
 
 
-import com.aicontact.backend.user.entity.CoupleEntity;
-import com.aicontact.backend.user.entity.NicknameEntity;
+import com.aicontact.backend.couple.entity.CoupleEntity;
+import com.aicontact.backend.nickname.entity.NicknameEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
