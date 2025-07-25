@@ -9,16 +9,16 @@
 // export default App;
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import AuthPage from "./pages/AuthPage";
 
 import MainPage from "./pages/MainPage"; // 기존 메인 페이지
+import AuthPage from "./pages/AuthPage"; // 회원가입 페이지
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<MainPage />} />
-        {/* <Route path="/AuthPage" element={<AuthPage />} /> */}
+        <Route path="/AuthPage" element={<AuthPage />} />
       </Routes>
     </Router>
   );
