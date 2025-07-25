@@ -1,7 +1,7 @@
 package com.aicontact.backend.dailySchedule.repository;
 
 import com.aicontact.backend.dailySchedule.entity.DailyScheduleEntity;
-import com.aicontact.backend.user.entity.CoupleEntity;
+import com.aicontact.backend.couple.entity.CoupleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

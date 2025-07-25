@@ -1,6 +1,7 @@
-package com.aicontact.backend.user.entity;
+package com.aicontact.backend.nickname.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.aicontact.backend.couple.entity.CoupleEntity;
+import com.aicontact.backend.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

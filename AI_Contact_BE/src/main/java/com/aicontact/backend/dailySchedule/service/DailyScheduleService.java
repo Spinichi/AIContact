@@ -3,9 +3,9 @@ package com.aicontact.backend.dailySchedule.service;
 
 import com.aicontact.backend.dailySchedule.entity.DailyScheduleEntity;
 import com.aicontact.backend.dailySchedule.repository.DailyScheduleRepository;
-import com.aicontact.backend.user.entity.CoupleEntity;
+import com.aicontact.backend.couple.entity.CoupleEntity;
 import com.aicontact.backend.user.entity.UserEntity;
-import com.aicontact.backend.user.repository.CoupleRepository;
+import com.aicontact.backend.couple.repository.CoupleRepository;
 import com.aicontact.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

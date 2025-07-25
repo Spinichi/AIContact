@@ -1,11 +1,11 @@
-package com.aicontact.backend.user.controller;
+package com.aicontact.backend.nickname.controller;
 
 
 import com.aicontact.backend.auth.dto.CustomUserDetails;
-import com.aicontact.backend.user.dto.NicknameRequestDto;
-import com.aicontact.backend.user.dto.NicknameResponseDto;
-import com.aicontact.backend.user.entity.NicknameEntity;
-import com.aicontact.backend.user.service.NicknameService;
+import com.aicontact.backend.nickname.dto.NicknameRequestDto;
+import com.aicontact.backend.nickname.dto.NicknameResponseDto;
+import com.aicontact.backend.nickname.entity.NicknameEntity;
+import com.aicontact.backend.nickname.service.NicknameService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

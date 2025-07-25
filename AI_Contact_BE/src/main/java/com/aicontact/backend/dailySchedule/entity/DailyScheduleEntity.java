@@ -1,6 +1,6 @@
 package com.aicontact.backend.dailySchedule.entity;
 
-import com.aicontact.backend.user.entity.CoupleEntity;
+import com.aicontact.backend.couple.entity.CoupleEntity;
 import com.aicontact.backend.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
