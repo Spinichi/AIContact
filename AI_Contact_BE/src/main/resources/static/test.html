@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    <title>Chat Test</title>
+</head>
+<body>
+<h2>1:1 Chat Test</h2>
+
+<div>
+    <label>Room ID: </label>
+    <input id="roomId" placeholder="roomId 입력" value="couple-123"/>
+</div>
+<div>
+    <label>Sender ID: </label>
+    <input id="senderId" placeholder="senderId 입력" value="1"/>
+</div>
+<div style="margin-top:8px;">
+    <button id="connectBtn">Connect</button>
+</div>
+
+<div id="messages" style="border:1px solid #ccc; padding:10px; height:200px; width:300px; overflow:auto; margin-top:16px;">
+    <!-- 수신된 메시지가 여기에 표시됩니다 -->
+</div>
+
+<div style="margin-top:8px;">
+    <input id="msgInput" placeholder="메시지 입력" style="width:220px;"/>
+    <button id="sendBtn">Send</button>
+</div>
+
+<script>
+    let stompClient;
+
+    document.getElementById('connectBtn').onclick = () => {
+        const roomId = document.getElementById('roomId').value.trim();
+        if (!roomId) {
+            alert('Room ID를 입력하세요.');
+            return;
+        }
+
+        const socket = new SockJS('/api/v1/ws-chat');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, frame => {
+            console.log('Connected:', frame);
+            document.getElementById('messages').innerHTML = '';
+            stompClient.subscribe(`/sub/chat/${roomId}`, msg => {
+                const chat = JSON.parse(msg.body);
+                const div = document.createElement('div');
+                div.textContent = `[${chat.sentAt}] ${chat.senderId}: ${chat.content}`;
+                document.getElementById('messages').appendChild(div);
+                // 스크롤 최하단으로
+                const msgBox = document.getElementById('messages');
+                msgBox.scrollTop = msgBox.scrollHeight;
+            });
+        }, error => {
+            console.error('WebSocket error', error);
+            alert('WebSocket 연결에 실패했습니다.');
+        });
+    };
+
+    document.getElementById('sendBtn').onclick = () => {
+        if (!stompClient) {
+            alert('먼저 Connect 버튼을 눌러 연결하세요.');
+            return;
+        }
+        const roomId = document.getElementById('roomId').value.trim();
+        const senderId = parseInt(document.getElementById('senderId').value, 10);
+        const content  = document.getElementById('msgInput').value.trim();
+
+        if (!content) {
+            alert('메시지를 입력하세요.');
+            return;
+        }
+
+        const payload = {
+            roomId: roomId,
+            senderId: senderId,
+            content: content
+        };
+
+        stompClient.send(
+            '/pub/chat/sendMessage',
+            {},
+            JSON.stringify(payload)
+        );
+
+        document.getElementById('msgInput').value = '';
+    };
+</script>
+</body>
+</html>
