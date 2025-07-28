@@ -2,13 +2,18 @@ package com.aicontact.backend.user.controller;
 
 
 import com.aicontact.backend.auth.jwt.JwtUtil;
+import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.user.dto.JoinDto;
 import com.aicontact.backend.user.dto.UpdateUserDto;
 import com.aicontact.backend.user.dto.UserDto;
+import com.aicontact.backend.user.dto.UserResponseDto;
 import com.aicontact.backend.user.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/users")
@@ -22,30 +27,34 @@ public class UserController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/sign-up")
-    public ResponseEntity<String> joinProcess(@RequestBody JoinDto joinDto) {
+    @PostMapping(
+            value = "/sign-up",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE     // multipart/form-data 로 지정
+    )
+    public ResponseEntity<ApiResponse<UserResponseDto>> joinProcess(@ModelAttribute JoinDto joinDto) throws IOException {
         try {
-            // 필수 입력값 누락 체크
-            if (joinDto.getEmail() == null || joinDto.getPassword() == null || joinDto.getName() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("필수 입력값입니다.");
+            // 필수 입력 체크
+            if (joinDto.getEmail() == null || joinDto.getPassword() == null
+                    || joinDto.getName() == null || joinDto.getFile() == null) {
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse<>(false, null));
             }
 
-            boolean result = userService.joinProcess(joinDto);
+            UserResponseDto result = userService.joinProcess(joinDto);
 
-            if (!result) {
+            if (result == null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(joinDto.getEmail() + " 은(는) 이미 등록된 이메일입니다.");
+                        .body(new ApiResponse<>(false, null));
             }
 
-            // 회원가입 성공 시 201 Created 반환
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("회원가입 성공 및 사용자 정보 반환");
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new ApiResponse<>(true, result));
 
         } catch (Exception e) {
-            // 예기치 못한 서버 오류
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("서버 내부 오류: " + e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(false, null));
         }
     }
 
