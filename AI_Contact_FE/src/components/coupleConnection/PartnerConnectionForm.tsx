@@ -3,7 +3,7 @@ import heart from '../../assets/images/heart.png';
 
 export default function MyConnectionInfo(){
     return(
-        <form className="container">
+        <form className="connection-container">
             <div className="heart">
                 <img src={heart}></img>
             </div>

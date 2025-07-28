@@ -21,7 +21,7 @@
     align-items: center;
 }
 
-.profile-image{
+.profile-container{
     width : 150px;
     height : 150px;
     border-radius: 50%;
@@ -42,6 +42,13 @@
     font-weight : 500;
     border-bottom: 2px solid var(--primary);
     margin : 10px;
+}
+
+.connection-container{
+    display: flex;
+    flex-direction: column;
+    gap : 30px;
+    align-items: center;
 }
 
 .connection-container button{
