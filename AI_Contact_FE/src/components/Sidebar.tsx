@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/Sidebar.css'; 
 import Logo from './Logo.tsx';
+import { Link } from 'react-router-dom';
 
 // 컴포넌트 만들기
 export default function Sidebar() {
