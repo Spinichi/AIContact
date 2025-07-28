@@ -18,6 +18,7 @@ import DictionaryPage from './pages/DictionaryPage';
 import MyPage from './pages/MyPage';
 import AuthPage from "./pages/AuthPage"; // 회원가입 페이지
 
+
 function App() {
   return (
     <Router>
