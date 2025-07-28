@@ -1,18 +1,16 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import '../styles/Sidebar.css';
-import logo from '../assets/images/symbol.png';
+import '../styles/Sidebar.css'; 
+import Logo from './Logo.tsx';
 
-const Sidebar: React.FC = () => {
-  const location = useLocation(); // 현재 URL 경로 가져오기
-
+// 컴포넌트 만들기
+export default function Sidebar() {
   return (
+    // 전체 사이드바를 감싸는 컨테이너
     <aside className="sidebar">
+       {/* 상단 영역: 로고 + 제목 + 메뉴 리스트 */}
       <div>
-        <h2 className="sidebar-title">
-          <img src={logo} alt="로고" className="sidebar-logo" />
-          AI Contact
-        </h2>
+       {/* 제목 줄: 로고 이미지 + 텍스트 "아이:건택" */}
+      <Logo />
 
         <nav>
           <ul>
@@ -41,12 +39,11 @@ const Sidebar: React.FC = () => {
         </nav>
       </div>
 
+      {/* 하단 영역: 닫기 버튼과 로그아웃 버튼 */}
       <div className="sidebar-bottom">
         <button>❌</button>
         <button>로그아웃</button>
       </div>
     </aside>
   );
-};
-
-export default Sidebar;
+}
