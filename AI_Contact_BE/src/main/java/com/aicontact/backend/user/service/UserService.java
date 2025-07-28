@@ -2,35 +2,37 @@ package com.aicontact.backend.user.service;
 
 
 import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
+import com.aicontact.backend.global.storage.S3StorageService;
 import com.aicontact.backend.user.dto.JoinDto;
 import com.aicontact.backend.user.dto.UpdateUserDto;
 import com.aicontact.backend.user.dto.UserDto;
+import com.aicontact.backend.user.dto.UserResponseDto;
 import com.aicontact.backend.user.entity.UserEntity;
 import com.aicontact.backend.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final S3StorageService s3StorageService;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
-
-    public boolean joinProcess(JoinDto joinDto) {
+    public UserResponseDto joinProcess(JoinDto joinDto) throws IOException {
         String email = joinDto.getEmail();
         String password = joinDto.getPassword();
         String name = joinDto.getName();
 
 
         if (userRepository.existsByEmail(email)) {
-            return false;
+            return null;
         }
 
         UserEntity user = new UserEntity();
@@ -39,7 +41,16 @@ public class UserService {
         user.setName(name);
         user.setCoupleStatus(joinDto.getCoupleStatus() != null ? joinDto.getCoupleStatus() : CoupleStatus.SINGLE);
         user.setBirthDate(joinDto.getBirthDate());
-        user.setProfileImageUrl(joinDto.getProfileImageUrl());
+
+        MultipartFile file = joinDto.getFile();
+        String ext      = getExtension(file.getOriginalFilename());
+        String uuid     = UUID.randomUUID().toString();
+        String key      = String.format("media/profile/%s.%s", uuid, ext);
+
+        // 2) 원본 업로드
+        String fileUrl = s3StorageService.upload(file, key);
+
+        user.setProfileImageUrl(fileUrl);
 
         // 3) 랜덤 코드 생성 & 중복 방지
         String code;
@@ -49,7 +60,15 @@ public class UserService {
         user.setVerificationCode(code);
 
         userRepository.save(user);
-        return true;
+
+        return new UserResponseDto(user.getId(),user.getName(),user.getEmail());
+    }
+
+    private String getExtension(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            return "";
+        }
+        return filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
     }
 
     public UserDto getUserByEmail(String email) {
