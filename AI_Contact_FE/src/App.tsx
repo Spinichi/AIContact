@@ -17,6 +17,7 @@ import CalendarPage from './pages/CalendarPage';
 import DictionaryPage from './pages/DictionaryPage';
 import MyPage from './pages/MyPage';
 import AuthPage from "./pages/AuthPage"; // 회원가입 페이지
+import CoupleConnectionPage from "./pages/CoupleConnectionPage";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="calendar/" element={<CalendarPage />} />
         <Route path="mypage/" element={<MyPage />} />
         <Route path="/AuthPage" element={<AuthPage />} />
+        <Route path="/connection" element={<CoupleConnectionPage />} />
       </Routes>
     </Router>
   );
