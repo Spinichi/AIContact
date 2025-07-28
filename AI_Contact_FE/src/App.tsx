@@ -19,6 +19,7 @@ import MyPage from './pages/MyPage';
 import AuthPage from "./pages/AuthPage"; // 회원가입 페이지
 import CoupleConnectionPage from "./pages/CoupleConnectionPage";
 
+
 function App() {
   return (
     <Router>
