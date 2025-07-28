@@ -1,5 +1,7 @@
-package com.aicontact.backend.user.entity;
+package com.aicontact.backend.couple.entity;
 
+import com.aicontact.backend.global.entity.BaseTimeEntity;
+import com.aicontact.backend.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "couples")
 @Getter
 @Setter
-public class CoupleEntity {
+public class CoupleEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,19 +38,6 @@ public class CoupleEntity {
 
     @Column(name = "couple_name")
     private String coupleName;
-
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
-    @PreUpdate
-    public void setUpdateTime() {
-        this.updatedAt = LocalDateTime.now();
-    }
 
     public boolean hasUser(UserEntity user) {
         return user1.equals(user) || user2.equals(user);

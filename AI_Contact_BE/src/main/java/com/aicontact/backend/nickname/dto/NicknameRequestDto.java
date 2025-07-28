@@ -1,4 +1,4 @@
-package com.aicontact.backend.user.dto;
+package com.aicontact.backend.nickname.dto;
 
 import lombok.Data;
 

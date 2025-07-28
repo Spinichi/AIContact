@@ -1,11 +1,11 @@
-package com.aicontact.backend.user.service;
+package com.aicontact.backend.nickname.service;
 
 
-import com.aicontact.backend.user.entity.CoupleEntity;
-import com.aicontact.backend.user.entity.NicknameEntity;
+import com.aicontact.backend.couple.entity.CoupleEntity;
+import com.aicontact.backend.nickname.entity.NicknameEntity;
 import com.aicontact.backend.user.entity.UserEntity;
-import com.aicontact.backend.user.repository.CoupleRepository;
-import com.aicontact.backend.user.repository.NicknameRepository;
+import com.aicontact.backend.couple.repository.CoupleRepository;
+import com.aicontact.backend.nickname.repository.NicknameRepository;
 import com.aicontact.backend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

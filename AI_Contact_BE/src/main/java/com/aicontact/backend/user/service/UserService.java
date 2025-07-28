@@ -1,6 +1,7 @@
 package com.aicontact.backend.user.service;
 
 
+import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
 import com.aicontact.backend.user.dto.JoinDto;
 import com.aicontact.backend.user.dto.UpdateUserDto;
 import com.aicontact.backend.user.dto.UserDto;
@@ -8,8 +9,6 @@ import com.aicontact.backend.user.entity.UserEntity;
 import com.aicontact.backend.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
 
 @Service
 public class UserService {
@@ -36,9 +35,7 @@ public class UserService {
         user.setEmail(email);
         user.setPassword(bCryptPasswordEncoder.encode(password));
         user.setName(name);
-        user.setCoupleStatus(joinDto.getCoupleStatus() != null ? joinDto.getCoupleStatus() : UserEntity.CoupleStatus.SINGLE);
-        user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        user.setCoupleStatus(joinDto.getCoupleStatus() != null ? joinDto.getCoupleStatus() : CoupleStatus.SINGLE);
         user.setBirthDate(joinDto.getBirthDate());
         user.setProfileImageUrl(joinDto.getProfileImageUrl());
 

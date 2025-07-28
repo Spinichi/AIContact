@@ -1,7 +1,7 @@
-package com.aicontact.backend.user.repository;
+package com.aicontact.backend.couple.repository;
 
 
-import com.aicontact.backend.user.entity.CoupleEntity;
+import com.aicontact.backend.couple.entity.CoupleEntity;
 import com.aicontact.backend.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

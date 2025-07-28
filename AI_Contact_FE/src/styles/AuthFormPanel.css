@@ -1,0 +1,126 @@
+.auth-form-panel {
+    position: fixed;
+    top: 0;
+    width: 50vw;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items : center;
+    gap : 50px;
+    padding-top : 100px;
+    z-index: 10000;
+}
+
+.auth-form-panel.left {
+    left: 0;
+}
+
+.auth-form-panel.right {
+    left: 50vw;
+}
+
+.form-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 80%;
+  max-width: 400px;
+}
+
+.form-box input {
+  height : 2vh;
+  padding: 16px 24px;
+  font-size: 16px;
+  border : var(--primary) 1px solid;
+  color : var(--primary);
+}
+
+.form-box input::placeholder{
+  color : var(--primary);
+}
+
+.form-box input:focus{
+  box-shadow: 0px 0px 10px 1px rgb(from var(--primary) r g b / 0.65);
+  outline : none;
+}
+
+.form-box button {
+  padding: 12px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition : 0.1s ease-in-out;
+}
+
+.form-box button:hover{
+  background-color: var(--secondary);
+  box-shadow:  0px 0px 10px 1px rgb(from var(--secondary) r g b / 0.65);
+}
+
+.toggle-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--text-dark);
+  cursor: pointer;
+  text-align: center;
+}
+
+.toggle-text > span{
+  color : var(--primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.form-title{
+  width : 500px;
+  height : 195px;
+  display : flex;
+  flex-direction: column;
+  align-items : center;
+}
+
+.arrow-left{
+  width : 40px;
+  height : 40px;
+  position : absolute;
+  left : 50px;
+  top : 50px;
+  cursor: pointer;
+}
+
+.birth{
+  display : flex;
+  gap : 20px;
+}
+
+.birth input{
+  flex : 1;
+  width : 50px;
+}
+
+label{
+  color : var(--primary);
+}
+
+.profile{
+  width : 150px;
+  height : 150px;
+  border-radius : 50%;
+  background-image : linear-gradient(90deg, var(--secondary), var(--primary));
+  margin : 20px auto;
+}
+
+.image-edit{
+  width : 60px;
+  height : 60px;
+  position : relative;
+  top : 90px;
+  left : 90px;
+}

@@ -1,6 +1,6 @@
-package com.aicontact.backend.user.dto;
+package com.aicontact.backend.nickname.dto;
 
-import com.aicontact.backend.user.entity.NicknameEntity;
+import com.aicontact.backend.nickname.entity.NicknameEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -3,7 +3,7 @@
 .sidebar {
     width: 250px;   /* 고정 너비 */
     height: 100vh;  /* 전체 화면 높이랑 동일하게 설정 */
-    background-color: #EBF0F7;  /* 연보라? 배경색임 */
+    background-color: var(--bg-primary);  /* 연보라? 배경색임 */
     box-sizing: border-box; /* 패딩이랑 보더를 width안에 포함 */
     padding: 30px 20px;     /* 위 아래 30, 좌우 20 여벡 즘 */
     display: flex;          /* 세로 정렬할라고 이거 함 */
@@ -58,14 +58,15 @@
 
 /* 마우스 hover 시에 메뉴 항목 강조, 배경색 & 그림자  */
 .sidebar nav li:hover {
-  background-color: #d6caff; /* 연보라 배경 */
+  background-color : rgb(from var(--secondary) r g b / 0.8); /* secondary에 투명도 조절 */
+  color : white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
   color: black;
 }
 
 /* 현재 클릭한 메뉴, 진한 거 */
 .sidebar nav li.active {
-  background-color: #9c6bff;    /* 진한 보라색 배경 */
+  background-image : linear-gradient(90deg, var(--secondary), var(--primary));    /* 그라데이션 */
   color: white; /* 텍스트 흰색 */
   /* font-weight: bold;    텍스트 굵게 */
   /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);   더 강한 그림자 */
