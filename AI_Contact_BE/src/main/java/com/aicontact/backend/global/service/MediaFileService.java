@@ -44,8 +44,8 @@ public class MediaFileService {
         // 1) 키 생성
         String ext      = getExtension(file.getOriginalFilename());
         String uuid     = UUID.randomUUID().toString();
-        String key      = String.format("media/%d/%s.%s", coupleId, uuid, ext);
-        String thumbKey = String.format("media/%d/%s_thumb.jpg", coupleId, uuid);
+        String key      = String.format("media/couple/%d/%s.%s", coupleId, uuid, ext);
+        String thumbKey = String.format("media/couple/%d/%s_thumb.jpg", coupleId, uuid);
 
         // 2) 원본 업로드
         String fileUrl = storageService.upload(file, key);
