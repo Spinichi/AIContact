@@ -6,6 +6,7 @@ import RightIcons from '../components/RightIcons';
 
 import ChatPanel from '../components/ChatPanel';
 import '../styles/UserInfo.css';
+import EventCalendar from './MainEventCalendar';
 
 export default function MainPage() {
   // 채팅창 열기/닫기 상태 선언
@@ -16,13 +17,17 @@ export default function MainPage() {
       <Sidebar />
 
       <div className='main-content'>
-        <div className="user-info-header">
-          <p><span className="user-info-label">지민 💗 재욱</span></p>
+        <div className="mainpage-header">
+          <p><span className="mainpage-label">지민 💗 재욱</span></p>
           <h3>사랑한지 <strong>87일</strong> 째</h3>
         </div>
 
+        <div className='content-row'>
+
         <BabyAvatar />
+        <EventCalendar />
         <RightIcons onChatClick={() => setIsChatOpen(true)} />
+        </div>
 
         
         {/* 채팅 패널 */}
