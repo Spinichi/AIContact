@@ -34,7 +34,7 @@ const Sidebar: React.FC = () => {
             <li className={location.pathname === '/dictionary' ? 'active' : ''}>
               <Link to="/dictionary">애칭 백과사전</Link>
             </li>
-            <li className={location.pathname === '/mapage' ? 'active' : ''}>
+            <li className={location.pathname === '/mypage' ? 'active' : ''}>
               <Link to="/mypage">마이페이지</Link>
             </li>
           </ul>
