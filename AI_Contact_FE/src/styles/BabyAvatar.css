@@ -1,4 +1,5 @@
 .baby-container {
+    position: relative;
     display: flex;      /* 내부 요소를 가로 방향 플렉스로 배치 */
     justify-content: center;    /* 가로 방향 가운데 정렬 */
     align-items: center;        /* 세로 방향 가운데 정렬 */
@@ -7,29 +8,19 @@
     width: 100%;
 }
 
-.baby-image {
-    width: 500px;       /* 애기 사진 가로 크기 */
-    height: 500px;      /* 애기 사진 세로 크기 */
-    border-radius: 20%;     /* 원형 이미지 */
-    object-fit: cover;      /* 이미지 비율 유지한 상태로 박스에 꽉 채우기 */
-}
 
 
 /* 애기 이름 */
 .baby-avatar-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center; /* 가운데 정렬 */
   justify-content: center;
-  margin-top: 50px;
-  width: 100%;
+  align-items: center;
+  /* margin-top: 50px; */
+  width: 500px;
+  height: auto;
 }
 
-.baby-name {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 20px; /* 이미지와의 간격 */
-}
 
 .baby-stats {
   text-align: center;
@@ -37,7 +28,54 @@
   margin-top: 20px;
   color: #444;
 }
+
 .baby-stats strong {
   font-weight: bold;
   color: #222;
+}
+
+.image-wrapper {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* text-align: center; */
+  /* overflow: hidden; */
+
+}
+
+.baby-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* 정확히 가운데 이동 */
+  width: 100%;       /* 애기 사진 가로 크기 */
+  height: 100%;      /* 애기 사진 세로 크기 */
+  border-radius: 20%;     /* 원형 이미지 */
+  object-fit: contain;      /* 이미지 비율 유지한 상태로 박스에 꽉 채우기 */
+  display: block;
+}
+
+.baby-name {
+  position: relative;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px; /* 이미지와의 간격 */
+  display: inline;
+  flex: 0;
+  position: static;
+  z-index: 10000;
+}
+
+.talk-button {
+  position: absolute;
+  bottom: 40px;
+  right: 50px;
+  width: 80x;
+  height: auto;
+  cursor: pointer;
+  z-index: 10;
+
 }

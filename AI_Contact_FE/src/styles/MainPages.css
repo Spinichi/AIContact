@@ -1,16 +1,17 @@
 .main-layout {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
 }
 
 .main-content {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    flex-direction: column;
-    height: 100%;
-    position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width:  100%;
+  position: relative;
+  overflow: hidden;
 }
