@@ -12,14 +12,15 @@ RUN ./gradlew dependencies --no-daemon --quiet
 
 # 3) 소스 복사 후 실제 빌드 (테스트 제외)
 COPY . .
-RUN ./gradlew bootJar -x test --no-daemon --quiet
+RUN chmod +x gradlew \
+ && ./gradlew bootJar -x test --no-daemon --quiet
 
 # ─── Stage 2: Runtime ─────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Spring Boot fat JAR 복사
-COPY --from=builder /app/build/libs/*-boot.jar app.jar
+COPY --from=builder /app/build/libs/*.jar app.jar
 
 # (선택) 컨테이너 포트 문서화
 EXPOSE 8081
