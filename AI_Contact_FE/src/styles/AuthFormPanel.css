@@ -115,6 +115,7 @@ label{
   border-radius : 50%;
   background-image : linear-gradient(90deg, var(--secondary), var(--primary));
   margin : 20px auto;
+  
 }
 
 .image-edit{
@@ -123,4 +124,17 @@ label{
   position : relative;
   top : 90px;
   left : 90px;
+  cursor: pointer;
+}
+
+.profile-image{
+  display : none;
+}
+
+.image-preview{
+  position: absolute;
+  width : 150px;
+  height : 150px;
+  object-fit: cover;
+  border-radius: 50%;
 }
