@@ -44,7 +44,7 @@
     margin : 10px;
 }
 
-button{
+.connection-container button{
     width : 300px;
     height : 48px;
     background-color: var(--primary);
@@ -57,7 +57,7 @@ button{
     object-fit: contain;
 }
 
-input {
+.connection-container input {
   height : 24px;
   width : 252px;
   padding: 16px 24px;
