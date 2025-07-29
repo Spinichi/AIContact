@@ -5,7 +5,7 @@ import "../styles/CalendarPage.css";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid'; // 'timeGridWeek' 뷰를 위해 필요합니다.
-import interactionPlugin from '@fullcalendar/interaction';
+import interactionPlugin, {type DateClickArg} from '@fullcalendar/interaction';
 import koLocale from '@fullcalendar/core/locales/ko';
 import Modal from '../components/modal/Modal';
 import CalendarDetail from '../components/calendar/CalendarDetail';
@@ -16,10 +16,10 @@ export default function CalendarPage() {
 
   const [showModal, setShowModal] = useState(false);
   const [clickedDateInfo, setClickedDateInfo] = useState(null);
-  const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
-  const openModal = (dateInfo) => {
+  function openModal(dateInfo : DateClickArg) {
     console.log(dateInfo);
+    console.log(typeof (dateInfo));
     setClickedDateInfo(dateInfo);
     setShowModal(true);
   }
@@ -45,7 +45,7 @@ const events = [
   return (
     <div className="main-layout">
       {showModal && createPortal(<Modal onClose={closeModal} hasNext={true} hasPrev={true}>
-          {clickedDateInfo && <CalendarDetail date={clickedDateInfo.date} />}
+          {clickedDateInfo && <CalendarDetail dateInfo={clickedDateInfo.date} />}
         </Modal>,
       document.body)}
       {/* 왼쪽 사이드바 */}
