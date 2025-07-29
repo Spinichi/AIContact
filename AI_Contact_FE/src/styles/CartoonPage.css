@@ -1,0 +1,214 @@
+.cartoon-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex-direction: column;
+    height: auto;
+    position: relative;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: top center;
+    overflow: visible;
+}
+
+.cartoon-header {
+    position: absolute;
+    top: 70px;
+    left: 100px;
+    /* 네브바 너비 + 간격 */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* gap: 5px; */
+}
+
+.hashtags {
+    display: flex;
+    gap: 12px;
+    font-size: 24px;
+    color: #FFFFFF;
+    font-weight: 500;
+}
+
+.title-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.title-box h1 {
+    font-size: 34px;
+    font-weight: bold;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.home-icon-img {
+    position: absolute;
+    top: 83px;
+    left: 40px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+}
+
+.background-img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    /* background-size: contain; */
+}
+
+.board-box {
+    position: relative;
+    top: -35px;
+    left: 0px;
+    width: 630px;
+    height: 705px;
+    display: flex;
+    border-radius: 30px;
+    justify-self: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.board-img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* border-radius: 50px; */
+    top: 0;
+    left: 0;
+    z-index: 0;
+    /* background-size: contain; */
+}
+.input-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.input-overlay input::placeholder {
+    color: #8A8C90;
+}
+
+.answer-input {
+  position: absolute;
+  width: 65%;                 /* 밑줄 길이 맞추기 */
+  left: 50%;
+  transform: translateX(-50%);
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  text-align: center;
+  color: #000;
+  text-align: left;
+   /* border: 1px solid red; */
+}
+
+/* 각 input을 밑줄 위치에 맞추기 (픽셀값 조정 필요) */
+.input-1 { top: 204px; }
+.input-2 { top: 310px; }
+.input-3 { top: 417px; }
+.input-4 { top: 524px; }
+
+.button-container {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    bottom: 76px;
+    left: 50%;
+    transform: translateX(-50%);
+    /* margin-top: 20px; */
+    z-index: 2;
+}
+
+.page-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 2px;
+    position: relative;
+    width: 180px;
+    height: auto;
+    background: url('../assets/icons/cartoonpagebtn.svg') no-repeat center;
+    background-size: contain;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+
+    transition: transform 0.1s ease-in-out;
+}
+
+.page-btn:active {
+  transform: scale(0.95);   /* 클릭 시 살짝 작아짐 */
+}
+
+.page-btn:focus {
+  outline: none;
+}
+
+
+
+/* .board-box textarea {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  border: none;
+  outline: none;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  background: transparent; /* 하얀 배경이 비치도록 투명 */
+
+
+/* .question-box {
+    position: absolute;
+    top: 140px;
+    left: 420px;
+    width: 450px;
+    padding: 20px 30px;
+    background: transparent;
+}
+
+.question-title {
+  font-size: 16px;
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  font-weight: 500;
+} */
+/* 
+.question-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.question-field label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.question-field input {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: 6px;
+  font-size: 14px;
+  outline: none;
+} */

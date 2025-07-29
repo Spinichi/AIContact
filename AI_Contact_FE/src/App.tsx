@@ -19,6 +19,7 @@ import MyPage from './pages/MyPage';
 import AuthPage from "./pages/AuthPage"; // 회원가입 페이지
 import WebRtcPage from "./webrtc/WebRtcPage"; // 회원가입 페이지
 import CoupleConnectionPage from "./pages/CoupleConnectionPage";
+import CartoonPage from "./pages/CartoonPage";
 
 function App() {
   return (
@@ -33,6 +34,8 @@ function App() {
         <Route path="/AuthPage" element={<AuthPage />} />
         <Route path="/webrtc" element={<WebRtcPage />} />
         <Route path="/connection" element={<CoupleConnectionPage />} />
+        <Route path="cartoon/" element={<CartoonPage />} />
+      
       </Routes>
     </Router>
   );

@@ -1,4 +1,4 @@
-import {useState, React} from "react";
+import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import "../styles/MainPages.css";
 import "../styles/CalendarPage.css";
@@ -30,6 +30,7 @@ const events = [
         initialView='dayGridMonth'
         editable={true}
         events={events}
+        height="auto"
       />
         </div>
       </div>
