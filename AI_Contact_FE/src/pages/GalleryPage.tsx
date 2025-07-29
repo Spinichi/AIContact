@@ -1,84 +1,69 @@
-// import React from 'react';
-
-// const GalleryPage: React.FC = () => {
-//   return (
-//     <div>
-//       <h1>갤러리 페이지</h1>
-//     </div>
-//   );
-// };
-
-// export default GalleryPage;
-
-import '../styles/MainPages.css';
-import React from 'react';
+import React, { useState } from 'react';
+import '../styles/GalleryPage.css';
+import photobook from '../assets/images/photobook.png'
+import '../styles/MainPages.css'
 import Sidebar from '../components/Sidebar';
 
-import '../styles/GalleryPage.css';
+export default function PhotoBook() {
+  const [photos, setPhotos] = useState<string[]>([]);
 
-export default function GalleryPage() {
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      const newPhotos = files.map(file => URL.createObjectURL(file));
+      setPhotos(prev => [...prev, ...newPhotos]);
+    }
+  };
+
   return (
-    <div className='main-layout'>
-      {/* 왼쪽 사이드바 그대로 */}
-      <Sidebar />
+<div className='main-layout'>
+  <Sidebar />
 
-      {/* 오른쪽 메인 컨텐츠 영역 */}
-      <div className='main-content'>
-        {/* 상단 헤더 */}
-        <div className="user-info-header">
-          <h3>갤러리</h3>
-        </div>
-
-        {/* 갤러리 페이지 본문 */}
-        <div className="gallery-container">
-          {/* 상단 필터 메뉴 */}
-          <div className="gallery-header">
-            <div className="gallery-tabs">
-              <span className="active">전체</span>
-              <span>즐겨찾기</span>
-            </div>
-            <div className="gallery-sort">
-              <span className="active">최신순</span>
-              <span>오래된순</span>
-              <span className="calendar-icon">📅</span>
-              <button className="upload-btn">⬆ 업로드</button>
-            </div>
-          </div>
-
-          {/* 앨범 */}
-          <div className="album-wrapper">
-            <button className="arrow left">〈</button>
-            <div className="album">
-              {/* 왼쪽 페이지 */}
-              <div className="album-page">
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <div key={i} className="photo-box">
-                    <img
-                      src={`/images/sample${i + 1}.jpg`}
-                      alt={`sample-${i + 1}`}
-                    />
-                  </div>
-                ))}
-              </div>
-              {/* 오른쪽 페이지 */}
-              <div className="album-page">
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <div key={i} className="photo-box">
-                    <img
-                      src={`/images/sample${i + 13}.jpg`}
-                      alt={`sample-${i + 13}`}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <button className="arrow right">〉</button>
-          </div>
-
-          {/* 페이지 번호 */}
-          <div className="page-number">2</div>
-        </div>
+  <div className='album-content'>
+    {/* 필터 / 정렬 / 업로드 영역 */}
+    <div className='gallery-top-bar'>
+      <div className='gallery-tabs'>
+        <button className='active'>전체</button>
+        <button>즐겨찾기</button>
+      </div>
+      <div className='gallery-actions'>
+        <button className='sort-btn active'>최신순</button>
+        <button className='sort-btn'>오래된순</button>
+        <button className='calendar-btn'>📅</button>
+        <label className='upload-label'>
+          📤 업로드
+          <input type='file' multiple accept='image/*' onChange={handleUpload} />
+        </label>
       </div>
     </div>
+
+    {/* 앨범 */}
+    <div className='photobook-wrapper'>
+      <div className='photobook'>
+        {/* 왼쪽 사진 */}
+        <div className='photo-grid left'>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div className='photo-box' key={i}>
+              {photos[i] && <img src={photos[i]} alt={`photo-${i}`} />}
+            </div>
+          ))}
+        </div>
+
+        {/* 오른쪽 사진 */}
+        <div className='photo-grid right'>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div className='photo-box' key={i + 12}>
+              {photos[i + 12] && <img src={photos[i + 12]} alt={`photo-${i + 12}`} />}
+            </div>
+          ))}
+        </div>
+
+        {/* 배경 */}
+        <img src={photobook} alt='photobook background' className='photobook-bg' />
+      </div>
+    </div>
+  </div>
+</div>
+
   );
 }
