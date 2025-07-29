@@ -58,7 +58,10 @@ export default function Sidebar() {
       {/* 하단 영역: 닫기 버튼과 로그아웃 버튼 */}
       <div className="sidebar-bottom">
         <button>❌</button>
-        <button>로그아웃</button>
+        <button onClick={() => {
+          localStorage.removeItem('accessToken');
+          navigate('/auth');
+        }}>로그아웃</button>
       </div>
     </aside>
   );
