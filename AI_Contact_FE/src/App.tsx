@@ -17,7 +17,7 @@ import CalendarPage from "./pages/CalendarPage";
 import DictionaryPage from "./pages/DictionaryPage";
 import MyPage from "./pages/MyPage";
 import AuthPage from "./pages/AuthPage"; // 회원가입 페이지
-import WebRtcPage from "./webrtc/WebRtcPage"; // 회원가입 페이지
+import WebRtcPage from "./webrtc/WebRtcPage";
 import CoupleConnectionPage from "./pages/CoupleConnectionPage";
 
 function App() {
@@ -25,14 +25,15 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/talk" element={<TalkPage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/dictionary" element={<DictionaryPage />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/mypage" element={<MyPage />} />
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="/webrtc" element={<WebRtcPage />} />
         <Route path="/connection" element={<CoupleConnectionPage />} />
+        <Route path="/ai" element={<MainPage />} />
+        <Route path="/talk" element={<TalkPage />} />
+        <Route path="/webrtc" element={<WebRtcPage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/calendar" element={<CalendarPage />} />
+        <Route path="/dictionary" element={<DictionaryPage />} />
+        <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </Router>
   );
