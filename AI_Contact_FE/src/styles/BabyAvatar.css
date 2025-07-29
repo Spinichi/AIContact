@@ -77,5 +77,11 @@
   height: auto;
   cursor: pointer;
   z-index: 10;
+  transition: transform 0.1s ease-in-out;
 
+}
+
+
+.talk-button:active {
+  transform: scale(0.95);   /* 클릭 시 살짝 작아짐 */
 }
