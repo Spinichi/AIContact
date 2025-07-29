@@ -6,7 +6,7 @@ import {
   Room,
   RoomEvent,
 } from "livekit-client";
-import "./WebRtcPage.css";
+// import "./WebRtcPage.css";
 import { useState } from "react";
 import VideoComponent from "./components/VideoComponent";
 import AudioComponent from "./components/AudioComponent";
