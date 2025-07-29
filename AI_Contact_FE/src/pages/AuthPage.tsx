@@ -8,11 +8,18 @@ export default function AuthPage() {
 
   return (
     <div className="main-layout">
-      <AuthBackground />
+      <AuthBackground isSignUp={isSignUp} />
       <AuthForm
-        position={isSignUp ? "right" : "left"}
+        position="left"
         onFormChange={() => setIsSignUp((prev) => !prev)}
-        isSignUp={isSignUp}
+        isSignUp={false}
+        isVisible={!isSignUp}
+      />
+      <AuthForm
+        position="right"
+        onFormChange={() => setIsSignUp((prev) => !prev)}
+        isSignUp={true}
+        isVisible={isSignUp}
       />
     </div>
   );

@@ -3,27 +3,32 @@ import "../../styles/AuthFormPanel.css";
 import arrowLeft from "../../assets/icons/ArrowLeft.svg";
 import FormTitle from "./FormTitle";
 import LoginForm from "./LoginForm";
-import ProfileForm from "./ProfileForm";
+import SignUpForm from "./SignUpForm";
 
 interface AuthFormProps {
   isSignUp: boolean;
   position: "left" | "right";
   onFormChange: () => void;
+  isVisible: boolean;
 }
 
 export default function AuthForm({
   isSignUp,
   position,
   onFormChange,
+  isVisible,
 }: AuthFormProps) {
   return (
-    <div className={`auth-form-panel ${position}`}>
+    <div className={`auth-form-panel ${position} ${isVisible ? "" : "hidden"}`}>
       {isSignUp ? (
-        //<SignUpForm onToggle={onFormChange} />
-        <ProfileForm />
+        <>
+          <LeftArrow onBack={onFormChange} />
+          <FormTitle />
+          <SignUpForm onToggle={onFormChange} />
+        </>
       ) : (
         <>
-          <LeftArrow />
+          <LeftArrow onBack={onFormChange} />
           <FormTitle />
           <LoginForm onToggle={onFormChange} />
         </>
@@ -32,9 +37,13 @@ export default function AuthForm({
   );
 }
 
-function LeftArrow() {
+interface LeftArrowProps {
+  onBack: () => void;
+}
+
+function LeftArrow({ onBack }: LeftArrowProps) {
   return (
-    <div className="arrow-left">
+    <div className="arrow-left" onClick={onBack}>
       <img src={arrowLeft} />
     </div>
   );
