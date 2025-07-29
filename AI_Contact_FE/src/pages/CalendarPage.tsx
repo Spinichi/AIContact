@@ -1,4 +1,3 @@
-import {useState, React} from "react";
 import Sidebar from "../components/Sidebar";
 import "../styles/MainPages.css";
 import "../styles/CalendarPage.css";
@@ -6,12 +5,27 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid'; // 'timeGridWeek' 뷰를 위해 필요합니다.
 import interactionPlugin from '@fullcalendar/interaction';
+import koLocale from '@fullcalendar/core/locales/ko';
+
 
 
 export default function CalendarPage() {
 const events = [
-    { title: 'Meeting', start: new Date() }
+    { title: '포비 산책', start: "2025-07-18 13:00"},
+    { title: '포비 밥주기', start: "2025-07-18 14:00"},
+    { title: '포비 놀기', start: "2025-07-18 17:30"},
+    { title: '포비 포비 포비', start: "2025-07-18 19:00"},
+    { title: '포비 산책', start: "2025-07-18 21:50"},
+    { title: '포비 굿즈 구매', start: "2025-07-23 15:00"},
+    { title: '레스토랑 예약하기', start: "2025-07-24 15:00"},
+    { title: '엄마 생신', start: "2025-07-28 15:00"},
+    { title: '100일 💕', start: "2025-07-29 15:00"},
   ];
+
+  const handleDayCellContent = (e) => {
+    const dayNumber = e.dayNumberText.replace("일", "");
+    return dayNumber;
+  };
 
   return (
     <div className="main-layout">
@@ -25,12 +39,23 @@ const events = [
           <h3>캘린더</h3>
         </div>
         <div className="calendar-container">
-        <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView='dayGridMonth'
-        editable={true}
-        events={events}
-      />
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView='dayGridMonth'
+            editable={true}
+            events={events}
+            aspectRatio={1.6}
+            locale={koLocale}
+            headerToolbar={{
+              left: 'prev,title,next',
+              center: '',
+              right: 'today'
+            }}
+            dayCellContent={handleDayCellContent}
+            displayEventTime={false}
+            dayMaxEventRows={true}
+            dayMaxEvents = {2}
+          />
         </div>
       </div>
       <div>

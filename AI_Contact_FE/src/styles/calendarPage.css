@@ -1,86 +1,101 @@
 .calendar-container {
-  width : 100%;
-  height : 100%;
-  background: #f8f8f8;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  margin-top: 20px;
+  width : 960px;
+  height : auto;
+  background-color: white;
 }
 
-.react-calendar{
-  width : 100% !important;
-  height : 100% !important;
+.fc{
+  margin : 20px 20px;
 }
 
-.react-calendar__tile{
-  height : 15vh !important;
+.fc-dayGridMonth-view .fc-view .fc-daygrid{
+  color : var(--text-medium);
 }
 
-/* 상단 타이틀 */
-.calendar-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 20px;
+.fc .fc-daygrid-day.fc-day-today{
+  background-color: var(--bg-primary);
 }
 
-.calendar-header h2 {
-  font-size: 20px;
-  font-weight: bold;
+.fc-theme-standard .fc-col-header-cell {
+  background: none; 
+  border-left: none; 
+  border-right : none;
+  border-top : none;
 }
 
-.arrow-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
+.fc-toolbar-chunk > div{
+  display : flex;
+  gap : 10px;
 }
 
-/* 달력 테이블 스타일 */
-.calendar-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
+.fc .fc-button-primary{
+  background-color: transparent;
+  border-color : transparent;
+  color : var(--text-dark);
 }
 
-.calendar-table th {
-  padding: 10px;
-  background: #f2f2f2;
-  font-weight: bold;
-  border-bottom: 1px solid #ddd;
+.fc .fc-button-primary:hover{
+  background-color: var(--bg-primary);
+  border-color : var(--bg-primary);
+  color : var(--primary);
 }
 
-.calendar-table td {
-  height: 80px;
-  text-align: left;
-  vertical-align: top;
-  padding: 6px;
-  border: 1px solid #ddd;
-  position: relative;
-  font-size: 14px;
+.fc .fc-button-primary:active{
+  background-color: var(--bg-primary);
+  border-color : var(--bg-primary);
+  color : white;
 }
 
-.calendar-table td.prev-month {
-  color: #ccc;
+.fc .fc-button-primary:disabled { 
+  background-color: var(--bg-primary);
+  border-color : var(--bg-primary);
+  color : var(--primary);
 }
 
-.calendar-table td.holiday {
+.fc .fc-toolbar-title{
+  color : var(--text-dark);
+}
+
+
+.fc-day-sat .fc-daygrid-day-number {
+  color: blue;
+}
+
+.fc-day-sun .fc-daygrid-day-number {
   color: red;
 }
 
-/* 이벤트 표시 */
-.event-label {
-  font-size: 10px;
-  color: #333;
-  background: #f2e8ff;
-  border-radius: 4px;
-  padding: 2px 4px;
-  margin-top: 4px;
-  display: inline-block;
+.fc-day-mon .fc-daygrid-day-number,
+.fc-day-tue .fc-daygrid-day-number,
+.fc-day-wed .fc-daygrid-day-number,
+.fc-day-thu .fc-daygrid-day-number,
+.fc-day-fri .fc-daygrid-day-number{
+  color : var(--text-dark);
 }
 
-.calendar-table td.event {
-  background: #faf5ff;
+.fc .fc-col-header-cell-cushion{
+  color : var(--text-light);
+}
+
+.fc .fc-daygrid-day-top{
+  flex-direction: row;
+  font-size : 14px;
+}
+
+.fc .fc-event-title{
+  font-size : 12px;
+  color : var(--text-dark);
+}
+
+.fc .fc-daygrid-event-dot{
+  width : 12px;
+  height : 12px;
+  border-radius: 50%;
+  border : 0px;
+  background-color: var(--primary);
+  margin : 0 8px 0 3px;
+}
+
+.fc .fc-daygrid-more-link{
+  color : var(--text-light);
 }
