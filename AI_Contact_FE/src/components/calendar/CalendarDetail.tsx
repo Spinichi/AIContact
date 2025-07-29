@@ -3,9 +3,10 @@ import '../../styles/CalendarDetail.css';
 
 interface CalendarDetailProps{
     dateInfo : Date;
+    onAdd : () => void;
 }
 
-export default function CalendarDetail({dateInfo}: CalendarDetailProps){
+export default function CalendarDetail({dateInfo, onAdd}: CalendarDetailProps){
 
     const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
     const calendarEvents = [
@@ -23,7 +24,7 @@ export default function CalendarDetail({dateInfo}: CalendarDetailProps){
                     <div className="monthday">{dateInfo.getMonth()+1}월 {dateInfo.getDate()}일</div>
                     <div className="day">{days[dateInfo.getDay()]}</div>
                 </div>
-                <img src={plusBtn} className="add-btn" />
+                <img src={plusBtn} className="add-btn" onClick={onAdd}/>
             </div>
             <div className="modal-body">
                 {

@@ -5,6 +5,7 @@ import "../styles/MainPages.css";
 import "../styles/CalendarPage.css";
 
 import CalendarDetail from '../components/calendar/CalendarDetail';
+import AddCalendarEvent from '../components/calendar/AddCalendarEvent';
 import Modal from '../components/modal/Modal';
 import Sidebar from "../components/Sidebar";
 
@@ -19,16 +20,17 @@ import { type DayCellContentArg } from '@fullcalendar/core/index.js';
 
 export default function CalendarPage() {
 
-  const [showModal, setShowModal] = useState(false);
+  type ModalType = 'detail' | 'add' | 'off';
+
+  const [modalStatus, setModalStatus] = useState<ModalType>('off');
   const [clickedDateInfo, setClickedDateInfo] = useState<DateClickArg | null>(null);
 
-  function openModal(dateInfo : DateClickArg) {
+  function openCalendarDetail(dateInfo : DateClickArg) {
     console.log(dateInfo);
     console.log(typeof (dateInfo));
     setClickedDateInfo(dateInfo);
-    setShowModal(true);
+    setModalStatus('detail');
   }
-  const closeModal = () => setShowModal(false);
 
 const events = [
     { title: '포비 산책', start: "2025-07-18 13:00"},
@@ -47,11 +49,22 @@ const events = [
     return dayNumber;
   };
 
+  function setModalContent(modalStatus : ModalType){
+      switch (modalStatus){
+        case 'off':
+          return null;
+        case 'detail':
+          return <Modal onClose={()=>setModalStatus('off')} hasNext={true} hasPrev={true}>
+          {clickedDateInfo && <CalendarDetail dateInfo={clickedDateInfo.date} onAdd={()=>setModalStatus('add')}/>}</Modal>;
+        case 'add':
+          return <Modal onClose={()=>setModalStatus('off')} hasNext={false} hasPrev={false}>
+            {clickedDateInfo && <AddCalendarEvent dateInfo={clickedDateInfo.date} onCancel={() => setModalStatus('detail')} />}</Modal>;
+      }
+  }
+
   return (
     <div className="main-layout">
-      {showModal && createPortal(<Modal onClose={closeModal} hasNext={true} hasPrev={true}>
-          {clickedDateInfo && <CalendarDetail dateInfo={clickedDateInfo.date} />}
-        </Modal>,
+      {modalStatus!='off' && createPortal(setModalContent(modalStatus),
       document.body)}
       {/* 왼쪽 사이드바 */}
       <Sidebar />
@@ -79,7 +92,7 @@ const events = [
             displayEventTime={false}
             dayMaxEventRows={true}
             dayMaxEvents = {2}
-            dateClick={openModal}
+            dateClick={openCalendarDetail}
           />
         </div>
       </div>

@@ -1,0 +1,25 @@
+.modal-footer{
+    display : flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.modal-footer > button{
+    width : 270px;
+    height : 54px;
+    border-radius: 0%;
+}
+
+.modal-footer .cancel-btn,
+.modal-footer .submit-btn:active{
+    color : var(--primary);
+    background-color: white;
+    border : 1px solid var(--primary);
+}
+
+.modal-footer .cancel-btn:active,
+.modal-footer .submit-btn{
+    color : white;
+    background-color: var(--primary);
+    border : 1px solid white;
+}
