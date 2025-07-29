@@ -28,7 +28,7 @@ export default function SignUpForm({
   return (
     <form className="form-box" onSubmit={handleSubmit}>
       <input
-        type="text"
+        type="email"
         placeholder="이메일"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
