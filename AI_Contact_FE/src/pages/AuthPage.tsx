@@ -2,7 +2,7 @@ import { useState } from "react";
 import AuthBackground from "../components/auth/AuthBackground.tsx";
 import AuthForm from "../components/auth/AuthForm.tsx";
 import "../styles/MainPages.css";
-import ProfileForm from "../components/auth/ProfileForm.tsx"; // New import for ProfileForm
+import ProfileForm from "../components/auth/ProfileForm.tsx";
 
 export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -10,7 +10,6 @@ export default function AuthPage() {
     "emailPassword"
   );
   const [signUpData, setSignUpData] = useState({ email: "", password: "" });
-  const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   const handleSignUpSubmit = (email: string, password: string) => {
     setSignUpData({ email, password });
@@ -18,13 +17,9 @@ export default function AuthPage() {
   };
 
   const handleProfileSubmit = () => {
-    setShowCompletionModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowCompletionModal(false);
-    setIsSignUp(false); // Go back to login view after modal closes
-    setSignUpStep("emailPassword"); // Reset sign-up step
+    alert("회원가입이 완료되었습니다.");
+    setIsSignUp(false);
+    setSignUpStep("emailPassword");
   };
 
   return (
@@ -34,7 +29,7 @@ export default function AuthPage() {
         position="left"
         onFormChange={() => {
           setIsSignUp((prev) => !prev);
-          setSignUpStep("emailPassword"); // Reset step when switching forms
+          setSignUpStep("emailPassword");
         }}
         isSignUp={false}
         isVisible={!isSignUp}
@@ -44,11 +39,11 @@ export default function AuthPage() {
           position="right"
           onFormChange={() => {
             setIsSignUp((prev) => !prev);
-            setSignUpStep("emailPassword"); // Reset step when switching forms
+            setSignUpStep("emailPassword");
           }}
           isSignUp={true}
           isVisible={isSignUp}
-          onSignUpSubmit={handleSignUpSubmit} // Pass the submit handler
+          onSignUpSubmit={handleSignUpSubmit}
         />
       )}
       {signUpStep === "profile" && isSignUp && (
@@ -56,17 +51,8 @@ export default function AuthPage() {
           email={signUpData.email}
           password={signUpData.password}
           onProfileSubmit={handleProfileSubmit}
-          isVisible={isSignUp} // Only show if isSignUp is true
+          isVisible={isSignUp}
         />
-      )}
-
-      {showCompletionModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>회원가입이 완료되었습니다.</h2>
-            <button onClick={handleCloseModal}>확인</button>
-          </div>
-        </div>
       )}
     </div>
   );
