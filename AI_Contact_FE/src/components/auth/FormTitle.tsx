@@ -1,10 +1,17 @@
-import logo from '../../assets/images/symbol.png';
+import React from "react";
+import symbol from "../../assets/images/symbol.png";
 
-export default function FormTitle(){
-  return(
-      <div className="form-title">
-          <img src={logo} alt="서비스로고" className="service-logo" />
-          <h2>AI Contact</h2>
-      </div>
+const FormTitle = () => {
+  return (
+    <div className="form-title">
+      <img
+        src={symbol}
+        alt="symbol"
+        style={{ width: "100px", height: "100px" }}
+      />
+      <h3>AI Contact</h3>
+    </div>
   );
-}
+};
+
+export default FormTitle;
