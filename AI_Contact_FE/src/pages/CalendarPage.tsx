@@ -8,6 +8,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'; // 'timeGridWeek' 뷰를 �
 import interactionPlugin from '@fullcalendar/interaction';
 import koLocale from '@fullcalendar/core/locales/ko';
 import Modal from '../components/modal/Modal';
+import CalendarDetail from '../components/calendar/CalendarDetail';
 import { createPortal } from 'react-dom';
 
 
@@ -15,8 +16,10 @@ export default function CalendarPage() {
 
   const [showModal, setShowModal] = useState(false);
   const [clickedDateInfo, setClickedDateInfo] = useState(null);
+  const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
   const openModal = (dateInfo) => {
+    console.log(dateInfo);
     setClickedDateInfo(dateInfo);
     setShowModal(true);
   }
@@ -42,10 +45,7 @@ const events = [
   return (
     <div className="main-layout">
       {showModal && createPortal(<Modal onClose={closeModal} hasNext={true} hasPrev={true}>
-          <div style={{color : 'white'}}>
-            <h3>{clickedDateInfo&&clickedDateInfo.dateStr}</h3>
-            <p>이 날짜에 새 일정을 추가하시겠습니까?</p>
-          </div>
+          {clickedDateInfo && <CalendarDetail date={clickedDateInfo.date} />}
         </Modal>,
       document.body)}
       {/* 왼쪽 사이드바 */}
