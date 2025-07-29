@@ -1,11 +1,14 @@
 import { useRef, useState } from "react";
 import "../../styles/AuthFormPanel.css"; // Re-use existing styles
+import arrowLeft from "../../assets/icons/ArrowLeft.svg";
+import editIcon from "../../assets/icons/edit.svg"; // Import edit.svg
 
 interface ProfileFormProps {
   email: string;
   password: string;
   onProfileSubmit: () => void;
   isVisible: boolean;
+  onBack: () => void; // New prop for back navigation
 }
 
 export default function ProfileForm({
@@ -13,6 +16,7 @@ export default function ProfileForm({
   password,
   onProfileSubmit,
   isVisible,
+  onBack,
 }: ProfileFormProps) {
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState(""); // New state for birthdate
@@ -36,6 +40,11 @@ export default function ProfileForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!file) {
+      alert("프로필 이미지를 선택해주세요.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("email", email);
@@ -69,11 +78,12 @@ export default function ProfileForm({
 
   return (
     <div className={`auth-form-panel right ${isVisible ? "" : "hidden"}`}>
+      <div className="arrow-left" onClick={onBack}>
+        <img src={arrowLeft} />
+      </div>
       <form className="form-box" onSubmit={handleSubmit}>
-        <h2>프로필 정보 입력</h2>
+        <h3>프로필 정보 입력</h3>
         <div className="image-upload-area" onClick={handleImageClick}>
-          {" "}
-          {/* Make this clickable */}
           {imagePreview ? (
             <div className="image-preview-container">
               <img
@@ -85,6 +95,9 @@ export default function ProfileForm({
           ) : (
             <div className="image-placeholder"></div> // Placeholder for when no image is selected
           )}
+          <div className="editsvg">
+            <img src={editIcon} alt="Edit" />
+          </div>
         </div>
         <input
           type="file"

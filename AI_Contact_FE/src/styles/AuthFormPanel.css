@@ -104,6 +104,19 @@
   margin: 10px;
 }
 
+.form-box > h3 {
+  margin: 10px;
+  height: 60px;
+}
+
+.editsvg > img {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 200px;
+  left: 220px;
+}
+
 .arrow-left {
   width: 40px;
   height: 40px;
@@ -155,6 +168,7 @@ label {
 .image-upload-area {
   width: 150px;
   height: 150px;
+  margin-bottom: 50px;
   border-radius: 50%;
   overflow: hidden;
   cursor: pointer;
