@@ -59,7 +59,7 @@ export default function ProfileForm({
         onProfileSubmit();
       } else {
         const errorData = await response.json();
-        alert(`회원가입 실패: ${errorData.message || response.statusText}`);
+        alert(`회원가입 실패`);
       }
     } catch (error) {
       console.error("Error during sign-up:", error);
