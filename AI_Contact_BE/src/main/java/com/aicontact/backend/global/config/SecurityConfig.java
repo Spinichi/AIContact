@@ -83,7 +83,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/auth/**", "/users/**", "/token").permitAll()
+                        .requestMatchers("/auth/**", "/users/sign-up", "/users/**", "/token").permitAll()
                         .anyRequest().authenticated());
 
         http

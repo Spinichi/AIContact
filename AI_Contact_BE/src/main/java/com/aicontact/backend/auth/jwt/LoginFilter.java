@@ -1,6 +1,9 @@
 package com.aicontact.backend.auth.jwt;
 
 import com.aicontact.backend.auth.dto.CustomUserDetails;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.stream.Collectors;
+import com.aicontact.backend.auth.dto.LoginRequest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,14 +30,24 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        try {
+            // Read the request body as a JSON string
+            String requestBody = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            // Parse the JSON string to extract email and password
+            ObjectMapper objectMapper = new ObjectMapper();
+            LoginRequest loginRequest = objectMapper.readValue(requestBody, LoginRequest.class);
 
-        System.out.println(email);
+            String email = loginRequest.getEmail();
+            String password = loginRequest.getPassword();
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
+            System.out.println(email);
 
-        return authenticationManager.authenticate(token);
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
+
+            return authenticationManager.authenticate(token);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
