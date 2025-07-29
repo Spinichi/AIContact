@@ -13,14 +13,14 @@ interface ModalProps {
 export default function Modal({ onClose, hasPrev, hasNext, children  } : ModalProps){
     return(
       <>
-         <img src={closeBtn} className="close-btn" onClick={onClose} />
-         <div className="modal-overlay">
+        <img src={closeBtn} className="close-btn" onClick={onClose} />
+        <div className="modal-overlay">
             {hasPrev && <img src={prvBtn} className="move-btn" />}
             <div className="content">
                 {children }
             </div>
             {hasNext && <img src={nxtBtn} className="move-btn" />}
-         </div>
+        </div>
       </>
     )
 }

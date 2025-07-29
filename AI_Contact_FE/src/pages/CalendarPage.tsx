@@ -1,21 +1,26 @@
 import { useState } from 'react';
-import Sidebar from "../components/Sidebar";
+import { createPortal } from 'react-dom';
+
 import "../styles/MainPages.css";
 import "../styles/CalendarPage.css";
+
+import CalendarDetail from '../components/calendar/CalendarDetail';
+import Modal from '../components/modal/Modal';
+import Sidebar from "../components/Sidebar";
+
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid'; // 'timeGridWeek' 뷰를 위해 필요합니다.
 import interactionPlugin, {type DateClickArg} from '@fullcalendar/interaction';
 import koLocale from '@fullcalendar/core/locales/ko';
-import Modal from '../components/modal/Modal';
-import CalendarDetail from '../components/calendar/CalendarDetail';
-import { createPortal } from 'react-dom';
+import { type DayCellContentArg } from '@fullcalendar/core/index.js';
+
 
 
 export default function CalendarPage() {
 
   const [showModal, setShowModal] = useState(false);
-  const [clickedDateInfo, setClickedDateInfo] = useState(null);
+  const [clickedDateInfo, setClickedDateInfo] = useState<DateClickArg | null>(null);
 
   function openModal(dateInfo : DateClickArg) {
     console.log(dateInfo);
@@ -37,7 +42,7 @@ const events = [
     { title: '100일 💕', start: "2025-07-29 15:00"},
   ];
 
-  const handleDayCellContent = (e) => {
+  const handleDayCellContent = (e : DayCellContentArg) => {
     const dayNumber = e.dayNumberText.replace("일", "");
     return dayNumber;
   };

@@ -3,7 +3,6 @@ import '../../styles/CalendarDetail.css';
 
 interface CalendarDetailProps{
     dateInfo : Date;
-    events : Array<object>;
 }
 
 export default function CalendarDetail({dateInfo}: CalendarDetailProps){
