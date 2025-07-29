@@ -28,9 +28,12 @@
   gap: 12px;
   width: 80%;
   max-width: 400px;
+  position: relative; /* Added for absolute positioning of children */
+  align-items: center;
 }
 
 .form-box input {
+  width: 352px;
   height: 2vh;
   padding: 16px 24px;
   font-size: 16px;
@@ -42,12 +45,24 @@
   color: var(--primary);
 }
 
+.form-box input[type="date"]::placeholder {
+  font-weight: 600 !important;
+}
+
+.form-box input[type="date"]::-webkit-datetime-edit-text,
+.form-box input[type="date"]::-webkit-datetime-edit-month-field,
+.form-box input[type="date"]::-webkit-datetime-edit-day-field,
+.form-box input[type="date"]::-webkit-datetime-edit-year-field {
+  font-weight: 600 !important;
+}
+
 .form-box input:focus {
   box-shadow: 0px 0px 10px 1px rgb(from var(--primary) r g b / 0.65);
   outline: none;
 }
 
 .form-box button {
+  width: 100%;
   padding: 12px;
   background-color: var(--primary);
   color: white;
@@ -137,10 +152,44 @@ label {
   display: none;
 }
 
-.image-preview {
-  position: absolute;
+.image-upload-area {
   width: 150px;
   height: 150px;
-  object-fit: cover;
   border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  bottom: 0px; /* Adjust as needed */
+  right: 0px; /* Adjust as needed */
+  background: linear-gradient(
+    to right,
+    #a66ee0 0%,
+    #735ae1 100%
+  ); /* Added fill */
+}
+
+.image-preview-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(to right, #a66ee0 0%, #735ae1 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5em;
+  /* You can add an icon or text here if desired */
 }

@@ -10,6 +10,7 @@ interface AuthFormProps {
   position: "left" | "right";
   onFormChange: () => void;
   isVisible: boolean;
+  onSignUpSubmit?: (email: string, password: string) => void; // New prop
 }
 
 export default function AuthForm({
@@ -17,6 +18,7 @@ export default function AuthForm({
   position,
   onFormChange,
   isVisible,
+  onSignUpSubmit,
 }: AuthFormProps) {
   return (
     <div className={`auth-form-panel ${position} ${isVisible ? "" : "hidden"}`}>
@@ -24,7 +26,7 @@ export default function AuthForm({
         <>
           <LeftArrow onBack={onFormChange} />
           <FormTitle />
-          <SignUpForm onToggle={onFormChange} />
+          <SignUpForm onToggle={onFormChange} onSignUpSubmit={onSignUpSubmit} />
         </>
       ) : (
         <>
