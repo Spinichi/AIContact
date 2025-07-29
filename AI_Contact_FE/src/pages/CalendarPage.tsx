@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Sidebar from "../components/Sidebar";
 import "../styles/MainPages.css";
 import "../styles/CalendarPage.css";
@@ -6,10 +7,21 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid'; // 'timeGridWeek' 뷰를 위해 필요합니다.
 import interactionPlugin from '@fullcalendar/interaction';
 import koLocale from '@fullcalendar/core/locales/ko';
-
+import Modal from '../components/modal/Modal';
+import { createPortal } from 'react-dom';
 
 
 export default function CalendarPage() {
+
+  const [showModal, setShowModal] = useState(false);
+  const [clickedDateInfo, setClickedDateInfo] = useState(null);
+
+  const openModal = (dateInfo) => {
+    setClickedDateInfo(dateInfo);
+    setShowModal(true);
+  }
+  const closeModal = () => setShowModal(false);
+
 const events = [
     { title: '포비 산책', start: "2025-07-18 13:00"},
     { title: '포비 밥주기', start: "2025-07-18 14:00"},
@@ -29,6 +41,13 @@ const events = [
 
   return (
     <div className="main-layout">
+      {showModal && createPortal(<Modal onClose={closeModal} hasNext={true} hasPrev={true}>
+          <div style={{color : 'white'}}>
+            <h3>{clickedDateInfo&&clickedDateInfo.dateStr}</h3>
+            <p>이 날짜에 새 일정을 추가하시겠습니까?</p>
+          </div>
+        </Modal>,
+      document.body)}
       {/* 왼쪽 사이드바 */}
       <Sidebar />
 
@@ -55,6 +74,7 @@ const events = [
             displayEventTime={false}
             dayMaxEventRows={true}
             dayMaxEvents = {2}
+            dateClick={openModal}
           />
         </div>
       </div>
