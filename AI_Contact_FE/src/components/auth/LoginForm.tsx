@@ -27,7 +27,7 @@ export default function LoginForm({ onToggle }: LoginFromProps) {
 
       if (response.ok) {
         const token = await response.text();
-        localStorage.setItem("token", token);
+        localStorage.setItem("accessToken", token);
         navigate("/ai");
       } else {
         const errorData = await response.json();
