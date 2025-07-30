@@ -23,10 +23,12 @@ pipeline {
 
     stage('Push Repo to GitHub') {
       steps {
-        sh '''
-          git remote add github git@github.com:spinichi/commontest.git || true
-          git push github HEAD:master --force
-        '''
+        sshagent(['github-ssh']) {
+          sh '''
+            git remote add github git@github.com:Spinichi/commontest.git || true
+            git push github HEAD:master --force
+          '''
+        }
       }
     }
 
