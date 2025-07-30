@@ -51,7 +51,8 @@ pipeline {
                 cp "$PROP_PATH" src/main/resources/application.properties
                 chmod 644 src/main/resources/application.properties
               '''
-              sh 'docker-compose up -d --build'
+              sh 'docker-compose down || true'
+              sh 'docker-compose up -d --build --force-recreate'
             }
           }
       }
