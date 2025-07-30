@@ -8,14 +8,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/v1/chat")
 @RequiredArgsConstructor
 public class ChatRestController {
-    private final ChatService service;
+    private final ChatService chatService;
 
     @GetMapping("/{roomId}/messages")
-    public ResponseEntity<List<ChatMessage>> getHistory(@PathVariable String roomId) {
-        return ResponseEntity.ok(service.getHistory(roomId));
+    public ResponseEntity<List<ChatMessage>> getMessages(@PathVariable Long roomId) {
+        return ResponseEntity.ok(chatService.getHistory(roomId));
     }
 }
+

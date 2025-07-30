@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/nicknames")
+@RequestMapping("/nicknames")
 public class NicknameController {
 
     private final NicknameService nicknameService;
