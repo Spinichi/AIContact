@@ -38,3 +38,9 @@ out/
 
 src/main/resources/application.properties
 *.env
+
+Caddyfile
+configure_lan_private_ip_linux.sh
+custom-layout/
+livekit.yaml
+scripts/
