@@ -18,7 +18,7 @@ public class S3Service {
 
     private final AmazonS3Client s3Client;
 
-    @Value("${app.aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     /**
