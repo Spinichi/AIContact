@@ -38,8 +38,19 @@ pipeline {
       }
       steps {
           dir('AI_Contact_BE') {
-            withCredentials([file(credentialsId: 'my-env-file', variable: 'ENV_PATH')]) {
-              sh 'cp "$ENV_PATH" .env'
+            withCredentials([
+              file(credentialsId: 'my-env-file',   variable: 'ENV_PATH'),
+              file(credentialsId: 'my-properties', variable: 'PROP_PATH')
+            ]) {
+              sh '''
+                cp "$ENV_PATH" .env
+                chmod 644 .env
+              '''
+              sh '''
+                mkdir -p src/main/resources
+                cp "$PROP_PATH" src/main/resources/application.properties
+                chmod 644 src/main/resources/application.properties
+              '''
               sh 'docker-compose up -d --build'
             }
           }
