@@ -37,4 +37,7 @@ public class UserEntity extends BaseTimeEntity {
     @Column(name= "couple_status", length = 10)
     private CoupleStatus coupleStatus = CoupleStatus.SINGLE;
 
+    @Column(name= "verification_code", nullable = false, unique = true)
+    private String verificationCode;
+
 }
