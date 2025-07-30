@@ -1,11 +1,10 @@
 package com.aicontact.backend.comic.service;
 
+import com.aicontact.backend.comic.dto.ComicDto;
+import com.aicontact.backend.comic.entity.ComicEntity;
+import com.aicontact.backend.comic.repository.ComicRepository;
 import com.aicontact.backend.couple.entity.CoupleEntity;
 import com.aicontact.backend.couple.repository.CoupleRepository;
-import com.aicontact.backend.global.dto.MediaFileDto;
-import com.aicontact.backend.global.entity.MediaFileEntity;
-import com.aicontact.backend.global.entity.enumeration.FileType;
-import com.aicontact.backend.global.repository.MediaFileRepository;
 import com.aicontact.backend.global.storage.S3StorageService;
 import com.aicontact.backend.user.entity.UserEntity;
 import com.aicontact.backend.user.repository.UserRepository;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +34,8 @@ public class DalleService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private MediaFileRepository mediaFileRepository;
+    private ComicRepository comicRepository;
+
 
     public String generateImage(String prompt) throws IOException {
         OkHttpClient client = new OkHttpClient.Builder()
@@ -66,7 +67,7 @@ public class DalleService {
     }
 
     @Transactional
-    public MediaFileDto uploadDalleImageToS3(String dalleImageUrl, Long coupleId, Long uploaderId)
+    public ComicDto uploadDalleImageToS3(String dalleImageUrl, Long coupleId, Long uploaderId)
             throws IOException, JCodecException {
 
         // 1. 이미지 다운로드
@@ -97,24 +98,25 @@ public class DalleService {
             CoupleEntity couple = coupleRepository.getReferenceById(coupleId);
             UserEntity uploader = userRepository.getReferenceById(uploaderId);
 
-            MediaFileEntity entity = MediaFileEntity.builder()
+            ComicEntity entity = ComicEntity.builder()
                     .couple(couple)
-                    .uploader(uploader)
-                    .fileUrl(fileUrl)
-                    .thumbnailUrl(fileUrl) // DALL·E는 이미지니까 썸네일 따로 생성 안함
-                    .fileType(FileType.IMAGE)
-                    .fileSize((long) imageBytes.length)
-                    .originalFilename(key)
+                    .creator(uploader)
+                    .comicImageUrl(fileUrl)
                     .s3Key(key)
-                    .isFavorite(false)
-                    .uploadDate(LocalDate.now())
+                    .title(null) // 프론트에서 제목 입력받는다면 파라미터로 추가
+                    .createdAt(LocalDateTime.now())
                     .build();
 
-            mediaFileRepository.save(entity);
+            comicRepository.save(entity);
 
-            return MediaFileDto.fromEntity(entity);
+// DTO 반환 시 DTO도 새로 만들거나 entity.getId(), fileUrl 등 반환
+
+
+            return ComicDto.fromEntity(entity);
         }
     }
+
+
 
 }
 
