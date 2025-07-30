@@ -1,0 +1,15 @@
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>WebSocket Upgrade 테스트</title>
+</head>
+<body>
+  <h1>WebSocket Upgrade 테스트</h1>
+  <script>
+    const ws = new WebSocket('ws://172-26-9-114.openvidu-local.dev:7880/rtc');
+    ws.onopen  = () => console.log('✅ WS Upgrade OK');
+    ws.onerror = e => console.error('❌ WS Error', e);
+    ws.onclose = e => console.log('⏹️ WS Closed', e);
+  </script>
+</body>
+</html>

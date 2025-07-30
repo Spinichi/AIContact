@@ -37,18 +37,21 @@ pipeline {
         expression { return env.BE_CHANGED == 'true' }
       }
       steps {
-        dir('AI_Contact_BE') {
-          sh 'docker-compose up -d --build'
-        }
+          dir('AI_Contact_BE') {
+            withCredentials([file(credentialsId: 'my-env-file', variable: 'ENV_PATH')]) {
+              sh 'cp "$ENV_PATH" .env'
+              sh 'docker-compose up -d --build'
+            }
+          }
       }
     }
   }
 
-  post {
-    failure {
-      mail to: 'spinichi@naver.com',
-           subject: "[CI FAILURE] ${env.JOB_NAME}",
-           body: "Build/Deployment error : ${env.BUILD_URL}"
-    }
-  }
+//   post {
+//     failure {
+//       mail to: 'spinichi@naver.com',
+//            subject: "[CI FAILURE] ${env.JOB_NAME}",
+//            body: "Build/Deployment error : ${env.BUILD_URL}"
+//     }
+//   }
 }
