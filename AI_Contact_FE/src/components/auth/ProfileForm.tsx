@@ -19,7 +19,7 @@ export default function ProfileForm({
   onBack,
 }: ProfileFormProps) {
   const [name, setName] = useState("");
-  const [birthdate, setBirthdate] = useState(""); // New state for birthdate
+  const [birthDate, setBirthdate] = useState(""); // New state for birthDate
   const [file, setFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null); // New state for image preview
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
@@ -50,7 +50,7 @@ export default function ProfileForm({
     formData.append("email", email);
     formData.append("password", password);
     formData.append("name", name);
-    formData.append("birthdate", birthdate);
+    formData.append("birthDate", birthDate);
     if (file) {
       formData.append("file", file);
     }
@@ -114,9 +114,9 @@ export default function ProfileForm({
           required
         />
         <input
-          type="date" // Changed to type="date" for birthdate
-          placeholder="생년월일" // Placeholder for birthdate
-          value={birthdate}
+          type="date" // Changed to type="date" for birthDate
+          placeholder="생년월일" // Placeholder for birthDate
+          value={birthDate}
           onChange={(e) => setBirthdate(e.target.value)}
           required
         />
