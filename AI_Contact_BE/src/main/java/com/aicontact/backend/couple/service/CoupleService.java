@@ -22,22 +22,30 @@ public class CoupleService {
     private final CoupleRepository coupleRepository;
 
     @Transactional
-    public CoupleResponse joinByCode(String matchCode) {
+    public CoupleResponse joinByCode(Long myId, String matchCode) {
+        UserEntity me = userRepository.findById(myId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "로그인 유저를 찾을 수 없습니다."));
+
         UserEntity target = userRepository.findByVerificationCode(matchCode)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "매칭 코드를 가진 사용자를 찾을 수 없습니다."));
 
-        if (target.getCoupleStatus() != CoupleStatus.SINGLE) {
-            // 이미 커플 혹은 펜딩 상태
+        // 자기 코드 방지
+        if (me.getId().equals(target.getId())) {
             return new CoupleResponse(false, null);
         }
 
-        // (필요하다면 상태 변경 로직 추가)
-        // target.setCoupleStatus(CoupleStatus.PENDING);
-        // userRepository.save(target);
+        // 본인/상대 모두 SINGLE 인지 확인
+        if (me.getCoupleStatus() != CoupleStatus.SINGLE ||
+            target.getCoupleStatus() != CoupleStatus.SINGLE) {
+            return new CoupleResponse(false, null);
+        }
 
+        // (선택) 코드 만료/상태 검증을 working하려면 matching_codes 테이블 로직 추가
         return new CoupleResponse(true, target.getId());
     }
+
 
     @Transactional
     public CoupleInfoResponse getCoupleInfo(Long userId) {

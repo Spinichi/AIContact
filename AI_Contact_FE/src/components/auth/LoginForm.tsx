@@ -10,25 +10,24 @@ export default function LoginForm({ onToggle }: LoginFromProps) {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/v1/auth/sign-in",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/v1/auth/sign-in`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
       if (response.ok) {
         const token = await response.text();
         localStorage.setItem("accessToken", token);
-        navigate("/ai");
+        navigate("/connection");
       } else {
         const errorData = await response.json();
         alert("로그인 실패");

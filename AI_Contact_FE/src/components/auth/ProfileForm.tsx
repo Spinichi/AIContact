@@ -8,7 +8,7 @@ interface ProfileFormProps {
   password: string;
   onProfileSubmit: () => void;
   isVisible: boolean;
-  onBack: () => void; // New prop for back navigation
+  onBack: () => void;
 }
 
 export default function ProfileForm({
@@ -19,10 +19,12 @@ export default function ProfileForm({
   onBack,
 }: ProfileFormProps) {
   const [name, setName] = useState("");
-  const [birthDate, setBirthdate] = useState(""); // New state for birthDate
+  const [birthDate, setBirthdate] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // New state for image preview
-  const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -35,7 +37,7 @@ export default function ProfileForm({
   };
 
   const handleImageClick = () => {
-    fileInputRef.current?.click(); // Trigger click on hidden file input
+    fileInputRef.current?.click();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,13 +58,10 @@ export default function ProfileForm({
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/v1/users/sign-up",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/v1/users/sign-up`, {
+        method: "POST",
+        body: formData,
+      });
 
       if (response.ok) {
         onProfileSubmit();
@@ -93,7 +92,7 @@ export default function ProfileForm({
               />
             </div>
           ) : (
-            <div className="image-placeholder"></div> // Placeholder for when no image is selected
+            <div className="image-placeholder"></div>
           )}
           <div className="editsvg">
             <img src={editIcon} alt="Edit" />
@@ -103,8 +102,8 @@ export default function ProfileForm({
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          ref={fileInputRef} // Assign ref
-          style={{ display: "none" }} // Hide the actual file input
+          ref={fileInputRef}
+          style={{ display: "none" }}
         />
         <input
           type="text"
@@ -114,8 +113,8 @@ export default function ProfileForm({
           required
         />
         <input
-          type="date" // Changed to type="date" for birthDate
-          placeholder="생년월일" // Placeholder for birthDate
+          type="date"
+          placeholder="생년월일"
           value={birthDate}
           onChange={(e) => setBirthdate(e.target.value)}
           required

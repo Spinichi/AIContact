@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/couples")
 @RequiredArgsConstructor
@@ -19,12 +18,16 @@ public class CoupleController {
     private final CoupleService coupleService;
 
     @PostMapping("/join")
-    public ResponseEntity<CoupleResponse> join(@RequestBody VerificationCodeResponse req) {
-        CoupleResponse resp = coupleService.joinByCode(req.getVerificationCode());
+    public ResponseEntity<CoupleResponse> join(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody VerificationCodeRequest req) {
+
+        String myEmail = userDetails.getUserEntity().getEmail();
+        Long myId = userService.getUserByEmail(myEmail).getId();
+
+        CoupleResponse resp = coupleService.joinByCode(myId, req.getVerificationCode());
         if (!resp.isMatched()) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(resp);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(resp);
         }
         return ResponseEntity.ok(resp);
     }
@@ -36,11 +39,8 @@ public class CoupleController {
 
         String email = userDetails.getUserEntity().getEmail();
         Long userId = userService.getUserByEmail(email).getId();
-        CoupleInfoResponse resp = coupleService
-                .createCouple(userId, req);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(resp);
+        CoupleInfoResponse resp = coupleService.createCouple(userId, req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resp);
     }
 
     @GetMapping("")
@@ -66,13 +66,8 @@ public class CoupleController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody CoupleUpdateRequest req) {
 
-        Long userId = userService
-                .getUserByEmail(userDetails.getUsername())
-                .getId();
-
-        CoupleInfoResponse resp = coupleService
-                .updateCoupleInfo(userId, req);
-
+        Long userId = userService.getUserByEmail(userDetails.getUsername()).getId();
+        CoupleInfoResponse resp = coupleService.updateCoupleInfo(userId, req);
         return ResponseEntity.ok(resp);
     }
 
@@ -85,9 +80,4 @@ public class CoupleController {
         VerificationCodeResponse resp = coupleService.getMyCode(userId);
         return ResponseEntity.ok(resp);
     }
-
-
 }
-
-
-
