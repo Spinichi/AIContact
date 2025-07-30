@@ -1,0 +1,52 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Detect Changes') {
+      steps {
+        script {
+          def files = sh(
+            script: "git diff --name-only HEAD~1 HEAD",
+            returnStdout: true
+          ).trim().split('\n')
+
+          env.BE_CHANGED = files.any { it.startsWith('AI_Contact_BE/') } ? 'true' : 'false'
+        }
+      }
+    }
+
+    stage('Push Repo to GitHub') {
+      steps {
+        sh '''
+          git remote add github git@github.com:spinichi/commontest.git || true
+          git push github HEAD:master --force
+        '''
+      }
+    }
+
+    stage('Deploy Backend') {
+      when {
+        expression { return env.BE_CHANGED == 'true' }
+      }
+      steps {
+        dir('AI_Contact_BE') {
+          sh 'docker-compose up -d --build'
+        }
+      }
+    }
+  }
+
+  post {
+    failure {
+      mail to: 'spinichi@naver.com',
+           subject: "[CI FAILURE] ${env.JOB_NAME}",
+           body: "Build/Deployment error : ${env.BUILD_URL}"
+    }
+  }
+}
