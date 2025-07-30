@@ -1,0 +1,121 @@
+package com.aicontact.backend.comic.service;
+
+import com.aicontact.backend.couple.entity.CoupleEntity;
+import com.aicontact.backend.couple.repository.CoupleRepository;
+import com.aicontact.backend.global.dto.MediaFileDto;
+import com.aicontact.backend.global.entity.MediaFileEntity;
+import com.aicontact.backend.global.entity.enumeration.FileType;
+import com.aicontact.backend.global.repository.MediaFileRepository;
+import com.aicontact.backend.global.storage.S3StorageService;
+import com.aicontact.backend.user.entity.UserEntity;
+import com.aicontact.backend.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import okhttp3.*;
+import org.jcodec.api.JCodecException;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+@Service
+public class DalleService {
+
+    private final String OPENAI_API_KEY = "Bearer S13P11A702-921b00de-b1d3-46b4-a329-0e2cd21c41d2";
+    private final String ENDPOINT = "https://gms.ssafy.io/gmsapi/api.openai.com/v1/images/generations";
+
+    @Autowired
+    private S3StorageService s3StorageService;
+    @Autowired
+    private CoupleRepository coupleRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private MediaFileRepository mediaFileRepository;
+
+    public String generateImage(String prompt) throws IOException {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .build();
+
+        JSONObject json = new JSONObject()
+                .put("model", "dall-e-3")
+                .put("prompt", prompt)
+                .put("n", 1)
+                .put("size", "1024x1024")
+                .put("response_format", "url");
+
+        Request request = new Request.Builder()
+                .url(ENDPOINT)
+                .header("Authorization", OPENAI_API_KEY)
+                .post(RequestBody.create(json.toString(), MediaType.get("application/json")))
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                String errorBody = response.body() != null ? response.body().string() : "(empty)";
+                throw new IOException("GMS image API failed: " + response + "\n" + errorBody);
+            }
+
+            JSONObject resJson = new JSONObject(response.body().string());
+            return resJson.getJSONArray("data").getJSONObject(0).getString("url");
+        }
+    }
+
+    @Transactional
+    public MediaFileDto uploadDalleImageToS3(String dalleImageUrl, Long coupleId, Long uploaderId)
+            throws IOException, JCodecException {
+
+        // 1. 이미지 다운로드
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(dalleImageUrl).build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful() || response.body() == null) {
+                throw new IOException("DALL·E 이미지 다운로드 실패: " + response);
+            }
+
+            byte[] imageBytes = response.body().bytes();
+            String contentType = response.header("Content-Type", "image/png");
+
+            String extension = switch (contentType) {
+                case "image/jpeg" -> "jpg";
+                case "image/webp" -> "webp";
+                case "image/png" -> "png";
+                default -> "bin";
+            };
+
+            // 2. S3에 업로드
+            String uuid = UUID.randomUUID().toString();
+            String key = String.format("media/couple/%d/%s.%s", coupleId, uuid, extension);
+            String fileUrl = s3StorageService.upload(imageBytes, key, contentType);
+
+            // 3. DB 저장
+            CoupleEntity couple = coupleRepository.getReferenceById(coupleId);
+            UserEntity uploader = userRepository.getReferenceById(uploaderId);
+
+            MediaFileEntity entity = MediaFileEntity.builder()
+                    .couple(couple)
+                    .uploader(uploader)
+                    .fileUrl(fileUrl)
+                    .thumbnailUrl(fileUrl) // DALL·E는 이미지니까 썸네일 따로 생성 안함
+                    .fileType(FileType.IMAGE)
+                    .fileSize((long) imageBytes.length)
+                    .originalFilename(key)
+                    .s3Key(key)
+                    .isFavorite(false)
+                    .uploadDate(LocalDate.now())
+                    .build();
+
+            mediaFileRepository.save(entity);
+
+            return MediaFileDto.fromEntity(entity);
+        }
+    }
+
+}
+
+
