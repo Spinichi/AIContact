@@ -25,7 +25,6 @@ const navigate = useNavigate();
       <button onClick={() => navigate('/webrtc')}>
         <img src={WebRTCgIcon} alt="영상통화" />
       </button>
-      <button ><img src={Growth} alt="일기쓰기" /></button>
       <button onClick={() => navigate('cartoon/')}>
         <img src={cartoonIcon} alt="만화보기" />
       </button>

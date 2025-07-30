@@ -17,7 +17,6 @@ function App() {
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/auth" element={<AuthPage />} />
-        <Route element={<ProtectedRoute />}>
           <Route path="/connection" element={<CoupleConnectionPage />} />
           <Route path="/ai" element={<MainPage />} />
           <Route path="/talk" element={<TalkPage />} />
@@ -27,7 +26,6 @@ function App() {
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/dictionary" element={<DictionaryPage />} />
           <Route path="/mypage" element={<MyPage />} />
-        </Route>
       </Routes>
     </Router>
   );
