@@ -7,15 +7,15 @@ type MeUserResponse = {
   id: number;
   email: string;
   name: string;
-  profile_image_url: string | null;
-  birth_date: string | null;
-  couple_status: "SINGLE" | "COUPLED" | string;
-  created_at: string;
-  updated_at: string;
+  profileImageUrl: string | null;
+  birthDate: string | null;
+  coupleStatus: "SINGLE" | "COUPLED" | string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 type MyCodeResponse = {
-  verification_code: string;
+  verificationCode: string;
 };
 
 export default function MyConnectionInfo() {
@@ -45,10 +45,10 @@ export default function MyConnectionInfo() {
         ]);
 
         // 프로필 이미지 설정 (없으면 플레이스홀더)
-        setProfileImageUrl(me.profile_image_url || placeholderImg);
+        setProfileImageUrl(me.profileImageUrl || placeholderImg);
 
         // 인증 코드 설정
-        setVerificationCode(myCode.verification_code ?? "");
+        setVerificationCode(myCode.verificationCode ?? "");
 
         setErrorMsg("");
       } catch (e: any) {
