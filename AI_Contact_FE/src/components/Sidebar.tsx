@@ -1,10 +1,11 @@
 import React from 'react';
 import '../styles/Sidebar.css'; 
 import Logo from './Logo.tsx';
-import { Link } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 // 컴포넌트 만들기
 export default function Sidebar() {
+  const navigate = useNavigate();
   return (
     // 전체 사이드바를 감싸는 컨테이너
     <aside className="sidebar">
@@ -16,25 +17,39 @@ export default function Sidebar() {
         <nav>
           <ul>
             {/* 현재 경로가 "/"일 때 active */}
-            <li className={location.pathname === '/' ? 'active' : ''}>
-              <Link to="/">아이</Link>
+            <li
+              className={location.pathname === '/' ? 'active' : ''}
+              onClick={() => navigate('/')}
+            >
+              아이
             </li>
 
-            {/* 현재 경로가 "/gallery"일 때 active */}
-            <li className={location.pathname === '/gallery' ? 'active' : ''}>
-              <Link to="/gallery">갤러리</Link>
+            <li
+              className={location.pathname === '/gallery' ? 'active' : ''}
+              onClick={() => navigate('/gallery')}
+            >
+              갤러리
             </li>
 
-            {/* 현재 경로가 "/calendar"일 때 active */}
-            <li className={location.pathname === '/calendar' ? 'active' : ''}>
-              <Link to="/calendar">캘린더</Link>
+            <li
+              className={location.pathname === '/calendar' ? 'active' : ''}
+              onClick={() => navigate('/calendar')}
+            >
+              캘린더
             </li>
 
-            <li className={location.pathname === '/dictionary' ? 'active' : ''}>
-              <Link to="/dictionary">애칭 백과사전</Link>
+            <li
+              className={location.pathname === '/dictionary' ? 'active' : ''}
+              onClick={() => navigate('/dictionary')}
+            >
+              애칭 백과사전
             </li>
-            <li className={location.pathname === '/mypage' ? 'active' : ''}>
-              <Link to="/mypage">마이페이지</Link>
+
+            <li
+              className={location.pathname === '/mypage' ? 'active' : ''}
+              onClick={() => navigate('/mypage')}
+            >
+              마이페이지
             </li>
           </ul>
         </nav>
@@ -43,7 +58,10 @@ export default function Sidebar() {
       {/* 하단 영역: 닫기 버튼과 로그아웃 버튼 */}
       <div className="sidebar-bottom">
         <button>❌</button>
-        <button>로그아웃</button>
+        <button onClick={() => {
+          localStorage.removeItem('accessToken');
+          navigate('/auth');
+        }}>로그아웃</button>
       </div>
     </aside>
   );

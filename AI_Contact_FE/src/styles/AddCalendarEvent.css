@@ -1,13 +1,39 @@
-.modal-footer{
+.add-calendar-event .modal-body{
     display : flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    gap : 30px;
+}
+
+.add-calendar-event .event-title{
+    width : 80%;
+    border : 0px;
+    border-bottom : 1px solid #000;
+}
+
+.add-calendar-event .modal-content{
+    width : 80%;
+    height : 240px;
+    display: flex;
+    gap : 20px;
     justify-content: space-around;
     align-items: center;
 }
 
+.modal-footer{
+    width : 80%;
+    display : flex;
+    justify-content: space-around;
+    align-items: center;
+    gap : 20px;
+}
+
 .modal-footer > button{
-    width : 270px;
-    height : 54px;
+    width : 240px;
+    height : 50px;
     border-radius: 0%;
+    margin-bottom : 20px;
 }
 
 .modal-footer .cancel-btn,
@@ -22,4 +48,101 @@
     color : white;
     background-color: var(--primary);
     border : 1px solid white;
+}
+
+.swiper-slide{
+    font-size : 24px;
+    height : 24px;
+    width : 120px;
+    text-align: center;
+    justify-content: center;
+}
+
+.modal-content > div{
+    width : 45%;
+    height : 240px;
+}
+
+.modal-content .timer{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.timer .timer-title{
+    font-size : 24px;
+    font-weight : bold;
+}
+
+.modal-content .swiper{
+    width : 100%;
+    height : 120px;
+    display : flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap : 20px;
+    overflow : hidden;
+}
+
+.timer .timer-layout{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    gap : 40px;
+}
+
+.swiper-slide.swiper-slide-active{
+    color : var(--primary);
+}
+
+.swiper-slide.swiper-slide-prev,
+.swiper-slide.swiper-slide-next{
+    color : var(--text-light);
+}
+
+.profile-selection{
+    display : flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.profile-selection > div{
+    width : 100%;
+    height : 40px;
+}
+
+.profile-list{
+    display : flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin : 0px 20px;
+}
+
+.profile-list .event-profile:first-child{
+    margin-left : 0px;
+}
+
+.profile-list .event-profile.first{
+    background-color: var(--primary);
+}
+
+.profile-list .event-profile.second{
+    background-color: var(--secondary);
+}
+
+.profile-list .event-profile{
+    width : 40px;
+    height : 40px;
+    border-radius: 50%;
+    margin-left : -10px;
+    filter :opacity(0.5);
+}
+
+.profile-list .event-profile:hover{
+    filter : opacity(1);
 }

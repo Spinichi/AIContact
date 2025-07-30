@@ -4,6 +4,7 @@ import chatIcon from '../assets/icons/chat.png';
 import WebRTCgIcon from '../assets/icons/WebRTC Button.png';
 import Growth from '../assets/icons/Growth Button.png';
 import cartoonIcon from '../assets/icons/cartoon.png';
+import { useNavigate  } from 'react-router-dom';
 
 // 이 컴포넌트가 받는 props의 타입 정의
 interface RightIconsProps {
@@ -12,6 +13,7 @@ interface RightIconsProps {
 
 // RightIconsProps 타입의 props를 받는다는 뜻
 const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
+const navigate = useNavigate();
   return (
     // 오른쪽에 위치할 아이콘 버튼들을 담는 div 
     <div className="right-icons">
@@ -20,9 +22,13 @@ const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
       <button onClick={onChatClick}>
         <img src={chatIcon} alt="채팅" />
       </button>
-      <button><img src={WebRTCgIcon} alt="영상통화" /></button>
-      <button><img src={Growth} alt="일기쓰기" /></button>
-      <button><img src={cartoonIcon} alt="기록보기" /></button>
+      <button onClick={() => navigate('/webrtc')}>
+        <img src={WebRTCgIcon} alt="영상통화" />
+      </button>
+      <button ><img src={Growth} alt="일기쓰기" /></button>
+      <button onClick={() => navigate('cartoon/')}>
+        <img src={cartoonIcon} alt="만화보기" />
+      </button>
     </div>
   );
 };

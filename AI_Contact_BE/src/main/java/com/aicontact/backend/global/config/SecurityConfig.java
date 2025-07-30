@@ -1,12 +1,12 @@
 package com.aicontact.backend.global.config;
 
 
-import com.aicontact.backend.auth.jwt.JwtFilter;
-import com.aicontact.backend.auth.jwt.JwtUtil;
-import com.aicontact.backend.auth.jwt.LoginFilter;
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,14 +18,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import java.util.Collections;
+import com.aicontact.backend.auth.jwt.JwtFilter;
+import com.aicontact.backend.auth.jwt.JwtUtil;
+import com.aicontact.backend.auth.jwt.LoginFilter;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
-
     private final JwtUtil jwtUtil;
 
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JwtUtil jwtUtil) {
@@ -33,68 +36,65 @@ public class SecurityConfig {
         this.jwtUtil = jwtUtil;
     }
 
-    //AuthenticationManager Bean 등록
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-
         return configuration.getAuthenticationManager();
     }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.
-                cors((cors) -> cors
-                        .configurationSource(new CorsConfigurationSource() {
-                            @Override
-                            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                                CorsConfiguration configuration = new CorsConfiguration();
+        // CORS
+        http.cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
+                @Override
+                public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration configuration = new CorsConfiguration();
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setAllowCredentials(true);
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+                        configuration.setMaxAge(3600L);
+                        return configuration;
+                }
+        }));
 
-                                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-                                configuration.setAllowedMethods(Collections.singletonList("*"));
-                                configuration.setAllowCredentials(true);
-                                configuration.setAllowedHeaders(Collections.singletonList("*"));
-                                configuration.setMaxAge(3600L);
+        // CSRF / 기본 인증 비활성화 (JWT 기반)
+        http.csrf((auth) -> auth.disable());
+        http.formLogin((auth) -> auth.disable());
+        http.httpBasic((auth) -> auth.disable());
 
-                                configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+        // 인가 정책
+        http.authorizeHttpRequests((auth) -> auth
+                // CORS Preflight 허용
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                                return configuration;
-                            }
-                        }));
+                // 회원가입 경로 허용
+                .requestMatchers(HttpMethod.POST, "/users/sign-up").permitAll()
 
-        //csrf disable
-        http
-                .csrf((auth) -> auth.disable());
+                // 로그인 경로 허용
+                .requestMatchers("/auth/**").permitAll()
 
-        //From 로그인 방식 disable
-        http
-                .formLogin((auth) -> auth.disable());
+                // 에러 페이지 허용
+                .requestMatchers("/error").permitAll()
 
-        //http basic 인증 방식 disable
-        http
-                .httpBasic((auth) -> auth.disable());
+                // 그 외는 인증 필요
+                .anyRequest().authenticated()
+        );
 
-        //경로별 인가 작업
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/auth/**", "/users/**", "/token").permitAll()
-                        .anyRequest().authenticated());
+        // JWT 필터는 UsernamePasswordAuthenticationFilter 앞에 배치
+        http.addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
 
-        http
-                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
-        http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        // 로그인 처리 필터는 UsernamePasswordAuthenticationFilter 위치에 배치
+        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-        //세션 설정
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        // 세션 미사용
+        http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }

@@ -64,8 +64,7 @@ const events = [
 
   return (
     <div className="main-layout">
-      {modalStatus!='off' && createPortal(setModalContent(modalStatus),
-      document.body)}
+      {modalStatus!='off' && createPortal(setModalContent(modalStatus), document.body)}
       {/* 왼쪽 사이드바 */}
       <Sidebar />
 

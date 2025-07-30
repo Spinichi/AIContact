@@ -1,29 +1,25 @@
 package com.aicontact.backend.webrtc.controller;
 
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.livekit.server.AccessToken;
 import io.livekit.server.RoomJoin;
 import io.livekit.server.RoomName;
 import io.livekit.server.WebhookReceiver;
 import livekit.LivekitWebhook.WebhookEvent;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
+@RequestMapping("/calls")
 @RestController
 public class WebRtcController {
 
-	@Value("${livekit.api.key}")
+	@Value("${LIVEKIT_API_KEY}")
 	private String LIVEKIT_API_KEY;
 
-	@Value("${livekit.api.secret}")
+	@Value("${LIVEKIT_API_SECRET}")
 	private String LIVEKIT_API_SECRET;
 
 	/**

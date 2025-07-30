@@ -1,20 +1,60 @@
-import '../styles/MainPages.css';
-import React, { useState } from 'react';
-import AuthBackground from '../components/auth/AuthBackground.tsx';
-import AuthForm from '../components/auth/AuthForm.tsx';
+import { useState } from "react";
+import AuthBackground from "../components/auth/AuthBackground.tsx";
+import AuthForm from "../components/auth/AuthForm.tsx";
+import "../styles/MainPages.css";
+import ProfileForm from "../components/auth/ProfileForm.tsx";
 
 export default function AuthPage() {
-    const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [signUpStep, setSignUpStep] = useState<"emailPassword" | "profile">(
+    "emailPassword"
+  );
+  const [signUpData, setSignUpData] = useState({ email: "", password: "" });
 
-    return(
-        <div className="main-layout">
-            <AuthBackground />
-            <AuthForm 
-                position={isSignUp ? 'right' : 'left'}
-                onFormChange={() => setIsSignUp(prev => !prev)} 
-                isSignUp={isSignUp} 
-            />
+  const handleSignUpSubmit = (email: string, password: string) => {
+    setSignUpData({ email, password });
+    setSignUpStep("profile");
+  };
 
-        </div>
-    );
+  const handleProfileSubmit = () => {
+    alert("회원가입이 완료되었습니다.");
+    setIsSignUp(false);
+    setSignUpStep("emailPassword");
+  };
+
+  return (
+    <div className="main-layout">
+      <AuthBackground isSignUp={isSignUp} />
+      <AuthForm
+        position="left"
+        onFormChange={() => {
+          setIsSignUp((prev) => !prev);
+          setSignUpStep("emailPassword");
+        }}
+        isSignUp={false}
+        isVisible={!isSignUp}
+      />
+      {signUpStep === "emailPassword" && (
+        <AuthForm
+          position="right"
+          onFormChange={() => {
+            setIsSignUp((prev) => !prev);
+            setSignUpStep("emailPassword");
+          }}
+          isSignUp={true}
+          isVisible={isSignUp}
+          onSignUpSubmit={handleSignUpSubmit}
+        />
+      )}
+      {signUpStep === "profile" && isSignUp && (
+        <ProfileForm
+          email={signUpData.email}
+          password={signUpData.password}
+          onProfileSubmit={handleProfileSubmit}
+          isVisible={isSignUp} // Only show if isSignUp is true
+          onBack={() => setSignUpStep("emailPassword")} // Add onBack prop
+        />
+      )}
+    </div>
+  );
 }
