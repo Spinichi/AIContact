@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "../../styles/CoupleConnection.css";
 import { apiFetch } from "../../api/fetchClient";
 import placeholderImg from "../../assets/images/symbol.png";
+import { useNavigate } from "react-router-dom";
 
 type MeUserResponse = {
   id: number;
@@ -23,6 +24,7 @@ export default function MyConnectionInfo() {
   const [profileImageUrl, setProfileImageUrl] =
     useState<string>(placeholderImg);
   const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -43,6 +45,12 @@ export default function MyConnectionInfo() {
             signal: controller.signal,
           }),
         ]);
+
+        // COUPLED인 경우 바로 리다이렉트
+        if (me.coupleStatus === "COUPLED") {
+          navigate("/ai", { replace: true });
+          return;
+        }
 
         // 프로필 이미지 설정 (없으면 플레이스홀더)
         setProfileImageUrl(me.profileImageUrl || placeholderImg);
