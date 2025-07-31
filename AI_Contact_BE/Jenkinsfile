@@ -47,6 +47,12 @@ pipeline {
       }
     }
 
+    stage('Prepare Backend') {
+      steps {
+        checkout scm   // ← 워크스페이스를 원본 repo 상태로 완전 복구
+      }
+    }
+
     stage('Deploy Backend') {
       when {
         beforeAgent true
