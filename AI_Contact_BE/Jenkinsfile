@@ -36,8 +36,12 @@ pipeline {
             set -e
             git remote set-url ${GH_REMOTE} ${GH_URL} || git remote add ${GH_REMOTE} ${GH_URL}
             git subtree split --prefix=${FE_DIR} -b fe-split
-            git push --force-with-lease ${GH_REMOTE} fe-split:${GH_BRANCH}
+            git -C . update-ref -d refs/heads/ci-temp || true
+            git checkout -B ci-temp fe-split
+            git commit --amend --no-edit --author="Jenkins CI <spinichi@naver.com>"
+            git push --force-with-lease ${GH_REMOTE} ci-temp:${GH_BRANCH}
             git branch -D fe-split || true
+            git branch -D ci-temp || true
           '''
         }
       }
