@@ -6,7 +6,7 @@ import RightIcons from '../components/RightIcons';
 
 import ChatPanel from '../components/ChatPanel';
 import '../styles/UserInfo.css';
-import EventCalendar from './MainEventCalendar';
+import EventCalendar from '../components/MainEventCalendar';
 
 export default function MainPage() {
   // 채팅창 열기/닫기 상태 선언

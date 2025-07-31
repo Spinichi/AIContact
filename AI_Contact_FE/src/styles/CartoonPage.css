@@ -81,7 +81,6 @@
     overflow: hidden;
     margin: 0;
     aspect-ratio: 630 / 705;
-
 }
 
 .board-img {
@@ -161,7 +160,6 @@
     font-weight: 600;
     cursor: pointer;
     outline: none;
-
     transition: transform 0.1s ease-in-out;
 }
 
