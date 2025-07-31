@@ -5,7 +5,7 @@
     right: -400px;
     width: 400px;
     height: 100vh;
-    background-color: #EBF0F7;
+    background-color: var(--bg-primary);
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
     transition: right 0.3s ease-in-out;
     display: flex;
@@ -19,7 +19,7 @@
 
 .chat-header {
     padding: 1rem;
-    background-color: #EBF0F7;
+    background-color: var(--bg-primary);
     display: flex;
     justify-content: space-between;
     font-weight: bold;
@@ -70,7 +70,7 @@
 .chat-input button {
   padding: 0.5rem 1rem;
   border: none;
-  background-color: #865dff;
+  background-color: var(--primary);
   color: white;
   border-radius: 20px;
 }

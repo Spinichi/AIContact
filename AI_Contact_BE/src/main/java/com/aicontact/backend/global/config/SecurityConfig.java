@@ -51,17 +51,17 @@ public class SecurityConfig {
 
         // CORS
         http.cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-                configuration.setAllowedHeaders(Collections.singletonList("*"));
-                configuration.setAllowCredentials(true);
-                configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-                configuration.setMaxAge(3600L);
-                return configuration;
-            }
+                @Override
+                public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration configuration = new CorsConfiguration();
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setAllowCredentials(true);
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+                        configuration.setMaxAge(3600L);
+                        return configuration;
+                }
         }));
 
         // CSRF / 기본 인증 비활성화 (JWT 기반)

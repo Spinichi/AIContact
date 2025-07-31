@@ -1,0 +1,148 @@
+.dictionary-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  position: relative;
+}
+
+.dictionary-book {
+  display: flex;
+  width: 80%;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 20px;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.dictionary-page {
+  width: 48%;
+  padding: 20px;
+  border-left: 1px solid #ddd;
+}
+
+.dictionary-page:first-child {
+  border-left: none;
+}
+
+.dictionary-page h2 {
+  font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wordedit-btn {
+  font-size: 12px;
+  color: #8A8C90;
+  cursor: pointer;
+}
+
+.description {
+  margin: 10px 0;
+}
+
+.example {
+  margin-top: 10px;
+  font-style: italic;
+  color: #555;
+}
+
+.link {
+  text-decoration: underline;
+  color: #9c6bff;
+  cursor: pointer;
+}
+
+.time-info {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #777;
+}
+
+.arrow {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.user-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* 제목과 버튼 양쪽 정렬 */
+  margin-bottom: 10px;
+}
+
+.upload-btn {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  display: flex;
+  font-size: 24;
+  gap: 5px;
+  background: #9c6bff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.upload-btn:hover {
+  background: #7b4ce3;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+.modal input,
+.modal textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modal-buttons button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-buttons button:last-child {
+  background: #9c6bff;
+  color: white;
+}
