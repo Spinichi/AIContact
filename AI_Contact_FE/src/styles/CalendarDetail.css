@@ -10,7 +10,6 @@
     display : flex;
     justify-content: space-between;
     padding : 40px;
-    margin-bottom : px;
 }
 
 .add-btn{
@@ -38,9 +37,12 @@
     display : flex;
     flex-direction: column;
     gap : 15px;
+    overflow-y : auto;
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none;
 }
 
-.event-list{
+.schedule-header{
     width : calc(100%-80px);
     height : 50px;
     padding : 0px 40px;
@@ -50,39 +52,29 @@
     gap : 20px;
 }
 
-.event-list:hover{
+.schedule-container:hover{
     background-color: var(--bg-primary);
 }
 
-.event-list .event-time,.event-title{
+.schedule-header .schedule-time,.schedule-title{
     font-size : 20px;
 }
 
-.event-list .event-time{
+.schedule-header .schedule-time{
     color : var(--text-light);
 }
 
-.event-list .event-profile-list{
+.schedule-container{
     display : flex;
-    flex-direction: row;
-    margin : 0px 20px;
+    flex-direction: column;
+    cursor: default;
+    transition: grid-template-rows 0.4s ease-in-out;
 }
 
-.event-profile-list .event-profile:first-child{
-    margin-left : 0px;
-}
-
-.event-profile.first{
-    background-color: var(--primary);
-}
-
-.event-profile.second{
-    background-color: var(--secondary);
-}
-
-.event-list .event-profile{
-    width : 40px;
-    height : 40px;
-    border-radius: 50%;
-    margin-left : -10px;
+.schedule-content{
+    color : var(--text-light);
+    padding : 0px 40px;
+    transition : grid-template-rows 0.4s ease-in-out;
+    grid-template-rows: 0fr;
+    margin : 10px;
 }

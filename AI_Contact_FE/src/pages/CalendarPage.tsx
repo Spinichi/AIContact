@@ -5,7 +5,7 @@ import "../styles/MainPages.css";
 import "../styles/CalendarPage.css";
 
 import CalendarDetail from '../components/calendar/CalendarDetail';
-import AddCalendarEvent from '../components/calendar/AddCalendarEvent';
+import AddSchedule from '../components/calendar/AddSchedule';
 import Modal from '../components/modal/Modal';
 import Sidebar from "../components/Sidebar";
 
@@ -58,7 +58,7 @@ const events = [
           {clickedDateInfo && <CalendarDetail dateInfo={clickedDateInfo.date} onAdd={()=>setModalStatus('add')}/>}</Modal>;
         case 'add':
           return <Modal onClose={()=>setModalStatus('off')} hasNext={false} hasPrev={false}>
-            {clickedDateInfo && <AddCalendarEvent dateInfo={clickedDateInfo.date} onCancel={() => setModalStatus('detail')} />}</Modal>;
+            {clickedDateInfo && <AddSchedule dateInfo={clickedDateInfo.date} onCancel={() => setModalStatus('detail')} />}</Modal>;
       }
   }
 
