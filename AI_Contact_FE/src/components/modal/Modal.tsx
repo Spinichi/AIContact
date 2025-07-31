@@ -8,18 +8,20 @@ interface ModalProps {
   hasPrev: boolean;          // boolean 값
   hasNext: boolean;          // boolean 값
   children : React.ReactNode; // 렌더링될 모든 React 요소 (가장 유연함)
+  onPrev?: () => void;
+  onNext?: () => void;
 }
 
-export default function Modal({ onClose, hasPrev, hasNext, children  } : ModalProps){
+export default function Modal({ onClose, hasPrev, hasNext, children, onPrev, onNext  } : ModalProps){
     return(
       <>
         <img src={closeBtn} className="close-btn" onClick={onClose} />
         <div className="modal-overlay">
-            {hasPrev && <img src={prvBtn} className="move-btn" />}
+            {hasPrev && <img src={prvBtn} className="move-btn" onClick={onPrev} />}
             <div className="content">
                 {children }
             </div>
-            {hasNext && <img src={nxtBtn} className="move-btn" />}
+            {hasNext && <img src={nxtBtn} className="move-btn" onClick={onNext} />}
         </div>
       </>
     )
