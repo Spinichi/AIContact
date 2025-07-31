@@ -90,9 +90,14 @@ public class CoupleService {
         // 5) 두 유저 상태 COUPLED 로 변경
         me.setCoupleStatus(CoupleStatus.COUPLED);
         partner.setCoupleStatus(CoupleStatus.COUPLED);
+
+        // 6) 두 유저 커플 id 채우기
+        me.setCoupleId(couple.getId());
+        partner.setCoupleId(couple.getId());
+
         userRepository.saveAll(Arrays.asList(me, partner));
 
-        // 6) 생성된 Couple 정보 반환
+        // 7) 생성된 Couple 정보 반환
         return new CoupleInfoResponse(couple);
     }
 
