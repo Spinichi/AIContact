@@ -30,7 +30,11 @@ function VideoComponent({
       <div className="participant-data">
         <p>{participantIdentity + (local ? " (You)" : "")}</p>
       </div>
-      <video ref={videoElement} id={track.sid}></video>
+      <video
+        ref={videoElement}
+        id={track.sid}
+        style={local ? { transform: "scaleX(-1)" } : undefined}
+      ></video>
     </div>
   );
 }
