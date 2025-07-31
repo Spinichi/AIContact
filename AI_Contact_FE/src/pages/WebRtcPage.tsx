@@ -6,10 +6,9 @@ import {
   Room,
   RoomEvent,
 } from "livekit-client";
-// import "./WebRtcPage.css";
 import { useState } from "react";
-import VideoComponent from "./components/VideoComponent";
-import AudioComponent from "./components/AudioComponent";
+import VideoComponent from "../components/webrtc/VideoComponent";
+import AudioComponent from "../components/webrtc/AudioComponent";
 
 type TrackInfo = {
   trackPublication: RemoteTrackPublication;
