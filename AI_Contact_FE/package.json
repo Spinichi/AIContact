@@ -23,6 +23,7 @@
     "react-tsparticles": "^2.12.2",
     "tsparticles": "^3.8.1",
     "vite-plugin-svgr": "^4.3.0"
+    // "swiper": "" 버전 명시 바람
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

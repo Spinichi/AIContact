@@ -34,10 +34,13 @@ public class UserEntity extends BaseTimeEntity {
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name= "couple_status", length = 10)
+    @Column(name = "couple_status", length = 10)
     private CoupleStatus coupleStatus = CoupleStatus.SINGLE;
 
-    @Column(name= "verification_code", nullable = false, unique = true)
+    @Column(name = "verification_code", nullable = false, unique = true)
     private String verificationCode;
+
+    @Column(name = "couple_id")
+    private Long coupleId;
 
 }

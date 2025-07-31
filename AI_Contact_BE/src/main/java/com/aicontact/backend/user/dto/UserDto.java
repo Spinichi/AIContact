@@ -17,6 +17,7 @@ public class UserDto {
     private CoupleStatus coupleStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long coupleId;
 
     public UserDto(UserEntity entity) {
         this.id = entity.getId();
@@ -27,6 +28,8 @@ public class UserDto {
         this.coupleStatus = entity.getCoupleStatus();
         this.createdAt = entity.getCreatedAt();
         this.updatedAt = entity.getUpdatedAt();
+        this.coupleId = entity.getCoupleId();
+
     }
 
 }
