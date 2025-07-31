@@ -1,11 +1,8 @@
 package com.aicontact.backend.global.dto;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Getter
 public class PaginationInfo {
     private final int currentPage;
