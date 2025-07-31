@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import "../styles/MainPages.css";
 import "../styles/DictionaryPage.css";
+import Modal from "../components/modal/Modal"
 
 const DictionaryPage: React.FC = () => {
   // ------------------- 상태 -------------------
@@ -109,8 +110,8 @@ const DictionaryPage: React.FC = () => {
         </div>
 
         {/* ------------------- 통합 모달 ------------------- */}
-        {isModalOpen && (
-          <div className="modal-overlay">
+        {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} hasNext={false} hasPrev={false}> 
+          (
             <div className="modal">
               {/* 모드에 따라 제목 변경 */}
               <h3>{modalMode === "create" ? "새로운 단어 추가" : "단어 편집"}</h3>
@@ -135,8 +136,8 @@ const DictionaryPage: React.FC = () => {
                 <button onClick={handleSave}>저장</button>
               </div>
             </div>
-          </div>
-        )}
+        )
+        </Modal>}
       </div>
     </div>
   );
