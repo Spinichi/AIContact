@@ -213,3 +213,32 @@
 .remote-strip:has(.remote-thumb.clickable:hover) {
   background: var(--primary);
 }
+
+.volume-popup {
+  position: absolute;
+  bottom: 70px; /* 버튼 위에 뜨게 함 */
+  left: 0;
+  right: 0;
+  margin: auto;
+  height: 30px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-popup input[type="range"] {
+  flex: 1;
+  accent-color: #a566ff; /* 보라색 계열 */
+  height: 6px;
+  border-radius: 6px;
+}
+
+.volume-label {
+  color: white;
+  font-size: 14px;
+  min-width: 24px;
+  text-align: right;
+}

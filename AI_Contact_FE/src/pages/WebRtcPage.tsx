@@ -64,6 +64,8 @@ function WebRtcPage() {
   const [pinned, setPinned] = useState<
     { kind: "local" } | { kind: "remote"; sid: string }
   >({ kind: "local" });
+  const [isVolumeVisible, setIsVolumeVisible] = useState(false);
+  const [volume, setVolume] = useState(50); // 초기 볼륨값 50%
   const [isAiOn, setIsAiOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
@@ -80,7 +82,9 @@ function WebRtcPage() {
     }
   };
 
-  const onSound = async () => {};
+  const onSound = () => {
+    setIsVolumeVisible((prev) => !prev);
+  };
   const onAi = async () => {
     if (!room) return;
     setIsAiOn((prev) => !prev);
@@ -117,6 +121,11 @@ function WebRtcPage() {
     setLocalTrack(undefined);
     setRemoteTracks([]);
   }
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = Number(e.target.value);
+    setVolume(newVolume);
+  };
 
   // 1) 내 정보 조회 → participantName/roomName 준비
   useEffect(() => {
@@ -393,6 +402,18 @@ function WebRtcPage() {
 
           {/* 하단 버튼 */}
           <div id="room-btn-menu">
+            {isVolumeVisible && (
+              <div className="volume-popup">
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={volume}
+                  onChange={handleVolumeChange}
+                />
+                <span className="volume-label">{volume}</span>
+              </div>
+            )}
             <img src={WebrtcSound} onClick={onSound} />
             <img
               src={isAiOn ? WebrtcAiOn : WebrtcAiOff}
