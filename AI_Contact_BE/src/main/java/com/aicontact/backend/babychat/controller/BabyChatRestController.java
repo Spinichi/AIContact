@@ -6,11 +6,14 @@ import com.aicontact.backend.babychat.entity.AiMessageType;
 import com.aicontact.backend.babychat.entity.BabyChatMessage;
 import com.aicontact.backend.babychat.repository.BabyChatMessageRepository;
 import com.aicontact.backend.babychat.service.GmsChatService;
+import com.aicontact.backend.user.entity.UserEntity;
+import com.aicontact.backend.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/baby")
@@ -18,18 +21,24 @@ public class BabyChatRestController {
 
     private final GmsChatService service;
     private final BabyChatMessageRepository repo;
+    private final UserRepository userRepository;
 
     public BabyChatRestController(GmsChatService service,
-                                  BabyChatMessageRepository repo) {
+                                  BabyChatMessageRepository repo,
+                                  UserRepository userRepository) {
         this.service = service;
         this.repo    = repo;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/chat")
     public ResponseEntity<ChatResponseDTO> chat(@RequestBody ChatRequestDTO req) {
-        // 1) USER 메시지 저장
+
+        UserEntity user = userRepository.findById(req.getUserId())
+                .orElseThrow(() -> new RuntimeException("유저 없음"));
+
         BabyChatMessage userMsg = BabyChatMessage.builder()
-                .userId(req.getUserId())
+                .user(user)
                 .aiChildrenId(req.getAiChildrenId())
                 .aiMessageType(AiMessageType.USER)
                 .content(req.getMessage())
@@ -49,7 +58,7 @@ public class BabyChatRestController {
 
 
         BabyChatMessage aiMsg = BabyChatMessage.builder()
-                .userId(req.getUserId())
+                .user(user)
                 .aiChildrenId(req.getAiChildrenId())
                 .aiMessageType(AiMessageType.AI)
                 .content(babyReply)
@@ -66,4 +75,23 @@ public class BabyChatRestController {
                 .build();
         return ResponseEntity.ok(res);
     }
-}
+
+
+
+
+        @GetMapping("/chat")
+        public ResponseEntity<List<ChatResponseDTO>> getChatHistoryByUser(
+                @RequestParam Long userId
+        ) {
+            List<BabyChatMessage> messages = repo
+                    .findByUserIdOrderByCreatedAtAsc(userId);
+
+            List<ChatResponseDTO> response = messages.stream()
+                    .map(ChatResponseDTO::fromEntity)
+                    .toList();
+
+            return ResponseEntity.ok(response);
+        }
+    }
+
+
