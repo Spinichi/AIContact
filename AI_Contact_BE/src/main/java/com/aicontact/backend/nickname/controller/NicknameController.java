@@ -2,6 +2,7 @@ package com.aicontact.backend.nickname.controller;
 
 
 import com.aicontact.backend.auth.dto.CustomUserDetails;
+import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.nickname.dto.NicknameRequestDto;
 import com.aicontact.backend.nickname.dto.NicknameResponseDto;
 import com.aicontact.backend.nickname.entity.NicknameEntity;
@@ -18,8 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//2
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/nicknames")
@@ -28,15 +27,17 @@ public class NicknameController {
     private final NicknameService nicknameService;
 
     @PostMapping
-    public ResponseEntity<NicknameEntity> create(
+    public ResponseEntity<ApiResponse<NicknameResponseDto>> create(
             @RequestBody NicknameRequestDto dto,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return ResponseEntity.ok(nicknameService.create(dto.getWord(), dto.getDescription(), userDetails.getUsername()));
+        NicknameEntity saved = nicknameService.create(dto.getWord(), dto.getDescription(), userDetails.getUsername());
+        NicknameResponseDto result = NicknameResponseDto.fromEntity(saved);
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @GetMapping
-    public ResponseEntity<List<NicknameResponseDto>> getAll(
+    public ResponseEntity<ApiResponse<List<NicknameResponseDto>>> getAll(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             HttpServletResponse response
     ) {
@@ -53,36 +54,31 @@ public class NicknameController {
         cookie.setMaxAge(60 * 60 * 24);    // 1일 유효
         response.addCookie(cookie);
 
-        // 2. 원래대로 response body도 내려줌 (프론트에서 필요시)
-        List<NicknameResponseDto> result = nicknameService.getByCouple(userDetails.getUsername())
-                .stream()
+        // 2. 응답 body
+        List<NicknameResponseDto> result = entities.stream()
                 .map(NicknameResponseDto::fromEntity)
                 .toList();
 
-        System.out.println(nicknameList);
-
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 
-
     @PutMapping("/{id}")
-    public ResponseEntity<NicknameResponseDto> update(
+    public ResponseEntity<ApiResponse<NicknameResponseDto>> update(
             @PathVariable Long id,
             @RequestBody NicknameRequestDto dto,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         NicknameEntity entity = nicknameService.update(id, dto.getWord(), dto.getDescription(), userDetails.getUsername());
-        return ResponseEntity.ok(NicknameResponseDto.fromEntity(entity));
+        return ResponseEntity.ok(ApiResponse.success(NicknameResponseDto.fromEntity(entity)));
     }
 
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<ApiResponse<String>> delete(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         nicknameService.delete(id, userDetails.getUsername());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("닉네임이 성공적으로 삭제되었습니다."));
     }
-
 }
+
