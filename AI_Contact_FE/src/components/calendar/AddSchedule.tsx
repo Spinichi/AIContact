@@ -6,7 +6,7 @@ import '../../styles/AddSchedule.css';
 import 'swiper/css';
 
 interface AddScheduleProps{
-    dateInfo : Date;5
+    dateInfo : Date;
     onCancel : () => void;
 }
 
