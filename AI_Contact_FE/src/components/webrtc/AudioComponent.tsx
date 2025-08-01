@@ -1,16 +1,18 @@
-import { LocalAudioTrack, RemoteAudioTrack } from "livekit-client";
+// AudioComponent.tsx
 import { useEffect, useRef } from "react";
+import { RemoteAudioTrack } from "livekit-client";
 
 interface AudioComponentProps {
-  track: LocalAudioTrack | RemoteAudioTrack;
+  track: RemoteAudioTrack;
+  volume: number; // 0 ~ 100
 }
 
-function AudioComponent({ track }: AudioComponentProps) {
-  const audioElement = useRef<HTMLAudioElement | null>(null);
+function AudioComponent({ track, volume }: AudioComponentProps) {
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    if (audioElement.current) {
-      track.attach(audioElement.current);
+    if (audioRef.current) {
+      track.attach(audioRef.current);
     }
 
     return () => {
@@ -18,7 +20,13 @@ function AudioComponent({ track }: AudioComponentProps) {
     };
   }, [track]);
 
-  return <audio ref={audioElement} id={track.sid} />;
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
+  }, [volume]);
+
+  return <audio ref={audioRef} autoPlay />;
 }
 
 export default AudioComponent;

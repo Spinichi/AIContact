@@ -13,17 +13,17 @@
   -moz-osx-font-smoothing: grayscale;
 
   /* 주요 색상 */
-  --primary: #735AE1;
-  --secondary : #A66EE0;
-  --tertiary : #FFA38B;
+  --primary: #735ae1;
+  --secondary: #a66ee0;
+  --tertiary: #ffa38b;
 
   /* 텍스트 색상 */
-  --text-dark : #2A2B2A;
-  --text-medium : #757D83;
-  --text-light : #8A8C90;
+  --text-dark: #2a2b2a;
+  --text-medium: #757d83;
+  --text-light: #8a8c90;
 
   /* 배경 색상 */
-  --bg-primary : #EBF0F7;
+  --bg-primary: #ebf0f7;
 }
 
 a {
