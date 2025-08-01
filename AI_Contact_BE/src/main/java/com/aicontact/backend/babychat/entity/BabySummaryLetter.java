@@ -2,36 +2,32 @@ package com.aicontact.backend.babychat.entity;
 
 import com.aicontact.backend.user.entity.UserEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "baby_chat_messages")
+@Table(name = "baby_summary_letters")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class BabyChatMessage {
+public class BabySummaryLetter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "letter_id")
+    private Long letterId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    private Long aiChildrenId;
-
-    @Enumerated(EnumType.STRING)
-    private AiMessageType aiMessageType;
-
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    private String conversationSessionId;
-
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
+
