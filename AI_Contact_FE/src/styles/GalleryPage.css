@@ -226,17 +226,6 @@
   cursor: pointer;
 }
 
-.calendar-container {
-  position: relative;
-  display: inline-block;
-  width: auto;
-  height: auto;
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
 /* .calendar-dropdown {
   position: absolute;
   top: 40px;
