@@ -23,8 +23,6 @@ public class BabyChatRestController {
     private final BabyChatMessageRepository repo;
     private final UserRepository userRepository;
 
-
-
     public BabyChatRestController(GmsChatService service,
                                   BabyChatMessageRepository repo,
                                   UserRepository userRepository) {

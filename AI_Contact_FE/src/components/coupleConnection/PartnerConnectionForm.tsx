@@ -69,11 +69,11 @@ export default function PartnerConnectionForm() {
         maxLength={6}
       />
 
-      {errorMsg && <p style={{ color: "crimson" }}>{errorMsg}</p>}
-
       <button type="submit" disabled={submitting}>
         {submitting ? "연결 중..." : "연결하기"}
       </button>
+
+      {errorMsg && <p className="error-message">{errorMsg}</p>}
     </form>
   );
 }
