@@ -1,6 +1,7 @@
 package com.aicontact.backend.chat.entity;
 
 import com.aicontact.backend.couple.entity.CoupleEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class ChatRoom {
 
     @Id

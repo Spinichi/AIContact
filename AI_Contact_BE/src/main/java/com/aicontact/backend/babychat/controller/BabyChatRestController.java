@@ -1,14 +1,18 @@
 package com.aicontact.backend.babychat.controller;
 
+import com.aicontact.backend.auth.dto.CustomUserDetails;
 import com.aicontact.backend.babychat.dto.ChatRequestDTO;
 import com.aicontact.backend.babychat.dto.ChatResponseDTO;
 import com.aicontact.backend.babychat.entity.AiMessageType;
 import com.aicontact.backend.babychat.entity.BabyChatMessage;
 import com.aicontact.backend.babychat.repository.BabyChatMessageRepository;
 import com.aicontact.backend.babychat.service.GmsChatService;
+import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.user.entity.UserEntity;
 import com.aicontact.backend.user.repository.UserRepository;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,15 +31,23 @@ public class BabyChatRestController {
                                   BabyChatMessageRepository repo,
                                   UserRepository userRepository) {
         this.service = service;
-        this.repo    = repo;
+        this.repo = repo;
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/chat")
-    public ResponseEntity<ChatResponseDTO> chat(@RequestBody ChatRequestDTO req) {
+    @PostMapping(
+            path = "/chat",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ApiResponse<ChatResponseDTO>> chat(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody ChatRequestDTO req
+    ) {
 
         UserEntity user = userRepository.findById(req.getUserId())
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
+
 
         BabyChatMessage userMsg = BabyChatMessage.builder()
                 .user(user)
@@ -48,10 +60,9 @@ public class BabyChatRestController {
         repo.save(userMsg);
 
 
-        List<BabyChatMessage> history =
-                repo.findTop20ByUserIdAndConversationSessionIdOrderByCreatedAtAsc(
-                        req.getUserId(), req.getConversationSessionId()
-                );
+        List<BabyChatMessage> history = repo.findTop20ByUserIdAndConversationSessionIdOrderByCreatedAtAsc(
+                req.getUserId(), req.getConversationSessionId()
+        );
 
 
         String babyReply = service.chatWithBaby(history, req.getMessage());
@@ -73,25 +84,33 @@ public class BabyChatRestController {
                 .conversationSessionId(req.getConversationSessionId())
                 .timestamp(aiMsg.getCreatedAt())
                 .build();
-        return ResponseEntity.ok(res);
+
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ApiResponse<>(true, res));
     }
 
 
+    @GetMapping(
+            path = "/chat",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ApiResponse<List<ChatResponseDTO>>> getChatHistoryByUser(
+            @RequestParam Long userId
+    ) {
+        List<BabyChatMessage> messages = repo
+                .findByUserIdOrderByCreatedAtAsc(userId);
 
+        List<ChatResponseDTO> dtoList = messages.stream()
+                .map(ChatResponseDTO::fromEntity)
+                .toList();
 
-        @GetMapping("/chat")
-        public ResponseEntity<List<ChatResponseDTO>> getChatHistoryByUser(
-                @RequestParam Long userId
-        ) {
-            List<BabyChatMessage> messages = repo
-                    .findByUserIdOrderByCreatedAtAsc(userId);
-
-            List<ChatResponseDTO> response = messages.stream()
-                    .map(ChatResponseDTO::fromEntity)
-                    .toList();
-
-            return ResponseEntity.ok(response);
-        }
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ApiResponse<>(true, dtoList));
     }
 
-
+}

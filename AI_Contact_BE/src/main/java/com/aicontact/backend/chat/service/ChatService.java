@@ -59,6 +59,6 @@ public class ChatService {
     }
 
     public List<ChatMessage> getHistory(Long roomId) {
-        return chatMessageRepository.findByRoomIdOrderBySentAtAsc(roomId);
+        return chatMessageRepository.findByRoom_IdOrderBySentAtAsc(roomId);
     }
 }
