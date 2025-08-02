@@ -4,6 +4,7 @@ import com.aicontact.backend.auth.dto.CustomUserDetails;
 import com.aicontact.backend.couple.dto.*;
 import com.aicontact.backend.couple.service.CoupleService;
 import com.aicontact.backend.user.service.UserService;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
