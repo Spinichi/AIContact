@@ -1,4 +1,4 @@
-package com.aicontact.backend.couple.dto;
+package com.aicontact.backend.couple.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

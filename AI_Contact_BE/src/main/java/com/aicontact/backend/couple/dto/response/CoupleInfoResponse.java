@@ -1,4 +1,4 @@
-package com.aicontact.backend.couple.dto;
+package com.aicontact.backend.couple.dto.response;
 
 import com.aicontact.backend.couple.entity.CoupleEntity;
 import lombok.Getter;
