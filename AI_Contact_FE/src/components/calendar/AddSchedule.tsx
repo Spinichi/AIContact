@@ -3,7 +3,7 @@ import { Mousewheel } from 'swiper/modules';
 
 import '../../styles/AddSchedule.css';
 
-import 'swiper/bundle.css';
+import 'swiper/swiper-bundle.css';
 
 interface AddScheduleProps{
     dateInfo : Date;
