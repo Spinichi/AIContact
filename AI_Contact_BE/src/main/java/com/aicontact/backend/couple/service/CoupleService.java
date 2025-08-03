@@ -1,6 +1,10 @@
 package com.aicontact.backend.couple.service;
 
-import com.aicontact.backend.couple.dto.*;
+import com.aicontact.backend.couple.dto.request.CoupleMatchingRequest;
+import com.aicontact.backend.couple.dto.request.CoupleUpdateRequest;
+import com.aicontact.backend.couple.dto.response.CoupleInfoResponse;
+import com.aicontact.backend.couple.dto.response.CoupleResponse;
+import com.aicontact.backend.couple.dto.response.VerificationCodeResponse;
 import com.aicontact.backend.couple.entity.CoupleEntity;
 import com.aicontact.backend.couple.repository.CoupleRepository;
 import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
