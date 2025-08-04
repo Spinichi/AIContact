@@ -29,7 +29,7 @@ function App() {
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/dictionary" element={<DictionaryPage />} />
         <Route path="/mypage" element={<MyPage />} />
-        <Route path="/index" element={<OnBoardingPage />} />
+        <Route path="/main" element={<OnBoardingPage />} />
         {/* </Route> */}
       </Routes>
     </Router>
