@@ -1,8 +1,7 @@
-// src/components/coupleConnection/PartnerConnectionForm.tsx
 import { useState } from "react";
 import "../../styles/CoupleConnection.css";
 import heart from "../../assets/images/heart.png";
-import { CouplesApi } from "../../api/couples";
+import { CouplesApi } from "../../apis/couple";
 import { useNavigate } from "react-router-dom";
 
 export default function PartnerConnectionForm() {
@@ -25,25 +24,24 @@ export default function PartnerConnectionForm() {
     }
 
     try {
-      // 1) 코드 검증
-      const join = await CouplesApi.joinByCode(code.trim());
+      const joinRes = await CouplesApi.joinByCode(code.trim());
+      const join = joinRes.data;
+
       if (!join.matched || !join.partnerId) {
         setErrorMsg("매칭할 수 없습니다. 상대의 상태를 확인해 주세요.");
         setSubmitting(false);
         return;
       }
 
-      // 2) 커플 생성
-      await CouplesApi.matching({
-        partnerId: join.partnerId,
-      });
+      await CouplesApi.matching({ partnerId: join.partnerId });
 
       alert("연결이 완료되었습니다!");
-      navigate("/connection"); // 연결 페이지로 이동
+      navigate("/connection");
     } catch (e: any) {
-      if (e.message === "UNAUTHORIZED") {
+      const msg = e?.message || "";
+      if (msg === "UNAUTHORIZED") {
         setErrorMsg("세션이 만료되었습니다. 다시 로그인해 주세요.");
-      } else if (e.message === "FORBIDDEN") {
+      } else if (msg === "FORBIDDEN") {
         setErrorMsg("접근 권한이 없습니다.");
       } else {
         setErrorMsg("잘못된 코드입니다. 다시 확인하고 입력해 주세요.");

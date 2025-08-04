@@ -1,7 +1,9 @@
 import { useRef, useState } from "react";
-import "../../styles/AuthFormPanel.css"; // Re-use existing styles
+import "../../styles/AuthFormPanel.css";
 import arrowLeft from "../../assets/icons/ArrowLeft.svg";
-import editIcon from "../../assets/icons/edit.svg"; // Import edit.svg
+import editIcon from "../../assets/icons/edit.svg";
+
+import { UsersApi } from "../../apis/user";
 
 interface ProfileFormProps {
   email: string;
@@ -23,8 +25,6 @@ export default function ProfileForm({
   const [file, setFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -48,37 +48,26 @@ export default function ProfileForm({
       return;
     }
 
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("name", name);
-    formData.append("birthDate", birthDate);
-    if (file) {
-      formData.append("file", file);
-    }
-
     try {
-      const response = await fetch(`${BASE_URL}/api/v1/users/sign-up`, {
-        method: "POST",
-        body: formData,
+      await UsersApi.signUp({
+        email,
+        password,
+        name,
+        birthDate,
+        file,
       });
 
-      if (response.ok) {
-        onProfileSubmit();
-      } else {
-        const errorData = await response.json();
-        alert(`회원가입 실패`);
-      }
-    } catch (error) {
-      console.error("Error during sign-up:", error);
-      alert("회원가입 중 오류가 발생했습니다.");
+      onProfileSubmit(); // 회원가입 성공 시 콜백 호출
+    } catch (error: any) {
+      console.error("회원가입 오류:", error);
+      alert(error?.message || "회원가입 중 문제가 발생했습니다.");
     }
   };
 
   return (
     <div className={`auth-form-panel right ${isVisible ? "" : "hidden"}`}>
       <div className="arrow-left" onClick={onBack}>
-        <img src={arrowLeft} />
+        <img src={arrowLeft} alt="뒤로가기" />
       </div>
       <form className="form-box" onSubmit={handleSubmit}>
         <h3>프로필 정보 입력</h3>
@@ -92,7 +81,7 @@ export default function ProfileForm({
               />
             </div>
           ) : (
-            <div className="image-placeholder"></div>
+            <div className="image-placeholder" />
           )}
           <div className="editsvg">
             <img src={editIcon} alt="Edit" />

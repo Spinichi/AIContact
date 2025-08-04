@@ -4,6 +4,7 @@ type ApiOptions = RequestInit & {
 };
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_PREFIX = import.meta.env.VITE_API_PREFIX;
 
 function getToken() {
   return localStorage.getItem("accessToken");
@@ -15,7 +16,9 @@ export async function apiFetch<T = unknown>(
 ): Promise<T> {
   const { auth = true, headers, asText = false, ...rest } = options;
 
-  const url = path.startsWith("http") ? path : `${BASE_URL}${path}`;
+  const url = path.startsWith("http")
+    ? path
+    : `${BASE_URL}${API_PREFIX}${path}`;
   const h = new Headers(headers || {});
   h.set("Accept", "application/json");
 
