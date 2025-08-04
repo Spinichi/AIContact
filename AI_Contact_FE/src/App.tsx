@@ -9,6 +9,7 @@ import GalleryPage from "./pages/GalleryPage";
 import MainPage from "./pages/MainPage";
 import MyPage from "./pages/MyPage";
 import TalkPage from "./pages/TalkRoomPage";
+import CartoonResultPage from "./pages/CartoonResultPage";
 import WebRtcPage from "./pages/WebRtcPage";
 
 function App() {

@@ -72,23 +72,27 @@ export default function ChatRoom() {
                 <div className='board-box'>
                     <img src={QuestionBoard} alt="베경" className='background-img' />
                     <div className="input-overlay">
-                        <input type="text" 
-                            className="answer-input input-1" 
-                            placeholder='예: 강남역 앞 / 놀이공원 / 카페'/>
                         <input type="text"
-                            className="answer-input input-2" 
-                            placeholder='예: 영화보기 / 떡볶이 / 손잡기'/>
-                        <input type="text" 
-                            className="answer-input input-3" 
-                            placeholder='예: 사진 찍다 넘어짐 / 비가 와서 산책 못 함'/>
-                        <input type="text" 
-                            className="answer-input input-4" 
-                            placeholder='예: 설렘 / 달콤'/>
+                            className="answer-input input-1"
+                            placeholder='예: 강남역 앞 / 놀이공원 / 카페' />
+                        <input type="text"
+                            className="answer-input input-2"
+                            placeholder='예: 영화보기 / 떡볶이 / 손잡기' />
+                        <input type="text"
+                            className="answer-input input-3"
+                            placeholder='예: 사진 찍다 넘어짐 / 비가 와서 산책 못 함' />
+                        <input type="text"
+                            className="answer-input input-4"
+                            placeholder='예: 설렘 / 달콤' />
                     </div>
 
                     <div className='button-container'>
                         <button className='page-btn' onClick={()=>setIsModalOpen(true)}> 이전  작품 </button>
-                        <button className='page-btn'> 제작하기 </button>
+                        <button
+                            className='page-btn'
+                            onClick={() => navigate('cartoon-result')}
+                        > 제작하기
+                        </button>
                     </div>
                 </div>
 
