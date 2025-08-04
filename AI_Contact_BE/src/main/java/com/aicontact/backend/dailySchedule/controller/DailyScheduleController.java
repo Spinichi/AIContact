@@ -2,7 +2,6 @@ package com.aicontact.backend.dailySchedule.controller;
 
 import com.aicontact.backend.dailySchedule.dto.DailyScheduleRequestDto;
 import com.aicontact.backend.dailySchedule.dto.DailyScheduleResponseDto;
-import com.aicontact.backend.dailySchedule.dto.DailyScheduleSummaryDto;
 import com.aicontact.backend.dailySchedule.dto.DailyScheduleUpdateDto;
 import com.aicontact.backend.dailySchedule.entity.DailyScheduleEntity;
 import com.aicontact.backend.dailySchedule.service.DailyScheduleService;
@@ -62,7 +61,7 @@ public class DailyScheduleController {
     }
 
     @GetMapping("/month")
-    public ResponseEntity<ApiResponse<List<DailyScheduleSummaryDto>>> getMonthlySchedules(
+    public ResponseEntity<ApiResponse<List<DailyScheduleResponseDto>>> getMonthlySchedules(
             @RequestParam Long coupleId,
             @RequestParam int year,
             @RequestParam int month) {
@@ -70,8 +69,8 @@ public class DailyScheduleController {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
-        List<DailyScheduleSummaryDto> result = dailyScheduleService.getSchedulesByMonth(coupleId, start, end).stream()
-                .map(DailyScheduleSummaryDto::fromEntity)
+        List<DailyScheduleResponseDto> result = dailyScheduleService.getSchedulesByMonth(coupleId, start, end).stream()
+                .map(DailyScheduleResponseDto::fromEntity)
                 .toList();
 
         return ResponseEntity.ok(ApiResponse.success(result));

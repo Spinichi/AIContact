@@ -77,7 +77,7 @@ public class UserService {
         return new UserDto(user);
     }
 
-    public void updateMyInfo(String email, UpdateUserDto dto) {
+    public UserDto updateMyInfo(String email, UpdateUserDto dto) {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
@@ -86,7 +86,9 @@ public class UserService {
         if (dto.getBirthDate() != null) user.setBirthDate(dto.getBirthDate());
         if (dto.getCoupleStatus() != null) user.setCoupleStatus(dto.getCoupleStatus());
 
-        userRepository.save(user);
+        UserEntity updated = userRepository.save(user);
+
+        return new UserDto(updated);
     }
 
     public void deleteMyAccount(String email) {

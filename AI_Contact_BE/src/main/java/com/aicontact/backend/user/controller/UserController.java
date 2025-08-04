@@ -13,8 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -31,7 +29,7 @@ public class UserController {
             value = "/sign-up",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE     // multipart/form-data 로 지정
     )
-    public ResponseEntity<ApiResponse<UserResponseDto>> joinProcess(@ModelAttribute JoinDto joinDto) throws IOException {
+    public ResponseEntity<ApiResponse<UserResponseDto>> joinProcess(@ModelAttribute JoinDto joinDto){
         try {
             // 필수 입력 체크
             if (joinDto.getEmail() == null || joinDto.getPassword() == null
@@ -73,17 +71,17 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<ApiResponse<String>> updateMyInfo(@RequestHeader("Authorization") String authHeader,
+    public ResponseEntity<ApiResponse<UserDto>> updateMyInfo(@RequestHeader("Authorization") String authHeader,
                                                @RequestBody UpdateUserDto dto) {
         if (!authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(false,"잘못된 토큰 형식"));
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false,null));
         }
 
         String token = authHeader.substring(7);
         String email = jwtUtil.getEmail(token);
 
-        userService.updateMyInfo(email, dto);
-        return ResponseEntity.ok(ApiResponse.success("회원 정보 수정 완료"));
+        UserDto updatedUser = userService.updateMyInfo(email, dto);
+        return ResponseEntity.ok(ApiResponse.success(updatedUser));
     }
 
     @DeleteMapping("/me")
