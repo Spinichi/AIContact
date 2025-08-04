@@ -1,9 +1,10 @@
 package com.aicontact.backend.global.config;
 
 
-import java.util.Arrays;
-import java.util.Collections;
-
+import com.aicontact.backend.auth.jwt.JwtFilter;
+import com.aicontact.backend.auth.jwt.JwtUtil;
+import com.aicontact.backend.auth.jwt.LoginFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,11 +19,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import com.aicontact.backend.auth.jwt.JwtFilter;
-import com.aicontact.backend.auth.jwt.JwtUtil;
-import com.aicontact.backend.auth.jwt.LoginFilter;
-
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -54,7 +53,8 @@ public class SecurityConfig {
                 @Override
                 public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        configuration.setAllowedOrigins(List.of(
+                                "https://aicontact-gamma.vercel.app","http://localhost:5173"));
                         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);

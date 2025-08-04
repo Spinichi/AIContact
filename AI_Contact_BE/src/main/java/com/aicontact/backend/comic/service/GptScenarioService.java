@@ -4,16 +4,21 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class GptScenarioService {
 
-    private final String OPENAI_API_KEY = "Bearer S13P11A702-921b00de-b1d3-46b4-a329-0e2cd21c41d2";
-    private final String ENDPOINT = "https://gms.ssafy.io/gmsapi/api.openai.com/v1/chat/completions";
+    @Value("${GMS_KEY}")
+    private String OPENAI_API_KEY;
+
+    @Value("${GPT_ENDPOINT}")
+    private String ENDPOINT;
 
     public String getComicPanels(String location, String activity, String weather) throws IOException {
         OkHttpClient client = new OkHttpClient();
@@ -65,5 +70,72 @@ public class GptScenarioService {
                     .getString("content");
         }
     }
+
+    public String getAppearanceAttributes(
+            String photoAUrl,
+            String photoBUrl
+    ) throws IOException {
+        // 1) OkHttpClient 재사용 가능하다면 빈으로 분리해도 좋습니다.
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .build();
+
+        String promptSystem = """
+                You will receive two user messages each containing one reference image (Photo A and Photo B). After that, output exactly one concise sentence merging both faces’ eye size and color, eyelid shape and crease, nose bridge height and tip shape, lip fullness and shape, and hair features (length, texture, color) into a factual, objective description without using abstract terms like “cupid’s bow”. Use clear language such as “large round eyes”, “straight medium-height nose”, “full lips”, “medium-length wavy hair”, etc.
+                """;
+
+        // 2) messages 배열 구성
+        JSONArray messages = new JSONArray()
+                // system 메시지
+                .put(new JSONObject()
+                        .put("role", "system")
+                        .put("content", promptSystem))
+                // 첫 번째 사용자 메시지 (이미지 A)
+                .put(new JSONObject()
+                        .put("role", "user")
+                        .put("content", "Photo A")
+                        .put("image_url", photoAUrl))
+                // 두 번째 사용자 메시지 (이미지 B)
+                .put(new JSONObject()
+                        .put("role", "user")
+                        .put("content", "Photo B")
+                        .put("image_url", photoBUrl));
+
+        // 3) 페이로드 전체 조립
+        JSONObject payload = new JSONObject()
+                .put("model", "gpt-4o")
+                .put("messages", messages)
+                .put("temperature", 0.1)
+                .put("max_completion_tokens", 200);
+
+        // 4) Request 빌드
+        Request request = new Request.Builder()
+                .url(ENDPOINT)
+                .header("Authorization", OPENAI_API_KEY)
+                .post(RequestBody.create(
+                        payload.toString(),
+                        MediaType.get("application/json")))
+                .build();
+
+        // 5) 동기 호출 및 파싱
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful() || response.body() == null) {
+                String err = response.body() != null
+                        ? response.body().string()
+                        : "(empty)";
+                throw new IOException("Chat API failed: "
+                        + response.code() + " / " + err);
+            }
+
+            // 최종 JSON 파싱 후 message.content만 꺼내서 리턴
+            JSONObject resJson = new JSONObject(response.body().string());
+            return resJson
+                    .getJSONArray("choices")            // choices 배열
+                    .getJSONObject(0)                   // 첫 번째 요소
+                    .getJSONObject("message")           // message 객체
+                    .getString("content");              // content 필드
+        }
+    }
+
 }
 

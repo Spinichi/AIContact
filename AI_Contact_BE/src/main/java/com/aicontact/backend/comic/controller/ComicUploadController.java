@@ -1,6 +1,8 @@
 package com.aicontact.backend.comic.controller;
 
 
+import com.aicontact.backend.aiChild.entity.AiChildEntity;
+import com.aicontact.backend.aiChild.service.AiChildService;
 import com.aicontact.backend.comic.dto.ComicDto;
 import com.aicontact.backend.comic.service.DalleService;
 import com.aicontact.backend.global.dto.response.ApiResponse;
@@ -18,6 +20,7 @@ import java.io.IOException;
 public class ComicUploadController {
 
     private final DalleService dalleService;
+    private final AiChildService aiChildService;
 
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse<ComicDto>> uploadComicImage(
@@ -27,6 +30,7 @@ public class ComicUploadController {
     ) {
         try {
             ComicDto dto = dalleService.uploadDalleImageToS3(imageUrl, coupleId, uploaderId);
+            AiChildEntity myChild = aiChildService.updateChildPoints(coupleId,30);
             return ResponseEntity.ok(ApiResponse.success(dto));
 
         } catch (IOException | JCodecException e) {
