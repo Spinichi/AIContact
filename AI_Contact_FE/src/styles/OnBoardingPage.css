@@ -1,0 +1,62 @@
+.onboaring-layout {
+  display : flex;
+  width: 100vw;
+  height: 1000vh;
+  background-color: var(--bg-primary);
+}
+
+.onboarding-title{
+  width : 40%;
+  height : 100vh;
+  display : flex;
+  flex-direction: column;
+  padding-left : 80px;
+  justify-content: center;
+}
+
+.onboarding-title h2{
+  font-size : 2.5rem;
+  font-weight : 600;
+  background : linear-gradient(90deg, var(--primary), var(--secondary));
+  animation : title-gradient 6s infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  margin : 0px;
+}
+
+.onboarding-title p{
+  font-size : 1rem;
+  line-height : 1.5;
+  color : var(--text-light);
+}
+
+.onboarding-title .auth-btn{
+  display : flex;
+  gap : 20px;
+  align-items: flex-start;
+}
+
+.onboarding-title > div > img{
+  cursor : pointer;
+}
+
+.onboarding-image{
+  position : absolute;
+  right : 0;
+  width : 60vw;
+  z-index : 1;
+}
+
+
+@keyframes title-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

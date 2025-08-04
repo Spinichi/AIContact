@@ -11,6 +11,7 @@ import MyPage from "./pages/MyPage";
 import TalkPage from "./pages/TalkRoomPage";
 import CartoonResultPage from "./pages/CartoonResultPage";
 import WebRtcPage from "./pages/WebRtcPage";
+import OnBoardingPage from "./pages/OnBoardingPage";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/dictionary" element={<DictionaryPage />} />
         <Route path="/mypage" element={<MyPage />} />
+        <Route path="/index" element={<OnBoardingPage />} />
         {/* </Route> */}
       </Routes>
     </Router>
