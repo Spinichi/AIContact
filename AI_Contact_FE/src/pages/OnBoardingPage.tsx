@@ -5,7 +5,9 @@ import WhiteLoginBtn from "../assets/icons/LoginBtnWhite.svg";
 import TItleMockUp from "../assets/images/TItleMockUp.png";
 import '../styles/OnBoardingPage.css';
 import OnBoardingInfo from "../components/onboarding/OnBoardingInfo";
+import OnBoardingFooter from "../components/onboarding/OnBoardingFooter"
 import FixedButtons from "../components/onboarding/FixedButtons";
+import OnBoardingGallery from "../components/onboarding/OnBoardingGallery";
 
 
 export default function OnBoardingPage(){
@@ -31,6 +33,8 @@ export default function OnBoardingPage(){
             />
             <OnBoardingInfo />
             <FixedButtons />
+            <OnBoardingGallery />
+            <OnBoardingFooter />
         </div>
     </>;
 }
