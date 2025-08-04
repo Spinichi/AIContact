@@ -6,6 +6,7 @@ import com.aicontact.backend.couple.dto.request.CoupleUpdateRequest;
 import com.aicontact.backend.couple.dto.request.VerificationCodeRequest;
 import com.aicontact.backend.couple.dto.response.CoupleInfoResponse;
 import com.aicontact.backend.couple.dto.response.CoupleResponse;
+import com.aicontact.backend.couple.dto.response.PartnerResponse;
 import com.aicontact.backend.couple.dto.response.VerificationCodeResponse;
 import com.aicontact.backend.couple.service.CoupleService;
 import com.aicontact.backend.global.dto.response.ApiResponse;
@@ -92,4 +93,16 @@ public class CoupleController {
         ApiResponse<VerificationCodeResponse> response = ApiResponse.success(resp);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/partner")
+    public ResponseEntity<ApiResponse<PartnerResponse>> getPartnerInfo(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        String email = userDetails.getUserEntity().getEmail();
+        Long userId = userService.getUserByEmail(email).getId();
+
+        PartnerResponse partnerInfo = coupleService.getPartnerInfo(userId);
+        return ResponseEntity.ok(ApiResponse.success(partnerInfo));
+    }
+
 }
