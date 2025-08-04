@@ -1,0 +1,14 @@
+.top-button{
+    position : fixed;
+    bottom : 50px;
+    right : 50px;
+}
+
+.fixed-navbar{
+    position : fixed;
+    display : flex;
+    flex-direction: row;
+    top : 50px;
+    right : 50px;
+    gap : 10px;
+}

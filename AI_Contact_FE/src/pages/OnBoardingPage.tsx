@@ -5,6 +5,7 @@ import WhiteLoginBtn from "../assets/icons/LoginBtnWhite.svg";
 import TItleMockUp from "../assets/images/TItleMockUp.png";
 import '../styles/OnBoardingPage.css';
 import OnBoardingInfo from "../components/onboarding/OnBoardingInfo";
+import FixedButtons from "../components/onboarding/FixedButtons";
 
 
 export default function OnBoardingPage(){
@@ -29,6 +30,7 @@ export default function OnBoardingPage(){
                 className="text-decoration"
             />
             <OnBoardingInfo />
+            <FixedButtons />
         </div>
     </>;
 }
