@@ -19,7 +19,7 @@ export default function Modal({ onClose, hasPrev, hasNext, children, onPrev, onN
         <div className="modal-overlay">
             {hasPrev && <img src={prvBtn} className="move-btn" onClick={onPrev} />}
             <div className="content">
-                {children }
+                {children}
             </div>
             {hasNext && <img src={nxtBtn} className="move-btn" onClick={onNext} />}
         </div>

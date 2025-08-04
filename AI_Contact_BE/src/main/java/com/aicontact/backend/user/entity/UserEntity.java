@@ -2,6 +2,7 @@ package com.aicontact.backend.user.entity;
 
 import com.aicontact.backend.global.entity.BaseTimeEntity;
 import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Table(name = "users")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class UserEntity extends BaseTimeEntity {
 
     @Id
@@ -34,10 +36,13 @@ public class UserEntity extends BaseTimeEntity {
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name= "couple_status", length = 10)
+    @Column(name = "couple_status", length = 10)
     private CoupleStatus coupleStatus = CoupleStatus.SINGLE;
 
-    @Column(name= "verification_code", nullable = false, unique = true)
+    @Column(name = "verification_code", nullable = false, unique = true)
     private String verificationCode;
+
+    @Column(name = "couple_id")
+    private Long coupleId;
 
 }
