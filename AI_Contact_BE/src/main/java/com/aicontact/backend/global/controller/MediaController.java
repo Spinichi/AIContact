@@ -1,12 +1,15 @@
 package com.aicontact.backend.global.controller;
 
 
+import com.aicontact.backend.aiChild.entity.AiChildEntity;
+import com.aicontact.backend.aiChild.service.AiChildService;
 import com.aicontact.backend.auth.dto.CustomUserDetails;
 import com.aicontact.backend.global.dto.MediaFileDto;
 import com.aicontact.backend.global.dto.MediaSearchCondition;
 import com.aicontact.backend.global.dto.MediaThumbnailDto;
 import com.aicontact.backend.global.dto.response.*;
 import com.aicontact.backend.global.service.MediaFileService;
+import com.aicontact.backend.user.dto.UserDto;
 import com.aicontact.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.jcodec.api.JCodecException;
@@ -31,6 +34,7 @@ public class MediaController {
 
     private final MediaFileService mediaFileService;
     private final UserService userService;
+    private final AiChildService aiChildService;
 
     /** 1) 이미지 업로드 → POST /api/v1/media/images */
     @PostMapping(path = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -41,16 +45,17 @@ public class MediaController {
     ) throws IOException, JCodecException {
 
         String email = userDetails.getUserEntity().getEmail();
-        Long uploaderId = userService.getUserByEmail(email).getId();
+        UserDto me = userService.getUserByEmail(email);
+        Long uploaderId = me.getId();
 
-        System.out.println(coupleId);
-        System.out.println(email);
         MediaFileDto dto = mediaFileService.uploadMedia(file, coupleId, uploaderId);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(dto.getId())
                 .toUri();
+
+        AiChildEntity myChild = aiChildService.updateChildPoints(me.getCoupleId(),20);
         return ResponseEntity
                 .created(location)
                 .contentType(MediaType.APPLICATION_JSON)
