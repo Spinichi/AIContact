@@ -37,73 +37,143 @@ const MyPage: React.FC = () => {
 
       <div className="main-content">
         <div className="mypage-header">
-          <div>
-            <h4># 보안 # 철저 </h4>
-            <h3>마이페이지 🍀</h3>
-          </div>
+          <h4># 보안 # 철저 </h4>
+          <h3>마이페이지 🍀</h3>
         </div>
 
         <div className="mypage-container">
-          {/* 내 정보 */}
-          {me && (
-            <div className="mypage-card">
-              <h4>내 정보</h4>
-              <img
-                src={me.profileImageUrl || "/profile1.png"}
-                alt="내 프로필"
-                className="profile-img"
-              />
-              <p>
-                <strong>이름:</strong> {me.name}
-              </p>
-              <p>
-                <strong>생년월일:</strong> {me.birthDate || "정보 없음"}
-              </p>
-              <p>
-                <strong>이메일:</strong> {me.email}
-              </p>
-              <p>
-                <strong>연인코드:</strong>{" "}
-                {me.coupleId ? `${me.coupleId}` : "없음"}
-              </p>
-              <button className="useredit-btn">수정</button>
-              <button className="danger-btn">회원 탈퇴</button>
-            </div>
-          )}
+          <div>
+            {/* 내 정보 */}
+            {me && (
+              <div className="mypage-card-wrapper">
+                <h4>내 정보</h4>
+                <div className="mypage-card">
+                  <div className="mypage-card-section-wrapper">
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">이름</div>
+                      <div className="mypage-card-section-value">{me.name}</div>
+                    </div>
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">프로필사진</div>
+                      <div className="mypage-card-section-value">
+                        <img
+                          src={me.profileImageUrl || "/profile1.png"}
+                          alt="내 프로필"
+                          className="profile-img"
+                        />
+                      </div>
+                      <div className="mypage-card-section-btn">
+                        <button className="useredit-btn">수정</button>
+                      </div>
+                    </div>
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">생년월일</div>
+                      <div className="mypage-card-section-value">
+                        {me.birthDate}
+                      </div>
+                    </div>
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">이메일</div>
+                      <div className="mypage-card-section-value">
+                        {me.email}
+                      </div>
+                    </div>
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">비밀번호</div>
+                      <div className="mypage-card-section-value">
+                        **********
+                      </div>
+                      <div className="mypage-card-section-btn">
+                        <button className="useredit-btn">수정</button>
+                      </div>
+                    </div>
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">연인코드</div>
+                      <div className="mypage-card-section-value">
+                        {me.coupleId ? `${me.coupleId}` : "없음"}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="danger-btn-wrapper">
+                    <button className="danger-btn">회원 탈퇴</button>
+                  </div>
+                </div>
+              </div>
+            )}
 
-          {/* 연인 정보 */}
-          {partner && (
-            <div className="mypage-card">
-              <h4>연인 정보</h4>
-              <img
-                src={partner.profileImageUrl || "/profile2.png"}
-                alt="연인 프로필"
-                className="profile-img"
-              />
-              <p>
-                <strong>이름:</strong> {partner.name}
-              </p>
-              <p>
-                <strong>생년월일:</strong> {partner.birthDate || "정보 없음"}
-              </p>
-              <p>
-                <strong>이메일:</strong> {partner.email}
-              </p>
-              <button className="danger-btn">커플 연결 해제</button>
-            </div>
-          )}
+            {/* 연인 정보 */}
+            {partner && (
+              <div className="mypage-card-wrapper">
+                <h4>연인 정보</h4>
+                <div className="mypage-card">
+                  <div className="mypage-card-section-wrapper">
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">이름</div>
+                      <div className="mypage-card-section-value">
+                        {partner.name}
+                      </div>
+                    </div>
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">프로필사진</div>
+                      <div className="mypage-card-section-value">
+                        <img
+                          src={partner.profileImageUrl || "/profile2.png"}
+                          alt="연인 프로필"
+                          className="profile-img"
+                        />
+                      </div>
+                    </div>
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">생년월일</div>
+                      <div className="mypage-card-section-value">
+                        {partner.birthDate}
+                      </div>
+                    </div>
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">이메일</div>
+                      <div className="mypage-card-section-value">
+                        {partner.email}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="danger-btn-wrapper">
+                    <button className="danger-btn">커플 연결 해제</button>
+                  </div>
+                </div>
+              </div>
+            )}
 
-          {/* 아이 정보 */}
-          <div className="mypage-card">
-            <h4>아이 정보</h4>
-            <img src="/child.png" alt="아이 프로필" className="profile-img" />
-            <p>
-              <strong>이름:</strong> 김포비
-            </p>
-            <p>
-              <strong>생년월일:</strong> 2025년 7월 27일
-            </p>
-            <button className="useredit-btn">수정</button>
+            {/* 아이 정보 */}
+            <div className="mypage-card-wrapper">
+              <h4>아이 정보</h4>
+              <div className="mypage-card">
+                <div className="mypage-card-section-wrapper">
+                  <div className="mypage-card-section">
+                    <div className="mypage-card-section-name">이름</div>
+                    <div className="mypage-card-section-value">김포비</div>
+                    <div className="mypage-card-section-btn">
+                      <button className="useredit-btn">수정</button>
+                    </div>
+                  </div>
+                  <div className="mypage-card-section">
+                    <div className="mypage-card-section-name">프로필사진</div>
+                    <div className="mypage-card-section-value">
+                      <img
+                        src="/child.png"
+                        alt="아이 프로필"
+                        className="profile-img"
+                      />
+                    </div>
+                  </div>
+                  <div className="mypage-card-section">
+                    <div className="mypage-card-section-name">생년월일</div>
+                    <div className="mypage-card-section-value">
+                      2025년 7월 27일
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
