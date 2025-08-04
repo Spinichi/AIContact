@@ -1,8 +1,10 @@
 .onboaring-layout {
   display : flex;
+  flex-direction: column;
   width: 100vw;
   height: 1000vh;
   background-color: var(--bg-primary);
+  scroll-snap-type: y mandatory;
 }
 
 .onboarding-title{
@@ -44,8 +46,19 @@
 .onboarding-image{
   position : absolute;
   right : 0;
-  width : 60vw;
+  width : 60%;
   z-index : 1;
+}
+
+.onboarding-info{
+  display: flex;
+  width : 100vw;
+  height : 100vh;
+}
+
+.onboarding-info .lanyard{
+  width : 40%;
+  height : 100%;
 }
 
 

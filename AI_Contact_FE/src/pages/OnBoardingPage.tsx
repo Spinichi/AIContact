@@ -4,6 +4,8 @@ import StartBtn from "../assets/icons/Startbtn.svg";
 import WhiteLoginBtn from "../assets/icons/LoginBtnWhite.svg";
 import TItleMockUp from "../assets/images/TItleMockUp.png";
 import '../styles/OnBoardingPage.css';
+import OnBoardingInfo from "../components/onboarding/OnBoardingInfo";
+
 
 export default function OnBoardingPage(){
     return <>
@@ -18,14 +20,15 @@ export default function OnBoardingPage(){
                 </div>
             </div>
             <img src={TItleMockUp} alt="타이틀" className="onboarding-image"/>
+            <CurvedLoop 
+                marqueeText="   AI   ✦   CONTACT   ✦"
+                speed={2}
+                curveAmount={0}
+                direction="left"
+                interactive={false}
+                className="text-decoration"
+            />
+            <OnBoardingInfo />
         </div>
-        <CurvedLoop 
-            marqueeText="   AI   ✦   CONTACT   ✦"
-            speed={2}
-            curveAmount={0}
-            direction="left"
-            interactive={false}
-            className="text-decoration"
-        />
     </>;
 }
