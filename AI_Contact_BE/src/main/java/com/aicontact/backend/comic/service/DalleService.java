@@ -13,10 +13,10 @@ import okhttp3.*;
 import org.jcodec.api.JCodecException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -24,8 +24,11 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class DalleService {
 
-    private final String OPENAI_API_KEY = "Bearer S13P11A702-921b00de-b1d3-46b4-a329-0e2cd21c41d2";
-    private final String ENDPOINT = "https://gms.ssafy.io/gmsapi/api.openai.com/v1/images/generations";
+    @Value("${GMS_KEY}")
+    private String OPENAI_API_KEY;
+
+    @Value("${DALLE_ENDPOINT}")
+    private String ENDPOINT;
 
     @Autowired
     private S3StorageService s3StorageService;
