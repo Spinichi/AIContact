@@ -1,11 +1,12 @@
 import { apiFetch } from "../fetchClient";
 import type { ApiResponse } from "../types/common";
+import type { CoupleMatchingRequest } from "./request";
 import type {
-  MyCodeResponse,
-  CoupleJoinResponse,
   CoupleInfoResponse,
+  CoupleJoinResponse,
+  MyCodeResponse,
+  PartnerInfoResponse,
 } from "./response";
-import type { CoupleMatchingRequest, CoupleJoinRequest } from "./request";
 
 export const CouplesApi = {
   /** 인증 코드로 커플 연결 요청 */
@@ -27,4 +28,8 @@ export const CouplesApi = {
 
   /** 현재 커플 정보 가져오기 */
   getCoupleInfo: () => apiFetch<ApiResponse<CoupleInfoResponse>>("/couples"),
+
+  /** 연인 정보 가져오기 */
+  getPartnerInfo: () =>
+    apiFetch<ApiResponse<PartnerInfoResponse>>("/couples/partner"),
 };

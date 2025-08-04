@@ -15,3 +15,11 @@ export type CoupleInfoResponse = {
   startDate: string | null;
   coupleName: string | null;
 };
+
+export type PartnerInfoResponse = {
+  id: number;
+  email: string;
+  name: string;
+  profileImageUrl: string | null;
+  birthDate: string | null;
+};
