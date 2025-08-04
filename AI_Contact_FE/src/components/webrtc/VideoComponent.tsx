@@ -1,6 +1,6 @@
 import { LocalVideoTrack, RemoteVideoTrack } from "livekit-client";
-import "../../styles/VideoComponent.css";
 import { useEffect, useRef } from "react";
+import "../../styles/VideoComponent.css";
 
 interface VideoComponentProps {
   track: LocalVideoTrack | RemoteVideoTrack;
@@ -16,12 +16,15 @@ function VideoComponent({
   const videoElement = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    if (videoElement.current) {
-      track.attach(videoElement.current);
+    const el = videoElement.current;
+    if (el) {
+      track.attach(el);
     }
 
     return () => {
-      track.detach();
+      if (el) {
+        track.detach(el);
+      }
     };
   }, [track]);
 
@@ -33,8 +36,11 @@ function VideoComponent({
       <video
         ref={videoElement}
         id={track.sid}
+        autoPlay
+        playsInline
+        muted={local}
         style={local ? { transform: "scaleX(-1)" } : undefined}
-      ></video>
+      />
     </div>
   );
 }

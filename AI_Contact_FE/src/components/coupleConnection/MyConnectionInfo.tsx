@@ -1,23 +1,11 @@
 import { useEffect, useState } from "react";
-import "../../styles/CoupleConnection.css";
-import { apiFetch } from "../../api/fetchClient";
-import placeholderImg from "../../assets/images/symbol.png";
 import { useNavigate } from "react-router-dom";
+import placeholderImg from "../../assets/images/symbol.png";
+import "../../styles/CoupleConnection.css";
 
-type MeUserResponse = {
-  id: number;
-  email: string;
-  name: string;
-  profileImageUrl: string | null;
-  birthDate: string | null;
-  coupleStatus: "SINGLE" | "COUPLED" | string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type MyCodeResponse = {
-  verificationCode: string;
-};
+import { CouplesApi } from "../../apis/couple";
+import { UsersApi } from "../../apis/user";
+import type { MeUserResponse } from "../../apis/user/response";
 
 export default function MyConnectionInfo() {
   const [verificationCode, setVerificationCode] = useState("");
@@ -37,27 +25,22 @@ export default function MyConnectionInfo() {
       }
 
       try {
-        const [me, myCode] = await Promise.all([
-          apiFetch<MeUserResponse>("/api/v1/users/me", {
-            signal: controller.signal,
-          }),
-          apiFetch<MyCodeResponse>("/api/v1/couples/myCode", {
-            signal: controller.signal,
-          }),
+        const [meRes, codeRes] = await Promise.all([
+          UsersApi.getMe({ signal: controller.signal }),
+          CouplesApi.getMyCode(),
         ]);
 
-        // COUPLED인 경우 바로 리다이렉트
+        const me: MeUserResponse = meRes.data;
+        const code = codeRes.data.verificationCode;
+
+        // 커플 연결된 경우 리다이렉트
         if (me.coupleStatus === "COUPLED") {
           navigate("/ai", { replace: true });
           return;
         }
 
-        // 프로필 이미지 설정 (없으면 플레이스홀더)
         setProfileImageUrl(me.profileImageUrl || placeholderImg);
-
-        // 인증 코드 설정
-        setVerificationCode(myCode.verificationCode ?? "");
-
+        setVerificationCode(code ?? "");
         setErrorMsg("");
       } catch (e: any) {
         if (e.message === "UNAUTHORIZED") {
@@ -83,7 +66,6 @@ export default function MyConnectionInfo() {
           src={profileImageUrl}
           alt="프로필"
           onError={(e) => {
-            // 이미지 로드 실패 시 플레이스홀더로 대체
             (e.currentTarget as HTMLImageElement).src = placeholderImg;
           }}
           style={{
