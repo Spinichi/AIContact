@@ -15,7 +15,7 @@
 
 .talkroom-header {
   position: absolute;
-  top: 70px;
+  top: 30px;
   left: 100px; /* 네브바 너비 + 간격 */
   display: flex;
   flex-direction: column;
@@ -44,9 +44,9 @@
   margin: 0;
 }
 
-.home-icon-img {
+.talkhome-icon-img {
   position: absolute;
-  top: 83px;
+  top: 45px;
   left: 40px;
   width: 50px;
   height: 50px;
@@ -104,14 +104,16 @@
 .chat-bubble {
   display: flex;
   justify-content: center;
-  padding: 10px 15px;
+  padding: 2px 0px;
   border-radius: 15px;
   max-width: 70%;
   word-break: break-word;
   position: relative;
   font-size: 16px;
-  line-height: 1.4;
-  text-align: center;
+  line-height: 1.3;
+  text-align: left;
+  align-items: center;
+  
 }
 
 
@@ -119,7 +121,7 @@
   align-self: flex-end;
   background: #8e6ff9;
   color: white;
-  margin-right:  50px;
+  /* margin-right:  50px; */
 }
 
 /* 꼬리 만들기 (내 메시지) */
@@ -137,7 +139,7 @@
   align-self: flex-start;
   background: #ffffff;
   color: #222;
-  margin-left: 50px;
+  /* margin-left: 50px; */
 }
 
 .chat-bubble.ai::after {
@@ -178,4 +180,33 @@
   border-radius: 20px;
   padding: 8px 16px;
   cursor: pointer;
+}
+
+
+/* 스크롤바 전체 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* 스크롤 트랙 */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 스크롤 thumb */
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 150, 150, 0.1);  /* 반투명 */
+  border-radius: 20px;   /* 완전 둥글게 */
+  transition: background 0.1s;
+}
+
+/* hover 시 강조 */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.6);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(150, 150, 150, 0.3) transparent;
 }

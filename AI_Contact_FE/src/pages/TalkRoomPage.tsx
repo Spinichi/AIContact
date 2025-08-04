@@ -28,7 +28,7 @@ export default function ChatRoom() {
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { text: 'AI가 대답했어 😊', sender: 'ai' }
+        { text: '엄마 안녕 나 포비야! 😊', sender: 'ai' }
       ]);
     }, 500);
 
@@ -46,7 +46,7 @@ export default function ChatRoom() {
         <img
           src={homeIcon}
           alt='홈'
-          className='home-icon-img'
+          className='talkhome-icon-img'
           onClick={() => navigate('/')}
         />
 

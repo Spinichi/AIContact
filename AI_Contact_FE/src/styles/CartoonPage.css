@@ -3,7 +3,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: 185%;
     flex-direction: column;
     height: auto;
     position: relative;
@@ -11,23 +11,26 @@
     background-repeat: no-repeat;
     background-position: top center;
     overflow: visible;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .cartoon-header {
     position: absolute;
-    top: 70px;
-    left: 100px;
+    top: 5%;
+    left: 55px;
     /* 네브바 너비 + 간격 */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    z-index: 3;
     /* gap: 5px; */
 }
 
 .hashtags {
     display: flex;
     gap: 12px;
-    font-size: 24px;
+    font-size: 20px;
     color: #FFFFFF;
     font-weight: 500;
 }
@@ -39,18 +42,18 @@
 }
 
 .title-box h1 {
-    font-size: 34px;
+    font-size: 30px;
     font-weight: bold;
     color: #FFFFFF;
     margin: 0;
 }
 
 .home-icon-img {
-    position: absolute;
-    top: 83px;
-    left: 40px;
-    width: 50px;
-    height: 50px;
+    position: absolute !important;
+    top: 50px !important;
+    left: 10px !important;
+    width: 40px !important;
+    height: 40px !important;
     cursor: pointer;
 }
 
@@ -69,13 +72,15 @@
     position: relative;
     top: -35px;
     left: 0px;
-    width: 630px;
-    height: 705px;
+    width: 40%;
+    height: auto;
     display: flex;
     border-radius: 30px;
     justify-self: center;
     align-items: center;
     overflow: hidden;
+    margin: 0;
+    aspect-ratio: 630 / 705;
 }
 
 .board-img {
@@ -89,12 +94,17 @@
     z-index: 0;
     /* background-size: contain; */
 }
+
 .input-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .input-overlay input::placeholder {
@@ -117,17 +127,17 @@
 }
 
 /* 각 input을 밑줄 위치에 맞추기 (픽셀값 조정 필요) */
-.input-1 { top: 204px; }
-.input-2 { top: 310px; }
-.input-3 { top: 417px; }
-.input-4 { top: 524px; }
+.input-1 { top: 163px; }
+.input-2 { top: 250px; }
+.input-3 { top: 337px; }
+.input-4 { top: 424px; }
 
 .button-container {
     position: absolute;
     display: flex;
     justify-content: center;
     gap: 20px;
-    bottom: 76px;
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
     /* margin-top: 20px; */
@@ -150,7 +160,6 @@
     font-weight: 600;
     cursor: pointer;
     outline: none;
-
     transition: transform 0.1s ease-in-out;
 }
 
@@ -162,53 +171,3 @@
   outline: none;
 }
 
-
-
-/* .board-box textarea {
-  width: 100%;
-  height: 100%;
-  resize: none;
-  border: none;
-  outline: none;
-  font-size: 20px;
-  font-weight: 600;
-  text-align: center;
-  background: transparent; /* 하얀 배경이 비치도록 투명 */
-
-
-/* .question-box {
-    position: absolute;
-    top: 140px;
-    left: 420px;
-    width: 450px;
-    padding: 20px 30px;
-    background: transparent;
-}
-
-.question-title {
-  font-size: 16px;
-  text-align: center;
-  line-height: 1.5;
-  margin-bottom: 15px;
-  font-weight: 500;
-} */
-/* 
-.question-field {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
-}
-
-.question-field label {
-  font-size: 14px;
-  margin-bottom: 5px;
-  font-weight: 600;
-}
-
-.question-field input {
-  border: none;
-  border-bottom: 1px solid #ccc;
-  padding: 6px;
-  font-size: 14px;
-  outline: none;
-} */
