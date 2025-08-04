@@ -152,6 +152,8 @@ const handlePrev = () => {
           onClose={handleClose}
           hasPrev={true}
           hasNext={true}
+          onPrev={handlePrev}
+          onNext={handleNext}
         >
           <img
             src={photos[currentIndex]}

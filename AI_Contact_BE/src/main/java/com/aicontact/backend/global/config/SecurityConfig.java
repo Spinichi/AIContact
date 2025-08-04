@@ -84,9 +84,11 @@ public class SecurityConfig {
                 .requestMatchers("/error").permitAll()
 
                 // baby chat 경로 허용
-                .requestMatchers("/baby/chat").permitAll()
+                .requestMatchers("/chat/**").permitAll()
 
                 .requestMatchers("/summary/**").permitAll()
+
+                .requestMatchers("/comic/**").permitAll()
 
                 // 그 외는 인증 필요
                 .anyRequest().authenticated()

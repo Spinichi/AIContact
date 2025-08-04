@@ -3,7 +3,7 @@ import { Mousewheel } from 'swiper/modules';
 
 import '../../styles/AddSchedule.css';
 
-import 'swiper/css';
+import 'swiper/swiper-bundle.css';
 
 interface AddScheduleProps{
     dateInfo : Date;
@@ -12,8 +12,7 @@ interface AddScheduleProps{
 
 export default function AddSchedule({onCancel, dateInfo} : AddScheduleProps){
 
-  const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-
+    const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
     const formatNumber = (num: number) => String(num).padStart(2, '0');
     const hours = Array.from({ length: 24 }, (_, i) => formatNumber((i + 9) % 24));
@@ -76,5 +75,5 @@ export default function AddSchedule({onCancel, dateInfo} : AddScheduleProps){
                 </div>
             </form>
         </div>
-  );
+    );
 }
