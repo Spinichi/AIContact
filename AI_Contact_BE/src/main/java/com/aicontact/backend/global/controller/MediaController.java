@@ -40,13 +40,13 @@ public class MediaController {
     @PostMapping(path = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<MediaFileDto>> uploadImage(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("coupleId") Long coupleId
+            @RequestParam("file") MultipartFile file
     ) throws IOException, JCodecException {
 
         String email = userDetails.getUserEntity().getEmail();
         UserDto me = userService.getUserByEmail(email);
         Long uploaderId = me.getId();
+        Long coupleId = me.getCoupleId();
 
         MediaFileDto dto = mediaFileService.uploadMedia(file, coupleId, uploaderId);
         URI location = ServletUriComponentsBuilder
@@ -66,11 +66,10 @@ public class MediaController {
     @PostMapping(path = "/videos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<MediaFileDto>> uploadVideo(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("coupleId") Long coupleId
+            @RequestParam("file") MultipartFile file
     ) throws IOException, JCodecException {
         // 구현은 이미지 업로드와 동일하게 서비스에 위임
-        return uploadImage(userDetails, file, coupleId);
+        return uploadImage(userDetails, file);
     }
 
     /** 3) media 삭제 → DELETE /api/v1/media/{id} (200 OK) */
@@ -91,11 +90,15 @@ public class MediaController {
     /** 4) 찜한 미디어 조회 → GET /api/v1/media/favorites?coupleId=xxx&page=0&size=20 */
     @GetMapping("/favorites")
     public ResponseEntity<ApiResponse<MediaListResponse>> listFavorites(
-            @RequestParam("coupleId") Long coupleId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(value = "page",  defaultValue = "0")  int page,
             @RequestParam(value = "limit", defaultValue = "20") int limit,
             @ModelAttribute MediaSearchCondition cond
     ) {
+
+        String email = userDetails.getUserEntity().getEmail();
+        UserDto me = userService.getUserByEmail(email);
+        Long coupleId = me.getCoupleId();
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by("uploadDate").descending());
         Page<MediaFileDto> pageResult = mediaFileService.listFavorites(
@@ -114,11 +117,16 @@ public class MediaController {
 
     @GetMapping("")
     public ResponseEntity<ApiResponse<MediaListResponse>> getMedia(
-            @RequestParam("coupleId") Long coupleId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(value = "page",  defaultValue = "0")  int page,
             @RequestParam(value = "limit", defaultValue = "20") int limit,
             @ModelAttribute MediaSearchCondition cond
     ) {
+
+        String email = userDetails.getUserEntity().getEmail();
+        UserDto me = userService.getUserByEmail(email);
+        Long coupleId = me.getCoupleId();
+
         Pageable pageable = PageRequest.of(page, limit, Sort.by("uploadDate").descending());
         Page<MediaFileDto> pageResult = mediaFileService.findMedia(
                 pageable,
@@ -135,11 +143,16 @@ public class MediaController {
 
     @GetMapping("/thumbnails")
     public ResponseEntity<ApiResponse<MediaThumbnailListResponse>> getThumbnails(
-            @RequestParam("coupleId") Long coupleId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "limit", defaultValue = "20") int limit,
             @ModelAttribute MediaSearchCondition cond
     ) {
+
+        String email = userDetails.getUserEntity().getEmail();
+        UserDto me = userService.getUserByEmail(email);
+        Long coupleId = me.getCoupleId();
+
         Pageable pageable = PageRequest.of(page, limit, Sort.by("uploadDate").descending());
         Page<MediaThumbnailDto> pageResult = mediaFileService.findThumbnails(
                 pageable,
@@ -156,18 +169,27 @@ public class MediaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<MediaFileDto>> getMedia(
-            @RequestParam Long coupleId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("id") Long id
     ) {
+
+        String email = userDetails.getUserEntity().getEmail();
+        UserDto me = userService.getUserByEmail(email);
+        Long coupleId = me.getCoupleId();
+
         MediaFileDto dto = mediaFileService.getMedia(coupleId, id);
         return ResponseEntity.ok(new ApiResponse<>(true, dto));
     }
 
     @PostMapping("/{id}/favorite")
     public ResponseEntity<ApiResponse<FavoriteResponse>> toggleFavorite(
-            @RequestParam Long coupleId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("id") Long id
     ) throws IOException {
+        String email = userDetails.getUserEntity().getEmail();
+        UserDto me = userService.getUserByEmail(email);
+        Long coupleId = me.getCoupleId();
+
         FavoriteResponse resp = mediaFileService.toggleFavorite(coupleId, id);
         return ResponseEntity.ok(new ApiResponse<>(true, resp));
     }
