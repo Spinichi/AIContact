@@ -22,4 +22,10 @@ export const UsersApi = {
       body: formData,
     });
   },
+
+  /** 회원 탈퇴 */
+  deleteMe: () =>
+    apiFetch<ApiResponse<string>>("/users/me", {
+      method: "DELETE",
+    }),
 };

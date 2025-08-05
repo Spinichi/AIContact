@@ -1,12 +1,26 @@
-.dictionary-container {
+/* .dictionary-container {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 20px;
   position: relative;
+} */
+.dictionary-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  overflow: visible;
+  margin-top: 5%;
+  flex: 1;
+  display: flex;
+  flex-direction: center;
+  overflow-y: auto;
 }
 
-.dictionary-book {
+
+
+
+/* .dictionary-book {
   display: flex;
   width: 80%;
   background: white;
@@ -14,12 +28,48 @@
   padding: 20px;
   justify-content: space-between;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+} */
+.dictionary-book {
+  position: relative;
+  width: 75%;
+  max-width: 1200px;
+  aspect-ratio: 16/9;
+  height: auto;
+  padding: 30px 40px;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
 
+.dictionary-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 0;
+}
+
+
+
 .dictionary-page {
-  width: 48%;
-  padding: 20px;
-  border-left: 1px solid #ddd;
+  position: absolute;
+  z-index: 1;
+  padding: 10px 30px;
+  top: 30px;
+}
+
+.dictionary-page.left {
+  top: 10%;
+  margin-left: 1%;
+  height: 100%;
+  z-index: 2;
+}
+.dictionary-page.right {
+  top: 10%;
+  margin-left: 47%;
+  height: 100%;
+  z-index: 2;
 }
 
 .dictionary-page:first-child {
@@ -30,10 +80,17 @@
   font-size: 20px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* align-items: center; */
+  position: relative;
+  padding-right: 50px;
 }
 
 .wordedit-btn {
+  position: absolute;
+  top: 0;
+  right: -45%;
   font-size: 12px;
   color: #8A8C90;
   cursor: pointer;
@@ -90,13 +147,14 @@
   border: none;
   font-size: 14px;
   cursor: pointer;
+  z-index: 5;
 }
 
 .upload-btn:hover {
   background: #7b4ce3;
 }
 
-.modal-overlay {
+/* .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -108,9 +166,9 @@
   align-items: center;
   z-index: 999;
 
-}
+} */
 
-.modal {
+/* .modal {
   background: white;
   padding: 20px;
   border-radius: 10px;
@@ -118,18 +176,18 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
+} */
 
 
-.modal input,
+/* .modal input,
 .modal textarea {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
-}
+} */
 
-.modal-buttons {
+/* .modal-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
@@ -145,4 +203,4 @@
 .modal-buttons button:last-child {
   background: #9c6bff;
   color: white;
-}
+} */

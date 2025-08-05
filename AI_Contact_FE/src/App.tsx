@@ -11,12 +11,13 @@ import MyPage from "./pages/MyPage";
 import TalkPage from "./pages/TalkRoomPage";
 import CartoonResultPage from "./pages/CartoonResultPage";
 import WebRtcPage from "./pages/WebRtcPage";
+import OnBoardingPage from "./pages/OnBoardingPage";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<OnBoardingPage />} />
         <Route path="/auth" element={<AuthPage />} />
         {/* <Route element={<ProtectedRoute />}> */}
         <Route path="/connection" element={<CoupleConnectionPage />} />
@@ -24,6 +25,7 @@ function App() {
         <Route path="/talk" element={<TalkPage />} />
         <Route path="/webrtc" element={<WebRtcPage />} />
         <Route path="/cartoon" element={<CartoonPage />} />
+        <Route path="/cartoon/cartoon-result" element={<CartoonResultPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/dictionary" element={<DictionaryPage />} />

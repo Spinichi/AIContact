@@ -84,6 +84,7 @@
 .profile-img {
   width: 100px;
   height: 100px;
+  object-fit: cover;
   border: 1px solid var(--primary);
   border-radius: 50%;
   background: linear-gradient(to right, var(--secondary), var(--primary));
