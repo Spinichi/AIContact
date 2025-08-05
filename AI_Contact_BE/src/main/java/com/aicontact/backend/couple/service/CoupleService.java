@@ -1,6 +1,11 @@
 package com.aicontact.backend.couple.service;
 
-import com.aicontact.backend.couple.dto.*;
+import com.aicontact.backend.couple.dto.request.CoupleMatchingRequest;
+import com.aicontact.backend.couple.dto.request.CoupleUpdateRequest;
+import com.aicontact.backend.couple.dto.response.CoupleInfoResponse;
+import com.aicontact.backend.couple.dto.response.CoupleResponse;
+import com.aicontact.backend.couple.dto.response.PartnerResponse;
+import com.aicontact.backend.couple.dto.response.VerificationCodeResponse;
 import com.aicontact.backend.couple.entity.CoupleEntity;
 import com.aicontact.backend.couple.repository.CoupleRepository;
 import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
@@ -154,4 +159,25 @@ public class CoupleService {
         // 엔티티 필드명이 getVerificationCode() 라고 가정
         return new VerificationCodeResponse(user.getVerificationCode());
     }
+
+    @Transactional
+    public PartnerResponse getPartnerInfo(Long myId) {
+        CoupleEntity couple = coupleRepository
+                .findByUser1_IdOrUser2_Id(myId, myId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "커플 정보를 찾을 수 없습니다."));
+
+        UserEntity partner = couple.getUser1().getId().equals(myId)
+                ? couple.getUser2()
+                : couple.getUser1();
+
+        return PartnerResponse.builder()
+                .id(partner.getId())
+                .name(partner.getName())
+                .email(partner.getEmail())
+                .birthDate(partner.getBirthDate())
+                .profileImageUrl(partner.getProfileImageUrl())
+                .build();
+    }
+
 }

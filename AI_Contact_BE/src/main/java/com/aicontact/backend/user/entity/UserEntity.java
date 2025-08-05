@@ -2,6 +2,7 @@ package com.aicontact.backend.user.entity;
 
 import com.aicontact.backend.global.entity.BaseTimeEntity;
 import com.aicontact.backend.global.entity.enumeration.CoupleStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Table(name = "users")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class UserEntity extends BaseTimeEntity {
 
     @Id

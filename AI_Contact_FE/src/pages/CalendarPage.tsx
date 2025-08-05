@@ -5,7 +5,7 @@ import "../styles/MainPages.css";
 import "../styles/CalendarPage.css";
 
 import CalendarDetail from '../components/calendar/CalendarDetail';
-import AddCalendarEvent from '../components/calendar/AddCalendarEvent';
+import AddSchedule from '../components/calendar/AddSchedule';
 import Modal from '../components/modal/Modal';
 import Sidebar from "../components/Sidebar";
 
@@ -49,16 +49,30 @@ const events = [
     return dayNumber;
   };
 
+  const handleNextDay = () => {
+    if (!clickedDateInfo) return;
+    const currentDate = new Date(clickedDateInfo.date);
+    currentDate.setDate(currentDate.getDate() + 1);
+    setClickedDateInfo(prev => ({ ...prev, date: currentDate }));
+  };
+
+  const handlePrevDay = () => {
+        if (!clickedDateInfo) return;
+    const currentDate = new Date(clickedDateInfo.date);
+    currentDate.setDate(currentDate.getDate() - 1);
+    setClickedDateInfo(prev => ({ ...prev, date: currentDate }));
+  };
+
   function setModalContent(modalStatus : ModalType){
       switch (modalStatus){
         case 'off':
           return null;
         case 'detail':
-          return <Modal onClose={()=>setModalStatus('off')} hasNext={true} hasPrev={true}>
+          return <Modal onClose={()=>setModalStatus('off')} hasNext={true} hasPrev={true} onPrev={handlePrevDay} onNext={handleNextDay}>
           {clickedDateInfo && <CalendarDetail dateInfo={clickedDateInfo.date} onAdd={()=>setModalStatus('add')}/>}</Modal>;
         case 'add':
           return <Modal onClose={()=>setModalStatus('off')} hasNext={false} hasPrev={false}>
-            {clickedDateInfo && <AddCalendarEvent dateInfo={clickedDateInfo.date} onCancel={() => setModalStatus('detail')} />}</Modal>;
+            {clickedDateInfo && <AddSchedule dateInfo={clickedDateInfo.date} onCancel={() => setModalStatus('detail')} />}</Modal>;
       }
   }
 

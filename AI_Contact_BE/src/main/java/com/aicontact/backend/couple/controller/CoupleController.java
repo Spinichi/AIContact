@@ -1,8 +1,15 @@
 package com.aicontact.backend.couple.controller;
 
 import com.aicontact.backend.auth.dto.CustomUserDetails;
-import com.aicontact.backend.couple.dto.*;
+import com.aicontact.backend.couple.dto.request.CoupleMatchingRequest;
+import com.aicontact.backend.couple.dto.request.CoupleUpdateRequest;
+import com.aicontact.backend.couple.dto.request.VerificationCodeRequest;
+import com.aicontact.backend.couple.dto.response.CoupleInfoResponse;
+import com.aicontact.backend.couple.dto.response.CoupleResponse;
+import com.aicontact.backend.couple.dto.response.PartnerResponse;
+import com.aicontact.backend.couple.dto.response.VerificationCodeResponse;
 import com.aicontact.backend.couple.service.CoupleService;
+import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +25,7 @@ public class CoupleController {
     private final CoupleService coupleService;
 
     @PostMapping("/join")
-    public ResponseEntity<CoupleResponse> join(
+    public ResponseEntity<ApiResponse<CoupleResponse>> join(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody VerificationCodeRequest req) {
 
@@ -26,58 +33,76 @@ public class CoupleController {
         Long myId = userService.getUserByEmail(myEmail).getId();
 
         CoupleResponse resp = coupleService.joinByCode(myId, req.getVerificationCode());
+
         if (!resp.isMatched()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(resp);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse<>(false, resp));
         }
-        return ResponseEntity.ok(resp);
+        ApiResponse<CoupleResponse> response = ApiResponse.success(resp);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/matching")
-    public ResponseEntity<CoupleInfoResponse> matchCouple(
+    public ResponseEntity<ApiResponse<CoupleInfoResponse>> matchCouple(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody CoupleMatchingRequest req) {
 
         String email = userDetails.getUserEntity().getEmail();
         Long userId = userService.getUserByEmail(email).getId();
         CoupleInfoResponse resp = coupleService.createCouple(userId, req);
-        return ResponseEntity.status(HttpStatus.CREATED).body(resp);
+        ApiResponse<CoupleInfoResponse> response = ApiResponse.success(resp);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("")
-    public ResponseEntity<CoupleInfoResponse> getCouple(
+    public ResponseEntity<ApiResponse<CoupleInfoResponse>> getCouple(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         String email = userDetails.getUserEntity().getEmail();
         Long userId = userService.getUserByEmail(email).getId();
         CoupleInfoResponse resp = coupleService.getCoupleInfo(userId);
-        return ResponseEntity.ok(resp);
+        ApiResponse<CoupleInfoResponse> response = ApiResponse.success(resp);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("")
-    public ResponseEntity<Void> deleteCouple(
+    public ResponseEntity<ApiResponse<String>> deleteCouple(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         String email = userDetails.getUserEntity().getEmail();
-        Long userId  = userService.getUserByEmail(email).getId();
+        Long userId = userService.getUserByEmail(email).getId();
         coupleService.deleteCouple(userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("커플 정보 삭제 완료"));
     }
 
     @PatchMapping("")
-    public ResponseEntity<CoupleInfoResponse> patchCouple(
+    public ResponseEntity<ApiResponse<CoupleInfoResponse>> patchCouple(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody CoupleUpdateRequest req) {
 
         Long userId = userService.getUserByEmail(userDetails.getUsername()).getId();
         CoupleInfoResponse resp = coupleService.updateCoupleInfo(userId, req);
-        return ResponseEntity.ok(resp);
+        ApiResponse<CoupleInfoResponse> response = ApiResponse.success(resp);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/myCode")
-    public ResponseEntity<VerificationCodeResponse> getMyCode(
+    public ResponseEntity<ApiResponse<VerificationCodeResponse>> getMyCode(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        String email  = userDetails.getUserEntity().getEmail();
-        Long   userId = userService.getUserByEmail(email).getId();
+        String email = userDetails.getUserEntity().getEmail();
+        Long userId = userService.getUserByEmail(email).getId();
 
         VerificationCodeResponse resp = coupleService.getMyCode(userId);
-        return ResponseEntity.ok(resp);
+        ApiResponse<VerificationCodeResponse> response = ApiResponse.success(resp);
+        return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/partner")
+    public ResponseEntity<ApiResponse<PartnerResponse>> getPartnerInfo(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        String email = userDetails.getUserEntity().getEmail();
+        Long userId = userService.getUserByEmail(email).getId();
+
+        PartnerResponse partnerInfo = coupleService.getPartnerInfo(userId);
+        return ResponseEntity.ok(ApiResponse.success(partnerInfo));
+    }
+
 }

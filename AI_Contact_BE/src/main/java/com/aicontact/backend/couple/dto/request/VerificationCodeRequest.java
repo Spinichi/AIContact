@@ -1,14 +1,12 @@
-package com.aicontact.backend.couple.dto;
+package com.aicontact.backend.couple.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class VerificationCodeResponse {
+public class VerificationCodeRequest {
     private String verificationCode;
 }
