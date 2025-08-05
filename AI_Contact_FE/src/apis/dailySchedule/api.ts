@@ -12,19 +12,19 @@ export const dailySchedulesApi = {
     /* 일정 등록 */
     createSchedule: (payload: DailyScheduleRequest) =>
         apiFetch<ApiResponse<DailyScheduleResponse>>("/schedules", {
-          method: "POST",
-          body: JSON.stringify(payload),
+            method: "POST",
+            body: JSON.stringify(payload),
     }),
 
     updateSchedule: (scheduleId : number, payload: DailyScheduleUpdate) =>
         apiFetch<ApiResponse<DailyScheduleResponse>>(`/schedules/${scheduleId}`, {
-          method: "PUT",
-          body: JSON.stringify(payload),
+            method: "PUT",
+            body: JSON.stringify(payload),
     }),
 
     deleteSchedule: (scheduleId : number) => 
         apiFetch<ApiResponse<string>>(`/schedules/${scheduleId}`, {
-          method: "DELETE",
+            method: "DELETE",
     }),
 
     getSchedulesByDate: (date : string) => {
@@ -32,19 +32,19 @@ export const dailySchedulesApi = {
             date : date,
             coupleId : coupleId.toString(),
         });
-        apiFetch<ApiResponse<DailyScheduleResponse[]>>(`/schedules/${queryParams.toString()}`, {
-            method : "GET",
-            body: JSON.stringify(queryParams.toString()),
-    })},
+        return apiFetch<ApiResponse<DailyScheduleResponse[]>>(`/schedules/day?${queryParams.toString()}`, {
+            method: "GET",
+        });
+    },
 
     getSchedulesByMonth: (year: number, month: number) => {
         const queryParams = new URLSearchParams({
-            coupleId : coupleId.toString(),
+            coupleId: coupleId.toString(),
             year: year.toString(),
             month: month.toString(),
         });
-        apiFetch<ApiResponse<DailyScheduleResponse[]>>(`/schedules/${queryParams.toString()}`, {
-            method : "GET",
-            body: JSON.stringify(queryParams.toString()),
-    })}
+        return apiFetch<ApiResponse<DailyScheduleResponse[]>>(`/schedules/month?${queryParams.toString()}`, {
+            method: "GET",
+        });
+    }
 }

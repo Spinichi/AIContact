@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 import "../styles/MainPages.css";
@@ -14,9 +14,9 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid'; // 'timeGridWeek' 뷰를 위해 필요합니다.
 import interactionPlugin, {type DateClickArg} from '@fullcalendar/interaction';
 import koLocale from '@fullcalendar/core/locales/ko';
-import { type DayCellContentArg } from '@fullcalendar/core/index.js';
-
-
+import { type DayCellContentArg, type EventInput } from '@fullcalendar/core/index.js';
+import { dailySchedulesApi } from '../apis/dailySchedule';
+import type { DailyScheduleResponse } from '../apis/dailySchedule/response';
 
 export default function CalendarPage() {
 
@@ -24,6 +24,25 @@ export default function CalendarPage() {
 
   const [modalStatus, setModalStatus] = useState<ModalType>('off');
   const [clickedDateInfo, setClickedDateInfo] = useState<DateClickArg | null>(null);
+  const [events, setEvents] = useState<EventInput[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await dailySchedulesApi.getSchedulesByMonth(2025, 8);
+        const eventsData = response.data;
+        const processedData = eventsData.map((element) => ({
+          title : element.title,
+          start : element.scheduleDate
+        }));
+        setEvents(processedData);
+      } catch (e) { /* empty */ }
+    };
+
+    // 정의한 async 함수를 호출합니다.
+    fetchData();
+
+    }, []);
 
   function openCalendarDetail(dateInfo : DateClickArg) {
     console.log(dateInfo);
@@ -31,18 +50,6 @@ export default function CalendarPage() {
     setClickedDateInfo(dateInfo);
     setModalStatus('detail');
   }
-
-const events = [
-    { title: '포비 산책', start: "2025-07-18 13:00"},
-    { title: '포비 밥주기', start: "2025-07-18 14:00"},
-    { title: '포비 놀기', start: "2025-07-18 17:30"},
-    { title: '포비 포비 포비', start: "2025-07-18 19:00"},
-    { title: '포비 산책', start: "2025-07-18 21:50"},
-    { title: '포비 굿즈 구매', start: "2025-07-23 15:00"},
-    { title: '레스토랑 예약하기', start: "2025-07-24 15:00"},
-    { title: '엄마 생신', start: "2025-07-28 15:00"},
-    { title: '100일 💕', start: "2025-07-29 15:00"},
-  ];
 
   const handleDayCellContent = (e : DayCellContentArg) => {
     const dayNumber = e.dayNumberText.replace("일", "");
