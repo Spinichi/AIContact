@@ -1,5 +1,6 @@
 import "../../styles/AuthFormPanel.css";
 
+import { useNavigate } from "react-router-dom";
 import arrowLeft from "../../assets/icons/ArrowLeft.svg";
 import FormTitle from "./FormTitle";
 import LoginForm from "./LoginForm";
@@ -24,13 +25,13 @@ export default function AuthForm({
     <div className={`auth-form-panel ${position} ${isVisible ? "" : "hidden"}`}>
       {isSignUp ? (
         <>
-          <LeftArrow onBack={onFormChange} />
+          <LeftArrow onBack={onFormChange} isSignUp={isSignUp} />
           <FormTitle />
           <SignUpForm onToggle={onFormChange} onSignUpSubmit={onSignUpSubmit} />
         </>
       ) : (
         <>
-          <LeftArrow onBack={onFormChange} />
+          <LeftArrow onBack={onFormChange} isSignUp={isSignUp} />
           <FormTitle />
           <LoginForm onToggle={onFormChange} />
         </>
@@ -41,11 +42,22 @@ export default function AuthForm({
 
 interface LeftArrowProps {
   onBack: () => void;
+  isSignUp: boolean;
 }
 
-function LeftArrow({ onBack }: LeftArrowProps) {
+function LeftArrow({ onBack, isSignUp }: LeftArrowProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (isSignUp) {
+      onBack();
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
-    <div className="arrow-left" onClick={onBack}>
+    <div className="arrow-left" onClick={handleClick}>
       <img src={arrowLeft} />
     </div>
   );
