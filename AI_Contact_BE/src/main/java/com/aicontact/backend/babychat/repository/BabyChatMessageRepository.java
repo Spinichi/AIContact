@@ -9,4 +9,7 @@ public interface BabyChatMessageRepository extends JpaRepository<BabyChatMessage
     List<BabyChatMessage> findTop20ByUserIdAndConversationSessionIdOrderByCreatedAtAsc(
             Long userId, String conversationSessionId
     );
+
+    List<BabyChatMessage> findByUserIdOrderByCreatedAtAsc(Long userId);
+
 }

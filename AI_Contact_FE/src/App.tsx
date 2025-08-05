@@ -9,8 +9,9 @@ import GalleryPage from "./pages/GalleryPage";
 import MainPage from "./pages/MainPage";
 import MyPage from "./pages/MyPage";
 import TalkPage from "./pages/TalkRoomPage";
-import WebRtcPage from "./webrtc/WebRtcPage";
 import CartoonResultPage from "./pages/CartoonResultPage";
+import WebRtcPage from "./pages/WebRtcPage";
+
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/dictionary" element={<DictionaryPage />} />
           <Route path="/mypage" element={<MyPage />} />
+
       </Routes>
     </Router>
   );

@@ -92,7 +92,7 @@ public class GmsChatService {
     private List<Map<String,String>> buildMessages(List<BabyChatMessage> history,
                                                    String userMsg) {
         List<Map<String,String>> msgs = new ArrayList<>();
-        // 시스템 프롬프트 (역할·톤·스타일)
+
         msgs.add(Map.of(
                 "role",    "system",
                 "content",
@@ -109,7 +109,7 @@ public class GmsChatService {
                         "다시 한 번 얘기하지만 너는 어린아이이고 어르신 같은 감탄사는 절대 쓰지 않았으면 좋겠어"
 
         ));
-        // 히스토리 메시지 변환
+
         for (BabyChatMessage cm : history) {
             String role = cm.getAiMessageType() == AiMessageType.USER ? "user" : "assistant";
             msgs.add(Map.of(
@@ -117,7 +117,7 @@ public class GmsChatService {
                     "content", cm.getContent()
             ));
         }
-        // 최신 사용자 메시지
+
         msgs.add(Map.of("role","user","content",userMsg));
         return msgs;
     }

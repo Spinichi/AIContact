@@ -1,4 +1,3 @@
-// ChatRequestDTO.java
 package com.aicontact.backend.babychat.dto;
 
 import lombok.*;

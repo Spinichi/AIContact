@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/baby")
 public class BabyChatRestController {
@@ -66,4 +67,23 @@ public class BabyChatRestController {
                 .build();
         return ResponseEntity.ok(res);
     }
-}
+
+
+
+
+        @GetMapping("/chat")
+        public ResponseEntity<List<ChatResponseDTO>> getChatHistoryByUser(
+                @RequestParam Long userId
+        ) {
+            List<BabyChatMessage> messages = repo
+                    .findByUserIdOrderByCreatedAtAsc(userId);
+
+            List<ChatResponseDTO> response = messages.stream()
+                    .map(ChatResponseDTO::fromEntity)
+                    .toList();
+
+            return ResponseEntity.ok(response);
+        }
+    }
+
+
