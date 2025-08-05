@@ -97,7 +97,29 @@ const MyPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="danger-btn-wrapper">
-                    <button className="danger-btn">회원 탈퇴</button>
+                    <button
+                      className="danger-btn"
+                      onClick={async () => {
+                        const confirmed = window.confirm(
+                          "회원 탈퇴를 하면 커플 연결 해제 및 모든 데이터가 삭제됩니다.\n정말 탈퇴하시겠습니까?"
+                        );
+                        if (!confirmed) return;
+
+                        try {
+                          await CouplesApi.deleteCouple();
+                          await UsersApi.deleteMe();
+                          alert(
+                            "커플 연결 해제 및 회원 탈퇴가 완료되었습니다."
+                          );
+                          navigate("/auth");
+                        } catch (e) {
+                          console.error(e);
+                          alert("회원 탈퇴 중 오류가 발생했습니다.");
+                        }
+                      }}
+                    >
+                      회원 탈퇴
+                    </button>
                   </div>
                 </div>
               </div>
