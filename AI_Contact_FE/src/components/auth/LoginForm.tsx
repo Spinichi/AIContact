@@ -33,6 +33,8 @@ export default function LoginForm({ onToggle }: LoginFormProps) {
       });
 
       const me = meRes.data;
+      console.log(meRes);
+      console.log(me);
       if (me.coupleStatus === "COUPLED") {
         navigate("/ai", { replace: true });
       } else {
