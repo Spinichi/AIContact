@@ -1,7 +1,7 @@
-import React from 'react';
-import '../styles/Sidebar.css';
-import Logo from './Logo.tsx';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import "../styles/Sidebar.css";
+import Logo from "./Logo.tsx";
+import { useNavigate } from "react-router-dom";
 
 // 컴포넌트 만들기
 export default function Sidebar() {
@@ -17,57 +17,62 @@ export default function Sidebar() {
         <nav>
           <ul>
             {/* 현재 경로가 "/"일 때 active */}
-            <li className={
-              location.pathname === '/' ||
-                location.pathname.startsWith('/talk') ||  // 이야기하기
-                location.pathname.startsWith('/cartoon') // 네컷만화
-                ? 'active'
-                : ''
-            }
-            onClick={() => navigate('/')}
-          >
-            아이
-          </li>
+            <li
+              className={
+                location.pathname === "/" ||
+                location.pathname.startsWith("/talk") || // 이야기하기
+                location.pathname.startsWith("/cartoon") // 네컷만화
+                  ? "active"
+                  : ""
+              }
+              onClick={() => navigate("/ai")}
+            >
+              아이
+            </li>
 
-          <li
-            className={location.pathname === '/gallery' ? 'active' : ''}
-            onClick={() => navigate('/gallery')}
-          >
-            갤러리
-          </li>
+            <li
+              className={location.pathname === "/gallery" ? "active" : ""}
+              onClick={() => navigate("/gallery")}
+            >
+              갤러리
+            </li>
 
-          <li
-            className={location.pathname === '/calendar' ? 'active' : ''}
-            onClick={() => navigate('/calendar')}
-          >
-            캘린더
-          </li>
+            <li
+              className={location.pathname === "/calendar" ? "active" : ""}
+              onClick={() => navigate("/calendar")}
+            >
+              캘린더
+            </li>
 
-          <li
-            className={location.pathname === '/dictionary' ? 'active' : ''}
-            onClick={() => navigate('/dictionary')}
-          >
-            애칭 백과사전
-          </li>
+            <li
+              className={location.pathname === "/dictionary" ? "active" : ""}
+              onClick={() => navigate("/dictionary")}
+            >
+              애칭 백과사전
+            </li>
 
-          <li
-            className={location.pathname === '/mypage' ? 'active' : ''}
-            onClick={() => navigate('/mypage')}
-          >
-            마이페이지
-          </li>
-        </ul>
-      </nav>
-    </div>
+            <li
+              className={location.pathname === "/mypage" ? "active" : ""}
+              onClick={() => navigate("/mypage")}
+            >
+              마이페이지
+            </li>
+          </ul>
+        </nav>
+      </div>
 
-      {/* 하단 영역: 닫기 버튼과 로그아웃 버튼 */ }
-  <div className="sidebar-bottom">
-    <button>❌</button>
-    <button onClick={() => {
-      localStorage.removeItem('accessToken');
-      navigate('/auth');
-    }}>로그아웃</button>
-  </div>
-    </aside >
+      {/* 하단 영역: 닫기 버튼과 로그아웃 버튼 */}
+      <div className="sidebar-bottom">
+        <button>❌</button>
+        <button
+          onClick={() => {
+            localStorage.removeItem("accessToken");
+            navigate("/auth");
+          }}
+        >
+          로그아웃
+        </button>
+      </div>
+    </aside>
   );
 }
