@@ -121,9 +121,14 @@ public class CoupleService {
         // 3) 커플 레코드 삭제
         coupleRepository.delete(couple);
 
-        // 4) 유저 상태를 SINGLE 로 변경
+        // 4) 유저 상태를 SINGLE로 변경
         u1.setCoupleStatus(CoupleStatus.SINGLE);
         u2.setCoupleStatus(CoupleStatus.SINGLE);
+
+        // 5) 유저 커플 ID를 null로 변경
+        u1.setCoupleId(null);
+        u2.setCoupleId(null);
+
         userRepository.saveAll(List.of(u1, u2));
     }
 
