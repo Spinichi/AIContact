@@ -4,14 +4,16 @@ import "../styles/MainPages.css";
 import "../styles/MyPage.css";
 import "../styles/UserInfo.css";
 
-import { UsersApi } from "../apis/user";
+import { useNavigate } from "react-router-dom";
 import { CouplesApi } from "../apis/couple";
-import type { MeUserResponse } from "../apis/user/response";
 import type { PartnerInfoResponse } from "../apis/couple/response";
+import { UsersApi } from "../apis/user";
+import type { MeUserResponse } from "../apis/user/response";
 
 const MyPage: React.FC = () => {
   const [me, setMe] = useState<MeUserResponse | null>(null);
   const [partner, setPartner] = useState<PartnerInfoResponse | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -137,7 +139,26 @@ const MyPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="danger-btn-wrapper">
-                    <button className="danger-btn">커플 연결 해제</button>
+                    <button
+                      className="danger-btn"
+                      onClick={async () => {
+                        const confirmed = window.confirm(
+                          "커플 연결을 해제하면 모든 데이터가 삭제됩니다.\n정말 해제하시겠습니까?"
+                        );
+                        if (!confirmed) return;
+
+                        try {
+                          await CouplesApi.deleteCouple();
+                          alert("커플 연결이 해제되었습니다.");
+                          navigate("/connection");
+                        } catch (e) {
+                          console.error(e);
+                          alert("연결 해제 중 오류가 발생했습니다.");
+                        }
+                      }}
+                    >
+                      커플 연결 해제
+                    </button>
                   </div>
                 </div>
               </div>

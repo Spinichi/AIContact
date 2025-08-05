@@ -32,4 +32,10 @@ export const CouplesApi = {
   /** 연인 정보 가져오기 */
   getPartnerInfo: () =>
     apiFetch<ApiResponse<PartnerInfoResponse>>("/couples/partner"),
+
+  /** 커플 연결 해제 */
+  deleteCouple: () =>
+    apiFetch<ApiResponse<string>>("/couples", {
+      method: "DELETE",
+    }),
 };
