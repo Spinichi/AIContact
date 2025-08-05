@@ -1,0 +1,21 @@
+.top-button{
+    position : fixed;
+    bottom : 50px;
+    right : 50px;
+    cursor: pointer;
+    z-index : 1000;
+}
+
+.fixed-navbar{
+    position : fixed;
+    display : flex;
+    flex-direction: row;
+    top : 50px;
+    right : 50px;
+    gap : 10px;
+    z-index: 1000;
+}
+
+.fixed-navbar > img{
+    cursor: pointer;
+}

@@ -11,6 +11,7 @@ import MyPage from "./pages/MyPage";
 import TalkPage from "./pages/TalkRoomPage";
 import CartoonResultPage from "./pages/CartoonResultPage";
 import WebRtcPage from "./pages/WebRtcPage";
+import OnBoardingPage from "./pages/OnBoardingPage";
 
 function App() {
   return (

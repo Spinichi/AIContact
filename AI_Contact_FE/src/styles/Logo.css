@@ -8,6 +8,7 @@
   font-weight: bold;    /* 텍스트 굵게 세미 볼드 없나..? */
   margin-bottom: 30px;  /* 아래 메뉴와 간격 */
   text-align: left;
+  z-index : 1000;
 }
 
 .logo-image {
