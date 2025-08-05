@@ -1,26 +1,23 @@
-/* 사이드바 타이틀 영역 로고 + 텍스트임 */
-.logo-frame {   
-  font-family: sans-serif;  
-  display: flex;        /* 텍스트와 로고를 가로로 배치 */
-  align-items: center;  /* 세로 중앙 정렬 */
-  gap: 12px;            /* 로고와 텍스트 사이 간격 */
-  font-size: 20px;      /* 텍스트 크기 */
-  font-weight: bold;    /* 텍스트 굵게 세미 볼드 없나..? */
-  margin-bottom: 30px;  /* 아래 메뉴와 간격 */
+.logo-frame {
+  font-family: sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 30px;
   text-align: left;
-  z-index : 1000;
+  z-index: 1000;
 }
 
 .logo-image {
-    width: 36px;    /* 가로 크기 */
-    height: 36px;   /* 세로 크기 */
-    object-fit: contain;    /* 원본 비율 유지하면서 크기에 맞춤 */
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
-/* --- 추가된 부분 --- */
-/* 고정 위치를 위한 클래스 */
 .logo-fixed {
-  position: fixed; /* 뷰포트(브라우저 창) 기준으로 위치 고정 */
-  top: 30px;       /* 상단에서 30px */
-  left: 20px;      /* 왼쪽에서 20px */
+  position: fixed;
+  top: 30px;
+  left: 80px;
 }

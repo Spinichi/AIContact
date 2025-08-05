@@ -1,133 +1,150 @@
 .onboaring-layout {
-  display : flex;
+  display: flex;
   flex-direction: column;
-  gap : 60px;
-  width: 100vw;
+  width: 100%;
   height: auto;
   background-color: var(--bg-primary);
   scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
 }
 
-.onboarding-title{
-  width : 40%;
-  height : 100vh;
-  display : flex;
+.onboarding-title,
+.onboarding-info,
+.onboarding-footer {
+  scroll-snap-align: start;
+}
+
+.onboarding-title {
+  width: 40%;
+  height: 100vh;
+  display: flex;
   flex-direction: column;
-  padding-left : 80px;
+  padding-left: 80px;
   justify-content: center;
 }
 
-.onboarding-title h2{
-  font-size : 2.5rem;
-  font-weight : 600;
-  background : linear-gradient(90deg, var(--primary), var(--secondary));
-  animation : title-gradient 6s infinite;
+.onboarding-title h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  animation: title-gradient 6s infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-size: 200% auto;
-  margin : 0px;
+  margin: 0px;
 }
 
-.onboarding-title p{
-  font-size : 1rem;
-  line-height : 1.5;
-  color : var(--text-light);
+.onboarding-title p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-light);
 }
 
-.onboarding-title .auth-btn{
-  display : flex;
-  gap : 20px;
+.onboarding-title .auth-btn {
+  display: flex;
+  gap: 20px;
   align-items: flex-start;
 }
 
-.onboarding-title > div > img{
-  cursor : pointer;
+.auth-btn img:first-of-type {
+  border-radius: 14px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.onboarding-image{
-  position : absolute;
-  right : 0;
-  bottom : 0;
-  width : 60%;
-  z-index : 1;
-}
-
-.onboarding-info{
-  display: flex;
-  width : 100vw;
-  height : 100vh;
-}
-
-.onboarding-info .lanyard{
-  width : 40%;
-  height : 100%;
-}
-
-.onboarding-info-text{
-  width : 60%;
-  height : 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.onboarding-footer{
-  display : flex;
-  flex-direction: column;
-  gap : 20px;
-  justify-content: center;
-  align-items: center;
-  margin-top : 60px;
-}
-
-.onboarding-footer .symbol{
-  width : 100px;
-  height : 100px;
-}
-
-.onboarding-footer .description{
-  font-size : 1rem;
-}
-
-.onboarding-footer .start-btn{
+.auth-btn .onboarding-title > div > img {
   cursor: pointer;
 }
 
-.onboarding-gallery{
-  display : grid;
-  gap : 20px;
-  grid-template-columns: 1fr 1fr;
-  width : 90%;
-  height : auto;
-  margin : 10px auto;
+.onboarding-image {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 60%;
+  z-index: 1;
 }
 
-.on-image{
-  display : flex;
+.onboarding-info {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  z-index: 2;
+  background: var(--bg-primary);
+}
+
+.onboarding-info .lanyard {
+  width: 40%;
+  height: 100%;
+}
+
+.onboarding-info-text {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.onboarding-gallery {
+  padding: 50px;
+  display: grid;
+  gap: 50px;
+  grid-template-columns: 1fr 1fr;
+  z-index: 2;
+  background: var(--bg-primary);
+}
+
+.on-image {
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius : 2%;
-  padding : 5px;
-  gap : 5px;
-  background-color : rgb(from var(--secondary) r g b / 0.1);
+  border-radius: 20px;
+  padding: 20px;
+  background-color: rgb(from var(--secondary) r g b / 0.1);
   transition: 0.3s ease;
 }
 
-.on-image:hover{
-  background-color : rgb(from var(--secondary) r g b / 0.3);
-  scale : 1.03;
+.on-image:hover {
+  background-color: rgb(from var(--secondary) r g b / 0.3);
+  scale: 1.03;
 }
 
-.on-image > img{
-  width : 90%;
-  margin : 10px;
+.on-image > img {
+  width: 100%;
+  border-radius: 20px;
 }
 
-.on-image > p{
-  font-weight : 900;
-  font-size : 1rem;
-  margin : 10px;
+.on-image > p {
+  font-weight: 900;
+  font-size: 1rem;
+  margin: 20px 0 0 0;
+}
+
+.onboarding-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+  z-index: 2;
+  background: var(--bg-primary);
+}
+
+.onboarding-footer .symbol {
+  width: 100px;
+  height: 100px;
+}
+
+.onboarding-footer .description {
+  font-size: 1rem;
+}
+
+.onboarding-footer .start-btn {
+  cursor: pointer;
 }
 
 @keyframes title-gradient {
