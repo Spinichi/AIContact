@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import "../styles/MainPages.css";
 import "../styles/DictionaryPage.css";
 import Modal from "../components/modal/Modal"
+import dictionarybook from '../assets/images/dictionary.png'
 
 const DictionaryPage: React.FC = () => {
   // ------------------- 상태 -------------------
@@ -72,7 +73,7 @@ const DictionaryPage: React.FC = () => {
           <button className="arrow left">〈</button>
           <div className="dictionary-book">
             {/* 왼쪽 페이지 */}
-            <div className="dictionary-page">
+            <div className="dictionary-page left">
               <h2>
                 빵떡이{" "}
                 <span
@@ -91,7 +92,7 @@ const DictionaryPage: React.FC = () => {
             </div>
 
             {/* 오른쪽 페이지 */}
-            <div className="dictionary-page">
+            <div className="dictionary-page right">
               <h2>
                 빵떡이{" "}
                 <span
@@ -104,10 +105,13 @@ const DictionaryPage: React.FC = () => {
                 </span>
               </h2>
               <p className="description">얼굴이 동글동글하고 통통해서</p>
+           
             </div>
+              <img src={dictionarybook} alt="" className="dictionary-bg" />
           </div>
           <button className="arrow right">〉</button>
         </div>
+
 
         {/* ------------------- 통합 모달 ------------------- */}
         {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} hasNext={false} hasPrev={false}> 

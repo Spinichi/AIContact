@@ -19,18 +19,17 @@ function App() {
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/auth" element={<AuthPage />} />
-        {/* <Route element={<ProtectedRoute />}> */}
-        <Route path="/connection" element={<CoupleConnectionPage />} />
-        <Route path="/ai" element={<MainPage />} />
-        <Route path="/talk" element={<TalkPage />} />
-        <Route path="/webrtc" element={<WebRtcPage />} />
-        <Route path="/cartoon" element={<CartoonPage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/dictionary" element={<DictionaryPage />} />
-        <Route path="/mypage" element={<MyPage />} />
-        <Route path="/main" element={<OnBoardingPage />} />
-        {/* </Route> */}
+          <Route path="/connection" element={<CoupleConnectionPage />} />
+          <Route path="/ai" element={<MainPage />} />
+          <Route path="/talk" element={<TalkPage />} />
+          <Route path="/webrtc" element={<WebRtcPage />} />
+          <Route path="/cartoon" element={<CartoonPage />} />
+          <Route path='/cartoon/cartoon-result' element={<CartoonResultPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/dictionary" element={<DictionaryPage />} />
+          <Route path="/mypage" element={<MyPage />} />
+
       </Routes>
     </Router>
   );
