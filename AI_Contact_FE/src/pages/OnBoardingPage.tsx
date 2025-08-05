@@ -21,8 +21,8 @@ export default function OnBoardingPage(){
                     <img src={StartBtn} alt="시작하기"/>
                     <img src={WhiteLoginBtn} alt="로그인"/>
                 </div>
+                <img src={TItleMockUp} alt="타이틀" className="onboarding-image"/>
             </div>
-            <img src={TItleMockUp} alt="타이틀" className="onboarding-image"/>
             <CurvedLoop 
                 marqueeText="   AI   ✦   CONTACT   ✦"
                 speed={2}

@@ -4,7 +4,7 @@ import ScrollFloat from "../animations/ScrollFloat/ScrollFloat";
 export default function OnBoardingInfo(){
     return <div className="onboarding-info">
             <div className="lanyard">
-                <Lanyard position={[0, 0, 10]} gravity={[0, -40, 0]} />
+                <Lanyard position={[0, 0, 10]} gravity={[0, -40, 0]} transparent={true} />
             </div>
             <div className="onboarding-info-text">
                 <ScrollFloat

@@ -1,8 +1,9 @@
 .onboaring-layout {
   display : flex;
   flex-direction: column;
+  gap : 60px;
   width: 100vw;
-  height: 1000vh;
+  height: auto;
   background-color: var(--bg-primary);
   scroll-snap-type: y mandatory;
 }
@@ -46,6 +47,7 @@
 .onboarding-image{
   position : absolute;
   right : 0;
+  bottom : 0;
   width : 60%;
   z-index : 1;
 }
@@ -87,6 +89,10 @@
   font-size : 1rem;
 }
 
+.onboarding-footer .start-btn{
+  cursor: pointer;
+}
+
 .onboarding-gallery{
   display : grid;
   gap : 20px;
@@ -104,7 +110,13 @@
   border-radius : 2%;
   padding : 5px;
   gap : 5px;
-  background-color : rgb(from var(--secondary) r g b / 0.1);;
+  background-color : rgb(from var(--secondary) r g b / 0.1);
+  transition: 0.3s ease;
+}
+
+.on-image:hover{
+  background-color : rgb(from var(--secondary) r g b / 0.3);
+  scale : 1.03;
 }
 
 .on-image > img{
