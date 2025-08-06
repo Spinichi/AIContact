@@ -9,15 +9,17 @@ import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { babychatapi } from '../apis/babychat';
 import { apiFetch } from '../apis/fetchClient';
-import type { BabychatRequest, BabychatResponse } from '../apis/babychat';
+import type { BabychatRequest, BabychatResponse, AiMessageType } from '../apis/babychat';
 import type { ApiResponse } from '../apis/types/common';
 import type { MeUserResponse } from '../apis/user/response';
 import { aiChildApi } from '../apis/aiChild';
+
 
 interface Message {
   text: string;
   sender: 'me' | 'ai';
   timestamp: string;
+  aiMessageType: AiMessageType;
 }
 
 export default function ChatRoom() {
@@ -36,25 +38,25 @@ export default function ChatRoom() {
     localStorage.setItem('conversationSessionId', id);
     return id;
   });
-  
+
   useEffect(() => {
     aiChildApi.getMyChildren()
       .then(res => {
         if (res.success && res.data) {
-      
+
           setAiChildrenId(res.data.id);
         }
       })
       .catch(console.error);
   }, []);
 
- 
+
   useEffect(() => {
     apiFetch<ApiResponse<MeUserResponse>>('/users/me')
       .then(res => {
         if (res.success && res.data) {
           setUserId(res.data.id);
-         
+
           setAiChildrenId((res.data as any).aiChildrenId ?? null);
         }
       })
@@ -71,6 +73,7 @@ export default function ChatRoom() {
             text: item.reply,
             sender: 'ai' as const,
             timestamp: item.timestamp,
+            aiMessageType: item.aiMessageType,
           }));
           setMessages(history);
         }
@@ -85,38 +88,44 @@ export default function ChatRoom() {
     }
   }, [messages]);
 
-
-  const handleSend = async () => {
-    if (!input.trim() || userId == null || aiChildrenId == null) return;
-
-    
-    const userMsg: Message = { text: input, sender: 'me', timestamp: new Date().toISOString() };
-    setMessages(prev => [...prev, userMsg]);
-
-   
-    try {
-      const payload: BabychatRequest = {
-        userId,
-        aiChildrenId,
-        conversationSessionId: sessionId,
-        message: input,
-      };
-      const res = await babychatapi.sendMessage(payload);
-      if (res.success && res.data) {
-        const aiMsg: Message = {
-          text: res.data.reply,
-          sender: 'ai',
-          timestamp: res.data.timestamp,
-        };
-        setMessages(prev => [...prev, aiMsg]);
-      }
-    } catch (err) {
-      console.error('GMS 호출 실패:', err);
-    }
+const handleSend = async () => {
+  if (!input.trim() || userId == null || aiChildrenId == null) return;
 
   
-    setInput('');
+  const userMsg: Message = {
+    text: input,
+    sender: 'me',
+    timestamp: new Date().toISOString(),
+    aiMessageType: 'USER',
   };
+  setMessages(prev => [...prev, userMsg]);
+
+  try {
+    const payload: BabychatRequest = {
+      userId,
+      aiChildrenId,
+      conversationSessionId: sessionId,
+      message: input,
+    };
+    const res = await babychatapi.sendMessage(payload);
+
+    if (res.success && res.data) {
+      
+      const aiMsg: Message = {
+        text: res.data.reply,
+        sender: 'ai',
+        timestamp: res.data.timestamp,
+        aiMessageType: res.data.aiMessageType,
+      };
+      setMessages(prev => [...prev, aiMsg]);
+    }
+  } catch (err) {
+    console.error('GMS 호출 실패:', err);
+  }
+
+  setInput('');
+};
+
 
   return (
     <div className='main-layout'>
@@ -136,13 +145,17 @@ export default function ChatRoom() {
         </div>
         <div className='chatroom-messages' ref={scrollRef}>
           {messages.map((msg, idx) => (
-            <div key={idx} className={`chat-line ${msg.sender}`}>
-              <div className={`chat-bubble ${msg.sender}`}> 
+            <div key={idx} className={`chat-line ${msg.aiMessageType}`}>
+              <div className={`chat-bubble ${msg.aiMessageType}`}>
                 {msg.text}
-                <span className='timestamp'>{new Date(msg.timestamp).toLocaleTimeString()}</span>
               </div>
+              <span className='timestamp'>
+                {new Date(msg.timestamp)
+     .toLocaleTimeString('ko-KR', { hour: 'numeric', minute: '2-digit' })}
+              </span>
             </div>
           ))}
+
         </div>
         <img src={babyImage} alt='AI 아이' className='AIbaby-image' />
         <div className='chatroom-input-box'>
