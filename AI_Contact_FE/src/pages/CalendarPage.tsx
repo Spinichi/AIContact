@@ -26,6 +26,7 @@ export default function CalendarPage() {
   const [events, setEvents] = useState<EventInput[]>([]);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth()+1);
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,7 +43,7 @@ export default function CalendarPage() {
 
     fetchData();
 
-    }, [year, month]);
+    }, [refetchTrigger]);
 
   function openCalendarDetail(dateInfo : DateClickArg) {
     console.log(dateInfo);
@@ -73,11 +74,19 @@ export default function CalendarPage() {
   function handleDailyScheduleSumbit(){
     alert("일정이 등록되었습니다.");
     setModalStatus('off');
+    setRefetchTrigger(prev => prev+1);
+  }
+
+  function handleDailyScheduleDelete(){
+    alert("일정이 삭제되었습니다.");
+    setModalStatus('off');
+    setRefetchTrigger(prev => prev+1);
   }
 
   const updateDate = (dateInfo : DatesSetArg) => {
     setYear(dateInfo.view.currentStart.getFullYear());
     setMonth(dateInfo.view.currentStart.getMonth()+1);
+    setRefetchTrigger(prev => prev+1);
   };
 
   function setModalContent(modalStatus : ModalType){
@@ -91,6 +100,7 @@ export default function CalendarPage() {
                 <CalendarDetail 
                   dateInfo={clickedDateInfo.date} 
                   onAdd={()=>setModalStatus('add')}
+                  onDelete={handleDailyScheduleDelete}
                 />}
               </Modal>;
         case 'add':

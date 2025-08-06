@@ -6,11 +6,12 @@ import { dailySchedulesApi } from "../../apis/dailySchedule/api";
 import type { DailyScheduleResponse } from "../../apis/dailySchedule/response";
 
 interface CalendarDetailProps{
-    dateInfo : Date;
-    onAdd : () => void;
+    dateInfo : Date
+    onAdd : () => void
+    onDelete : () => void
 }
 
-export default function CalendarDetail({dateInfo, onAdd}: CalendarDetailProps){
+export default function CalendarDetail({dateInfo, onAdd, onDelete}: CalendarDetailProps){
 
         const [calendarEvents, setCalendarEvents] = useState<DailyScheduleResponse[]>([]);
 
@@ -21,7 +22,10 @@ export default function CalendarDetail({dateInfo, onAdd}: CalendarDetailProps){
             const response = await dailySchedulesApi.getSchedulesByDate(date);
             const eventsData = response.data;
             setCalendarEvents(eventsData);
-          } catch (e) { /* empty */ }
+            } catch (e) { 
+                console.log(e);
+                alert("일정 조회 중 오류가 발생했습니다");
+            }
         };
     
         fetchData();
@@ -43,7 +47,14 @@ export default function CalendarDetail({dateInfo, onAdd}: CalendarDetailProps){
                 {
                     calendarEvents.map((obj) => {
                     return (
-                    <Schedule time={obj.scheduleDate} title={obj.title} content={obj.memo}/>
+                    <Schedule 
+                        key={`${obj.scheduleDate}+${obj.createdAt}`} 
+                        id={obj.id} 
+                        time={obj.scheduleDate} 
+                        title={obj.title} 
+                        content={obj.memo} 
+                        onDelete={onDelete}
+                    />
                     )
                 })}
             </div>
