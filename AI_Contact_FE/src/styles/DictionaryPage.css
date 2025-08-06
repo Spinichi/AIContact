@@ -57,6 +57,10 @@
   z-index: 1;
   padding: 10px 30px;
   top: 30px;
+  width: 45%;
+  max-height: calc(100% - 60px); /* 위 아래 패딩·타이틀 공간 고려 */
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .dictionary-page.left {
@@ -77,20 +81,23 @@
 }
 
 .dictionary-page h2 {
-  font-size: 20px;
   display: flex;
   justify-content: space-between;
-  justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
+  font-size: 20px;
+  margin: 0;
+  padding: 0;
+  /* justify-content: flex-start; */
   /* align-items: center; */
   position: relative;
-  padding-right: 50px;
+  /* padding-right: 50px; */
 }
 
 .wordedit-btn {
-  position: absolute;
-  top: 0;
-  right: -45%;
+  position: static;
+  margin-left: 8px;
+  /* top: 0; */
+  /* right: -45%; */
   font-size: 12px;
   color: #8A8C90;
   cursor: pointer;
@@ -98,7 +105,11 @@
 
 .description {
   margin: 10px 0;
-}
+  white-space: pre-wrap;   /* 줄바꿈(\n)을 그대로 살려줍니다 */
+  word-break: break-word;  /* 단어가 너무 길면 적당히 줄바꿈 */
+  hyphens: auto;              /* 영어 등 하이픈 단어는 적절히 자르기 */
+  overflow: visible;
+  }
 
 .example {
   margin-top: 10px;
@@ -135,8 +146,8 @@
 
 .upload-btn {
   position: absolute;
-  top: -40px;
-  right: 0;
+  top: 0;
+  right: 8%;
   display: flex;
   font-size: 24;
   gap: 5px;
@@ -154,6 +165,51 @@
   background: #7b4ce3;
 }
 
+/* 1. page-header에 Flex 레이아웃을 걸어서 제목과 버튼 그룹을 한 줄에 배치 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px; /* 필요에 따라 조정 */
+}
+
+/* 2. 버튼 그룹에 flex + gap을 줘서 버튼 간 간격 유지 */
+.btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+/* 3. worddelete-btn에도 wordedit-btn 스타일을 상속 */
+.worddelete-btn {
+  font-size: 12px;
+  color: #8A8C90;
+  cursor: pointer;
+}
+
+/* 4. hover 시 색상을 살짝 바꿔서 구분감 추가 */
+.wordedit-btn:hover,
+.worddelete-btn:hover {
+  color: #5a5c5f;
+}
+
+/* 5. flex-direction: center 오류 제거 (center는 flex-direction이 아니라 justify-content) */
+.dictionary-container {
+  display: flex;
+  flex-direction: row; /* 또는 필요 없다면 flex-direction 속성 삭제 */
+  align-items: center;
+  justify-content: center;
+}
+
+.dictionary-page .btn-group {
+  position: absolute;  /* .dictionary-page를 기준으로 */
+  top: 12px;           /* 카드 상단 패딩만큼 아래 */
+  right: 12px;         /* 카드 우측 패딩만큼 왼쪽 */
+  display: flex;
+  gap: 8px;
+}
+
+
+
 /* .modal-overlay {
   position: fixed;
   top: 0;
@@ -168,7 +224,7 @@
 
 } */
 
-/* .modal {
+.modal {
   background: white;
   padding: 20px;
   border-radius: 10px;
@@ -176,18 +232,17 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-} */
+} 
 
-
-/* .modal input,
+.modal input,
 .modal textarea {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
-} */
+} 
 
-/* .modal-buttons {
+.modal-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
@@ -203,4 +258,4 @@
 .modal-buttons button:last-child {
   background: #9c6bff;
   color: white;
-} */
+}
