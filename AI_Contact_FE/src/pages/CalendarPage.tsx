@@ -131,6 +131,7 @@ export default function CalendarPage() {
             dayMaxEventRows={true}
             dayMaxEvents = {2}
             dateClick={openCalendarDetail}
+            timeZone={'UTC'}
           />
         </div>
       </div>

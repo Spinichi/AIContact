@@ -16,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
@@ -69,8 +71,8 @@ public class DailyScheduleController {
         String myEmail = userDetails.getUserEntity().getEmail();
         Long coupleId = userService.getUserByEmail(myEmail).getCoupleId();
 
-        LocalDateTime startDate = date.toLocalDate().plusDays(1).atStartOfDay();
-        LocalDateTime endDate = date.toLocalDate().plusDays(1).atTime(LocalTime.MAX);
+        LocalDateTime startDate = date.toLocalDate().atStartOfDay();
+        LocalDateTime endDate = date.toLocalDate().atTime(LocalTime.of(23,59));
 
         List<DailyScheduleResponseDto> result = dailyScheduleService.getSchedulesByDate(coupleId, startDate, endDate).stream()
                 .map(DailyScheduleResponseDto::fromEntity)
