@@ -1,4 +1,4 @@
-package com.aicontact.backend.comic.service;
+package com.aicontact.backend.global.service;
 
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
@@ -24,29 +24,30 @@ public class GptScenarioService {
         OkHttpClient client = new OkHttpClient();
 
         String prompt = """
-        You are a comic scenario formatter.
+                You are a comic scenario formatter.
 
-        Your task is to take the user's input and return only a list of simple scene descriptions for a multi-panel comic strip.  
-        Each panel must represent a different, non-repetitive moment in the day, and should be arranged in chronological order from beginning to end.  
-        Each description should be 1 sentence, clearly describing what is happening in that panel — focused on visual elements that can be drawn, not narrative.
+                Your task is to take the user's input and return only a list of simple scene descriptions for a multi-panel comic strip.
+                Each panel must represent a different, non-repetitive moment in the day, and should be arranged in chronological order from beginning to end.
+                Each description should be 1 sentence, clearly describing what is happening in that panel — focused on visual elements that can be drawn, not narrative.
 
-        Format:
-        Panel 1: [scene description]  
-        Panel 2: [scene description]  
-        Panel 3: [scene description]  
-        Panel 4: [scene description]
+                Format:
+                Panel 1: [scene description]
+                Panel 2: [scene description]
+                Panel 3: [scene description]
+                Panel 4: [scene description]
 
-        Rules:
-        - Do not include any dialogue or text that would appear in the comic  
-        - Focus on visual actions, background setting, props, and emotion  
-        - Maintain character and location consistency across all panels  
-        - Use summer, winter, etc. visuals if season is mentioned  
-        - Output only the list of panels — no intro, no explanation, no closing
+                Rules:
+                - Do not include any dialogue or text that would appear in the comic
+                - Focus on visual actions, background setting, props, and emotion
+                - Maintain character and location consistency across all panels
+                - Use summer, winter, etc. visuals if season is mentioned
+                - Output only the list of panels — no intro, no explanation, no closing
 
-        Location: %s
-        Main activity: %s
-        Weather/Season: %s
-        """.formatted(location, activity, weather);
+                Location: %s
+                Main activity: %s
+                Weather/Season: %s
+                """
+                .formatted(location, activity, weather);
 
         JSONObject json = new JSONObject()
                 .put("model", "gpt-4o")
@@ -73,8 +74,7 @@ public class GptScenarioService {
 
     public String getAppearanceAttributes(
             String photoAUrl,
-            String photoBUrl
-    ) throws IOException {
+            String photoBUrl) throws IOException {
         // 1) OkHttpClient 재사용 가능하다면 빈으로 분리해도 좋습니다.
         OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(60, TimeUnit.SECONDS)
@@ -130,12 +130,11 @@ public class GptScenarioService {
             // 최종 JSON 파싱 후 message.content만 꺼내서 리턴
             JSONObject resJson = new JSONObject(response.body().string());
             return resJson
-                    .getJSONArray("choices")            // choices 배열
-                    .getJSONObject(0)                   // 첫 번째 요소
-                    .getJSONObject("message")           // message 객체
-                    .getString("content");              // content 필드
+                    .getJSONArray("choices") // choices 배열
+                    .getJSONObject(0) // 첫 번째 요소
+                    .getJSONObject("message") // message 객체
+                    .getString("content"); // content 필드
         }
     }
 
 }
-

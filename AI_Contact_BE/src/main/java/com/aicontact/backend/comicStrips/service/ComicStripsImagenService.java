@@ -22,7 +22,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 @Service
-public class ImagenService {
+public class ComicStripsImagenService {
 
     @Value("${GMS_KEY}")
     private String OPENAI_API_KEY;
@@ -39,37 +39,38 @@ public class ImagenService {
                 .build();
 
         String prompt = """
-        You are a comic scenario formatter.
+                You are a visual comic scene formatter.
 
-        Your task is to take the user's input and return only a list of simple scene descriptions for a multi-panel comic strip.  
-        Each panel must represent a different, non-repetitive moment in the day, and should be arranged in chronological order from beginning to end.  
-        Each description should be 1 sentence, clearly describing what is happening in that panel — focused on visual elements that can be drawn, not narrative.
+                Your job is to return a list of 4 visual scene descriptions for a comic strip,
+                based on the given context. Each scene must show a unique moment of the day
+                (from morning to night) in 1 sentence, focusing on actions and visuals only.
 
-        Format:
-        Panel 1: [scene description]  
-        Panel 2: [scene description]  
-        Panel 3: [scene description]  
-        Panel 4: [scene description]
+                Avoid emotions, romantic references, or private settings.
 
-        Rules:
-        - Do not include any dialogue or text that would appear in the comic  
-        - Focus on visual actions, background setting, props, and emotion  
-        - Maintain character and location consistency across all panels  
-        - Use summer, winter, etc. visuals if season is mentioned  
-        - Output only the list of panels — no intro, no explanation, no closing
+                Format:
+                Panel 1: [scene description]
+                Panel 2: [scene description]
+                Panel 3: [scene description]
+                Panel 4: [scene description]
 
-        Location: %s
-        Main activity: %s
-        Weather/Season: %s
-        """.formatted(location, activity, weather);
+                Rules:
+                - Do not include any dialogue or text that would appear in the comic
+                - Focus on visual actions, background setting, props, and emotion
+                - Maintain character and location consistency across all panels
+                - Use summer, winter, etc. visuals if season is mentioned
+                - Output only the list of panels — no intro, no explanation, no closing
+
+                Location: %s
+                Main activity: %s
+                Weather/Season: %s
+                """
+                .formatted(location, activity, weather);
 
         JSONObject payload = new JSONObject()
                 .put("instances", new JSONArray()
-                        .put(new JSONObject().put("prompt", prompt))
-                )
+                        .put(new JSONObject().put("prompt", prompt)))
                 .put("parameters", new JSONObject()
-                        .put("sampleCount", 1)
-                );
+                        .put("sampleCount", 1));
 
         Request request = new Request.Builder()
                 .url(ENDPOINT + OPENAI_API_KEY.substring(7))
@@ -103,11 +104,12 @@ public class ImagenService {
     // 디코딩된 바이트와 mimeType을 S3에 업로드하고 DB에 저장
     @Transactional
     public String uploadComicStripsImageToS3(
-            String attributes,
-            Long coupleId
-    ) throws IOException {
+            String location,
+            String activity,
+            String weather,
+            Long coupleId) throws IOException {
         // 이미지 생성 + 디코딩
-        ComicStripsImage comicStrips = generateImage(attributes);
+        ComicStripsImage comicStrips = generateImage(location, activity, weather);
         byte[] imageBytes = comicStrips.getData();
         String contentType = comicStrips.getMimeType();
 
@@ -115,17 +117,32 @@ public class ImagenService {
         String extension = switch (contentType) {
             case "image/jpeg" -> "jpg";
             case "image/webp" -> "webp";
-            case "image/png"  -> "png";
-            default            -> "bin";
+            case "image/png" -> "png";
+            default -> "bin";
         };
 
         // S3 키, 업로드
         String uuid = UUID.randomUUID().toString();
-        String key  = String.format("media/couple/%d/%s.%s",
+        String key = String.format("media/couple/%d/%s.%s",
                 coupleId, uuid, extension);
 
         return s3StorageService.upload(imageBytes, key, contentType);
     }
 
-}
+    @Transactional
+    public void deleteFromS3(String key) {
+        s3StorageService.delete(key);
+    }
 
+    // S3 URL로부터 키 추출하는 메서드
+    public String extractKeyFromUrl(String url) {
+        // 예: https://your-bucket.s3.amazonaws.com/media/couple/3/abcd-1234.jpg
+        // → media/couple/3/abcd-1234.jpg
+        int idx = url.indexOf("media/");
+        if (idx == -1) {
+            throw new IllegalArgumentException("S3 키를 추출할 수 없습니다: " + url);
+        }
+        return url.substring(idx);
+    }
+
+}

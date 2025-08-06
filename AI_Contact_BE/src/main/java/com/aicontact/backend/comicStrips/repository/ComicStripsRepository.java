@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.aicontact.backend.comicStrips.entity.ComicStripsEntity;
-import com.aicontact.backend.comic.entity.ComicEntity;
 
 public interface ComicStripsRepository extends JpaRepository<ComicStripsEntity, Long> {
 
-    List<ComicEntity> findAllByCoupleIdOrderByCreatedAtDesc(Long coupleId);
+    List<ComicStripsEntity> findAllByCoupleIdOrderByCreatedAtDesc(Long coupleId);
+
+    // 리스트 조회
+    List<ComicStripsEntity> findAllByCouple_IdOrderByCreatedAtDesc(Long coupleId);
 
 }

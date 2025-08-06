@@ -2,6 +2,7 @@ package com.aicontact.backend.comicStrips.dto.response;
 
 import com.aicontact.backend.comicStrips.entity.ComicStripsEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,12 +10,11 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class ComicStripsResponse {
-    private Long   id;
+    private Long id;
     private String imageUrl;
-    private String title;
+
     public ComicStripsResponse(ComicStripsEntity e) {
-        this.id               = e.getId();
-        this.imageUrl         = e.getImageUrl();
-        this.title            = e.getTitle();
+        this.id = e.getId();
+        this.imageUrl = e.getImageUrl();
     }
 }
