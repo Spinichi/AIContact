@@ -5,9 +5,9 @@
   gap: 12px;
   font-size: 20px;
   font-weight: bold;
-  margin-bottom: 30px;
   text-align: left;
   z-index: 1000;
+  margin: 0 16px;
 }
 
 .logo-image {
@@ -18,6 +18,7 @@
 
 .logo-fixed {
   position: fixed;
-  top: 30px;
+  top: 50px;
   left: 80px;
+  margin: 0;
 }
