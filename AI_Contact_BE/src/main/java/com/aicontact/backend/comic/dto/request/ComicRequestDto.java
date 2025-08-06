@@ -1,4 +1,4 @@
-package com.aicontact.backend.comic.dto;
+package com.aicontact.backend.comic.dto.request;
 
 import lombok.Data;
 
@@ -8,4 +8,3 @@ public class ComicRequestDto {
     private String activity;
     private String weather;
 }
-

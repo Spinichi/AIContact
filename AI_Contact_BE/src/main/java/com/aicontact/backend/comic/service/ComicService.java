@@ -1,6 +1,6 @@
 package com.aicontact.backend.comic.service;
 
-import com.aicontact.backend.comic.dto.ComicDto;
+import com.aicontact.backend.comic.dto.response.ComicResponseDto;
 import com.aicontact.backend.comic.repository.ComicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,10 +14,10 @@ public class ComicService {
 
     private final ComicRepository comicRepository;
 
-    public List<ComicDto> getComicsByCouple(Long coupleId) {
+    public List<ComicResponseDto> getComicsByCouple(Long coupleId) {
         return comicRepository.findAllByCoupleIdOrderByCreatedAtDesc(coupleId)
                 .stream()
-                .map(ComicDto::fromEntity)
+                .map(ComicResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 }

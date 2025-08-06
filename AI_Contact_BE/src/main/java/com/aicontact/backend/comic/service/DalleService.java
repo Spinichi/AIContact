@@ -1,6 +1,6 @@
 package com.aicontact.backend.comic.service;
 
-import com.aicontact.backend.comic.dto.ComicDto;
+import com.aicontact.backend.comic.dto.response.ComicResponseDto;
 import com.aicontact.backend.comic.entity.ComicEntity;
 import com.aicontact.backend.comic.repository.ComicRepository;
 import com.aicontact.backend.couple.entity.CoupleEntity;
@@ -70,7 +70,7 @@ public class DalleService {
     }
 
     @Transactional
-    public ComicDto uploadDalleImageToS3(String dalleImageUrl, Long coupleId, Long uploaderId)
+    public ComicResponseDto uploadDalleImageToS3(String dalleImageUrl, Long coupleId, Long uploaderId)
             throws IOException, JCodecException {
 
         // 1. 이미지 다운로드
@@ -115,7 +115,7 @@ public class DalleService {
 // DTO 반환 시 DTO도 새로 만들거나 entity.getId(), fileUrl 등 반환
 
 
-            return ComicDto.fromEntity(entity);
+            return ComicResponseDto.fromEntity(entity);
         }
     }
 

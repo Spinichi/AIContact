@@ -1,7 +1,7 @@
 package com.aicontact.backend.comic.controller;
 
-import com.aicontact.backend.comic.dto.ComicDto;
-import com.aicontact.backend.comic.dto.ComicRequestDto;
+import com.aicontact.backend.comic.dto.response.ComicResponseDto;
+import com.aicontact.backend.comic.dto.request.ComicRequestDto;
 import com.aicontact.backend.comic.service.ComicService;
 import com.aicontact.backend.comic.service.DallePromptBuilder;
 import com.aicontact.backend.comic.service.DalleService;
@@ -23,7 +23,6 @@ public class ComicController {
     private final DallePromptBuilder promptBuilder;
     private final DalleService dalleService;
     private final ComicService comicService;
-
 
     @PostMapping("/generate")
     public ResponseEntity<ApiResponse<String>> generateComic(@RequestBody ComicRequestDto request) {
@@ -53,8 +52,8 @@ public class ComicController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ComicDto>>> getComics(@RequestParam Long coupleId) {
-        List<ComicDto> result = comicService.getComicsByCouple(coupleId);
+    public ResponseEntity<ApiResponse<List<ComicResponseDto>>> getComics(@RequestParam Long coupleId) {
+        List<ComicResponseDto> result = comicService.getComicsByCouple(coupleId);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
