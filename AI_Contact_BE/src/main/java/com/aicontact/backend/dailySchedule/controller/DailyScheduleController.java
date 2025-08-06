@@ -90,8 +90,8 @@ public class DailyScheduleController {
         String myEmail = userDetails.getUserEntity().getEmail();
         Long coupleId = userService.getUserByEmail(myEmail).getCoupleId();
 
-        LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
-        LocalDate lastDayOfMonth = firstDayOfMonth.with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate firstDayOfMonth = LocalDate.of(year, month, 1).minusMonths(1);
+        LocalDate lastDayOfMonth = LocalDate.of(year, month, 1).plusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
 
         LocalDateTime start = firstDayOfMonth.atStartOfDay();
         LocalDateTime end = lastDayOfMonth.atTime(23, 59, 59);
