@@ -1,11 +1,7 @@
 import { apiFetch } from "../fetchClient";
 import type { ApiResponse } from "../types/common";
-import { UsersApi } from "../user";
-import type { DailyScheduleRequest, DailyScheduleUpdate } from "./request";
+import type { DailyScheduleRequest } from "./request";
 import type { DailyScheduleResponse } from "./response";
-
-const res = await UsersApi.getMe();
-const coupleId = res.data.coupleId as number;
 
 export const dailySchedulesApi = {
 
@@ -16,7 +12,7 @@ export const dailySchedulesApi = {
             body: JSON.stringify(payload),
     }),
 
-    updateSchedule: (scheduleId : number, payload: DailyScheduleUpdate) =>
+    updateSchedule: (scheduleId : number, payload: DailyScheduleRequest) =>
         apiFetch<ApiResponse<DailyScheduleResponse>>(`/schedules/${scheduleId}`, {
             method: "PUT",
             body: JSON.stringify(payload),
@@ -27,19 +23,17 @@ export const dailySchedulesApi = {
             method: "DELETE",
     }),
 
-    getSchedulesByDate: (date : string) => {
+    getSchedulesByDate: async (date : string) => {
         const queryParams = new URLSearchParams({
             date : date,
-            coupleId : coupleId.toString(),
         });
         return apiFetch<ApiResponse<DailyScheduleResponse[]>>(`/schedules/day?${queryParams.toString()}`, {
             method: "GET",
         });
     },
 
-    getSchedulesByMonth: (year: number, month: number) => {
+    getSchedulesByMonth: async (year: number, month: number) => {
         const queryParams = new URLSearchParams({
-            coupleId: coupleId.toString(),
             year: year.toString(),
             month: month.toString(),
         });

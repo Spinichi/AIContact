@@ -1,6 +1,9 @@
 import Schedule from "./Schedule";
 import plusBtn from "../../assets/icons/Plus.svg";
 import '../../styles/CalendarDetail.css';
+import { useEffect, useState } from "react";
+import { dailySchedulesApi } from "../../apis/dailySchedule/api";
+import type { DailyScheduleResponse } from "../../apis/dailySchedule/response";
 
 interface CalendarDetailProps{
     dateInfo : Date;
@@ -9,20 +12,23 @@ interface CalendarDetailProps{
 
 export default function CalendarDetail({dateInfo, onAdd}: CalendarDetailProps){
 
-    const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-    const calendarEvents = [
-        {title:"포비 산책", time : '13:00', memo:"산책산책산책", index:1},
-        {title:"포비 밥주기", time: "14:00", memo:"밥밥밥", index:2},
-        {title:"포비 놀기", time: "17:30", memo:"놀기놀기놀기", index:2},
-        {title:"포비 포비 포비", time: "19:00", memo:"포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비", index:2},
-        {title:"포비 산책", time: "21:50", memo:"산책산책산책", index:2},
-        {title:"포비 산책", time : '13:00', memo:"산책산책산책", index:1},
-        {title:"포비 밥주기", time: "14:00", memo:"밥밥밥", index:2},
-        {title:"포비 놀기", time: "17:30", memo:"놀기놀기놀기", index:2},
-        {title:"포비 포비 포비", time: "19:00", memo:"포비포비포비포비포비포비포비포비포비", index:2},
-        {title:"포비 산책", time: "21:50", memo:"산책산책산책", index:2},
+        const [calendarEvents, setCalendarEvents] = useState<DailyScheduleResponse[]>([]);
 
-    ]
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const date = String(dateInfo.toISOString());
+            const response = await dailySchedulesApi.getSchedulesByDate(date);
+            const eventsData = response.data;
+            setCalendarEvents(eventsData);
+          } catch (e) { /* empty */ }
+        };
+    
+        fetchData();
+    
+        }, [dateInfo]);
+
+    const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
     return(
         <div className="calendar-modal">
@@ -37,7 +43,7 @@ export default function CalendarDetail({dateInfo, onAdd}: CalendarDetailProps){
                 {
                     calendarEvents.map((obj) => {
                     return (
-                    <Schedule time={obj.time} title={obj.title} content={obj.memo}/>
+                    <Schedule time={obj.scheduleDate} title={obj.title} content={obj.memo}/>
                     )
                 })}
             </div>

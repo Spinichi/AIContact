@@ -16,7 +16,6 @@ import interactionPlugin, {type DateClickArg} from '@fullcalendar/interaction';
 import koLocale from '@fullcalendar/core/locales/ko';
 import { type DayCellContentArg, type EventInput } from '@fullcalendar/core/index.js';
 import { dailySchedulesApi } from '../apis/dailySchedule';
-import type { DailyScheduleResponse } from '../apis/dailySchedule/response';
 
 export default function CalendarPage() {
 
@@ -29,7 +28,8 @@ export default function CalendarPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await dailySchedulesApi.getSchedulesByMonth(2025, 8);
+        const today = new Date();
+        const response = await dailySchedulesApi.getSchedulesByMonth(today.getFullYear(), today.getMonth()+1);
         const eventsData = response.data;
         const processedData = eventsData.map((element) => ({
           title : element.title,
@@ -39,7 +39,6 @@ export default function CalendarPage() {
       } catch (e) { /* empty */ }
     };
 
-    // 정의한 async 함수를 호출합니다.
     fetchData();
 
     }, []);
@@ -60,15 +59,20 @@ export default function CalendarPage() {
     if (!clickedDateInfo) return;
     const currentDate = new Date(clickedDateInfo.date);
     currentDate.setDate(currentDate.getDate() + 1);
-    setClickedDateInfo(prev => ({ ...prev, date: currentDate }));
+    setClickedDateInfo(prev => ({ ...(prev || {}), date: currentDate }));
   };
 
-  const handlePrevDay = () => {
-        if (!clickedDateInfo) return;
+  function handlePrevDay() {
+    if (!clickedDateInfo) return;
     const currentDate = new Date(clickedDateInfo.date);
     currentDate.setDate(currentDate.getDate() - 1);
-    setClickedDateInfo(prev => ({ ...prev, date: currentDate }));
-  };
+    setClickedDateInfo(prev => ({ ...(prev || {}), date: currentDate }));
+  }
+
+  function handleDailyScheduleSumbit(){
+    alert("일정이 등록되었습니다.");
+    setModalStatus('off');
+  }
 
   function setModalContent(modalStatus : ModalType){
       switch (modalStatus){
@@ -76,10 +80,24 @@ export default function CalendarPage() {
           return null;
         case 'detail':
           return <Modal onClose={()=>setModalStatus('off')} hasNext={true} hasPrev={true} onPrev={handlePrevDay} onNext={handleNextDay}>
-          {clickedDateInfo && <CalendarDetail dateInfo={clickedDateInfo.date} onAdd={()=>setModalStatus('add')}/>}</Modal>;
+            {
+              clickedDateInfo && 
+                <CalendarDetail 
+                  dateInfo={clickedDateInfo.date} 
+                  onAdd={()=>setModalStatus('add')}
+                />}
+              </Modal>;
         case 'add':
           return <Modal onClose={()=>setModalStatus('off')} hasNext={false} hasPrev={false}>
-            {clickedDateInfo && <AddSchedule dateInfo={clickedDateInfo.date} onCancel={() => setModalStatus('detail')} />}</Modal>;
+              {
+                clickedDateInfo && 
+                  <AddSchedule 
+                    dateInfo={clickedDateInfo.date} 
+                    onCancel={() => setModalStatus('detail')} 
+                    onDailyScheduleSubmit={handleDailyScheduleSumbit} 
+                  />
+              }
+            </Modal>;
       }
   }
 
@@ -99,7 +117,7 @@ export default function CalendarPage() {
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView='dayGridMonth'
-            editable={true}
+            editable={false}
             events={events}
             aspectRatio={1.6}
             locale={koLocale}
