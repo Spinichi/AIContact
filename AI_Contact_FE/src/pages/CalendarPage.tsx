@@ -14,7 +14,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid'; // 'timeGridWeek' 뷰를 위해 필요합니다.
 import interactionPlugin, {type DateClickArg} from '@fullcalendar/interaction';
 import koLocale from '@fullcalendar/core/locales/ko';
-import { type DayCellContentArg, type EventInput } from '@fullcalendar/core/index.js';
+import { type DatesSetArg, type DayCellContentArg, type EventInput } from '@fullcalendar/core/index.js';
 import { dailySchedulesApi } from '../apis/dailySchedule';
 
 export default function CalendarPage() {
@@ -24,12 +24,13 @@ export default function CalendarPage() {
   const [modalStatus, setModalStatus] = useState<ModalType>('off');
   const [clickedDateInfo, setClickedDateInfo] = useState<DateClickArg | null>(null);
   const [events, setEvents] = useState<EventInput[]>([]);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth()+1);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const today = new Date();
-        const response = await dailySchedulesApi.getSchedulesByMonth(today.getFullYear(), today.getMonth()+1);
+        const response = await dailySchedulesApi.getSchedulesByMonth(year, month);
         const eventsData = response.data;
         const processedData = eventsData.map((element) => ({
           title : element.title,
@@ -41,7 +42,7 @@ export default function CalendarPage() {
 
     fetchData();
 
-    }, []);
+    }, [year, month]);
 
   function openCalendarDetail(dateInfo : DateClickArg) {
     console.log(dateInfo);
@@ -73,6 +74,11 @@ export default function CalendarPage() {
     alert("일정이 등록되었습니다.");
     setModalStatus('off');
   }
+
+  const updateDate = (dateInfo : DatesSetArg) => {
+    setYear(dateInfo.view.currentStart.getFullYear());
+    setMonth(dateInfo.view.currentStart.getMonth()+1);
+  };
 
   function setModalContent(modalStatus : ModalType){
       switch (modalStatus){
@@ -132,6 +138,7 @@ export default function CalendarPage() {
             dayMaxEvents = {2}
             dateClick={openCalendarDetail}
             timeZone={'UTC'}
+            datesSet={updateDate}
           />
         </div>
       </div>
