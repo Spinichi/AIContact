@@ -83,6 +83,7 @@ public class BabyChatRestController {
                 .reply(babyReply)
                 .conversationSessionId(req.getConversationSessionId())
                 .timestamp(aiMsg.getCreatedAt())
+                .aiMessageType(aiMsg.getAiMessageType())
                 .build();
 
 
