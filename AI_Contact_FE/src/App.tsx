@@ -25,7 +25,7 @@ function App() {
         <Route path="/talk" element={<TalkPage />} />
         <Route path="/webrtc" element={<WebRtcPage />} />
         <Route path="/cartoon" element={<CartoonPage />} />
-        <Route path="/cartoon/cartoon-result" element={<CartoonResultPage />} />
+        <Route path="/cartoon-result" element={<CartoonResultPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/dictionary" element={<DictionaryPage />} />

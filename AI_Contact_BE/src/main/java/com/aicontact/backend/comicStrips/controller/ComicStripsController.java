@@ -55,7 +55,7 @@ public class ComicStripsController {
 
     @PatchMapping("/{id}/title")
     public ResponseEntity<ApiResponse<ComicStripsResponse>> updateTitle(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody UpdateComicStripsTitleRequest request) {
         ComicStripsEntity updated = comicStripsService.updateTitle(id, request.getTitle());
         return ResponseEntity.ok(ApiResponse.success(new ComicStripsResponse(updated)));
@@ -77,7 +77,7 @@ public class ComicStripsController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteComicStrips(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         String email = userDetails.getUserEntity().getEmail();
         Long coupleId = userService.getUserByEmail(email).getCoupleId();
