@@ -1,32 +1,36 @@
-.talkroom-content {
+.cartoon-content {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   flex-direction: column;
-  height: 100%;
+  height: auto;
   position: relative;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: top center;
   overflow: visible;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.talkroom-header {
+.cartoon-header {
   position: absolute;
-  top: 30px;
-  left: 100px; /* 네브바 너비 + 간격 */
+  top: 5%;
+  left: 55px;
+  /* 네브바 너비 + 간격 */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  z-index: 3;
   /* gap: 5px; */
 }
 
 .hashtags {
   display: flex;
   gap: 12px;
-  font-size: 24px;
+  font-size: 20px;
   color: #ffffff;
   font-weight: 500;
 }
@@ -38,162 +42,140 @@
 }
 
 .title-box h1 {
-  font-size: 34px;
+  font-size: 30px;
   font-weight: bold;
   color: #ffffff;
   margin: 0;
 }
 
-.talkhome-icon-img {
-  position: absolute;
-  top: 45px;
-  left: 40px;
-  width: 50px;
-  height: 50px;
+.home-icon-img {
+  position: absolute !important;
+  top: 50px !important;
+  left: 10px !important;
+  width: 40px !important;
+  height: 40px !important;
   cursor: pointer;
 }
 
-.AIbaby-image {
+.background-img {
   position: absolute;
-  bottom: 130px;
-  left: 80px;
-  width: auto !important;
-  height: auto;
-  object-fit: contain;
-  z-index: 1;
-  max-height: 100%;
-}
-
-.talkroom-content {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  height: 100vh;
-  background-size: cover;
-}
-
-/* 채팅 메시지 영역 */
-.chatroom-messages {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  gap: 10px;
-  width: 50%;
-  overflow-y: auto;
-  margin-top: 100px;
-  margin-bottom: 150px;
-}
-
-.chat-line {
-  display: flex;
   width: 100%;
-  margin: 5px 0;
+  height: 100%;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  /* background-size: contain; */
 }
 
-.chat-line.ai {
-  justify-content: flex-start;
-}
-
-.chat-line.me {
-  justify-content: flex-end;
-}
-
-/* 말풍선 */
-.chat-bubble {
-  display: flex;
-  justify-content: center;
-  padding: 2px 0px;
-  border-radius: 15px;
-  max-width: 70%;
-  word-break: break-word;
+.board-box {
   position: relative;
-  font-size: 16px;
-  line-height: 1.3;
-  text-align: left;
+  top: -35px;
+  left: 0px;
+  width: 35%;
+  height: auto;
+  display: flex;
+  border-radius: 30px;
+  justify-self: center;
   align-items: center;
-  background: #ffffff;
+  overflow: hidden;
+  margin: 0;
+  aspect-ratio: 630 / 705;
 }
 
-.chat-bubble.me {
-  align-self: flex-end;
-  background: #8e6ff9;
-  color: white;
-  /* margin-right:  50px; */
-}
-
-/* 꼬리 만들기 (내 메시지) */
-.chat-bubble.me::after {
-  content: "";
+.board-img {
   position: absolute;
-  right: -8px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 8px solid transparent;
-  border-left-color: #8e6ff9;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* border-radius: 50px; */
+  top: 0;
+  left: 0;
+  z-index: 0;
+  /* background-size: contain; */
 }
 
-.chat-bubble.ai {
-  align-self: flex-start;
-  background: #ffffff;
-  color: #222;
-  /* margin-left: 50px; */
-}
-
-.chat-bubble.ai::after {
-  content: "";
+.input-overlay {
   position: absolute;
-  left: -8px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 8px solid transparent;
-  border-right-color: #ffffff;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 }
 
-/* 입력창 */
-.chatroom-input-box {
+.input-overlay input::placeholder {
+  color: #8a8c90;
+}
+
+.answer-input {
   position: absolute;
-  bottom: 20px;
+  width: 65%; /* 밑줄 길이 맞추기 */
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  width: 50%;
-  background: white;
-  padding: 10px;
-  border-radius: 30px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.chatroom-input-box input {
-  flex: 1;
+  background: transparent;
   border: none;
   outline: none;
-  padding: 10px;
+  font-size: 18px;
+  text-align: center;
+  color: #000;
+  text-align: left;
+  /* border: 1px solid red; */
 }
 
-.chatroom-input-box button {
-  background: #8e6ff9;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 8px 16px;
-  cursor: pointer;
+/* 각 input을 밑줄 위치에 맞추기 (픽셀값 조정 필요) */
+.input-1 {
+  top: 27.5%;
+}
+.input-2 {
+  top: 43%;
+}
+.input-3 {
+  top: 58%;
+}
+.input-4 {
+  top: 73%;
 }
 
-.chat-line.USER {
-  justify-content: flex-end;
-}
-.chat-bubble.USER {
-  align-self: flex-end;
-  background: #8e6ff9;
-  color: #fff;
-}
-.chat-bubble.USER::after {
-  content: "";
+.button-container {
   position: absolute;
-  right: -8px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 8px solid transparent;
-  border-left-color: #8e6ff9;
+  display: flex;
+  justify-content: center;
+  gap: 5%;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  /* margin-top: 20px; */
+  z-index: 2;
+}
+
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 2px;
+  position: relative;
+  width: 180px;
+  height: auto;
+  background: url("../assets/icons/cartoonpagebtn.svg") no-repeat center;
+  background-size: contain;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+
+  transition: transform 0.1s ease-in-out;
+}
+
+.page-btn:active {
+  transform: scale(0.95); /* 클릭 시 살짝 작아짐 */
+}
+
+.page-btn:focus {
+  outline: none;
 }
