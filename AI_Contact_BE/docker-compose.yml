@@ -133,6 +133,8 @@ services:
       - host.docker.internal:host-gateway
     environment:
       - LAN_PRIVATE_IP=${LAN_PRIVATE_IP:-}
+      - NODE_IP=3.35.17.1
+      - UDP_PORT=8878
     entrypoint: /bin/sh /scripts/entrypoint.sh
     command: --config /etc/livekit.yaml
     ports:
