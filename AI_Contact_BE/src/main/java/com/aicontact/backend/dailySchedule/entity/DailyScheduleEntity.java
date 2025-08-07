@@ -5,7 +5,7 @@ import com.aicontact.backend.global.entity.BaseTimeEntity;
 import com.aicontact.backend.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "daily_schedules",
@@ -35,7 +35,7 @@ public class DailyScheduleEntity extends BaseTimeEntity {
     private UserEntity creator;
 
     @Column(name = "schedule_date", nullable = false)
-    private LocalDate scheduleDate;
+    private LocalDateTime scheduleDate;
 
     @Column(nullable = false, length = 100)
     private String title;

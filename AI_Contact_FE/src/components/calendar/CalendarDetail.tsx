@@ -1,34 +1,55 @@
 import Schedule from "./Schedule";
 import plusBtn from "../../assets/icons/Plus.svg";
 import '../../styles/CalendarDetail.css';
+import { useEffect, useState } from "react";
+import { dailySchedulesApi } from "../../apis/dailySchedule/api";
+import type { DailyScheduleResponse } from "../../apis/dailySchedule/response";
 
 interface CalendarDetailProps{
-    dateInfo : Date;
-    onAdd : () => void;
+    dateInfo : Date
+    onAdd : () => void
+    onDelete : () => void
+    onEdit : (schedule : DailyScheduleResponse) => void
 }
 
-export default function CalendarDetail({dateInfo, onAdd}: CalendarDetailProps){
+export default function CalendarDetail({dateInfo, onAdd, onDelete, onEdit}: CalendarDetailProps){
+
+    const [calendarEvents, setCalendarEvents] = useState<DailyScheduleResponse[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const date = String(dateInfo.toISOString());
+            const response = await dailySchedulesApi.getSchedulesByDate(date);
+            const eventsData = response.data;
+            setCalendarEvents(eventsData);
+            } catch (e) { 
+                console.log(e);
+                alert("일정 조회 중 오류가 발생했습니다");
+            }
+        };
+    
+        fetchData();
+    
+    }, [dateInfo]);
+
+    const handleEditRequest = (scheduleId : number) => {
+        // schedules 목록에서 id가 일치하는 스케줄을 찾는다.
+        const scheduleToEdit = calendarEvents.find(s => s.id === scheduleId);
+
+        // 데이터를 찾았다면, 부모에게 받은 onEditClick 함수를 호출해 전체 데이터를 넘겨준다.
+        if (scheduleToEdit) {
+            onEdit(scheduleToEdit);
+        }
+    };
 
     const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-    const calendarEvents = [
-        {title:"포비 산책", time : '13:00', memo:"산책산책산책", index:1},
-        {title:"포비 밥주기", time: "14:00", memo:"밥밥밥", index:2},
-        {title:"포비 놀기", time: "17:30", memo:"놀기놀기놀기", index:2},
-        {title:"포비 포비 포비", time: "19:00", memo:"포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비포비", index:2},
-        {title:"포비 산책", time: "21:50", memo:"산책산책산책", index:2},
-        {title:"포비 산책", time : '13:00', memo:"산책산책산책", index:1},
-        {title:"포비 밥주기", time: "14:00", memo:"밥밥밥", index:2},
-        {title:"포비 놀기", time: "17:30", memo:"놀기놀기놀기", index:2},
-        {title:"포비 포비 포비", time: "19:00", memo:"포비포비포비포비포비포비포비포비포비", index:2},
-        {title:"포비 산책", time: "21:50", memo:"산책산책산책", index:2},
-
-    ]
 
     return(
         <div className="calendar-modal">
             <div className="modal-header">
                 <div className="date">
-                    <div className="monthday">{dateInfo.getMonth()+1}월 {dateInfo.getDate()}일</div>
+                    <div className="monthday">{dateInfo.getFullYear()}년 {dateInfo.getMonth()+1}월 {dateInfo.getDate()}일</div>
                     <div className="day">{days[dateInfo.getDay()]}</div>
                 </div>
                 <img src={plusBtn} className="add-btn" onClick={onAdd}/>
@@ -37,7 +58,15 @@ export default function CalendarDetail({dateInfo, onAdd}: CalendarDetailProps){
                 {
                     calendarEvents.map((obj) => {
                     return (
-                    <Schedule time={obj.time} title={obj.title} content={obj.memo}/>
+                    <Schedule 
+                        key={`${obj.scheduleDate}+${obj.createdAt}`} 
+                        id={obj.id} 
+                        time={obj.scheduleDate} 
+                        title={obj.title} 
+                        content={obj.memo} 
+                        onDelete={onDelete}
+                        onEditRequest={handleEditRequest}
+                    />
                     )
                 })}
             </div>
