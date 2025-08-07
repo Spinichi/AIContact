@@ -14,14 +14,6 @@ rtc:
     tcp_port: 7881
     port_range_start: 7900
     port_range_end: 7999
-    # announce_ip → use_external_ip로 변경
-    use_external_ip: true
-    external_ip: 3.35.17.1
-    # force_relay → ice_server_configs 사용
-    ice_server_configs:
-        - urls: [ "turn:3.35.17.1:8878" ]
-          username: "livekit"
-          credential: "secret"
 redis:
     address: redis:6379
     username: ""
@@ -33,7 +25,6 @@ turn:
     udp_port: 8878
     relay_range_start: 40000
     relay_range_end: 50000
-    relay_only: true
 keys:
     devkey: secret
 webhook:
