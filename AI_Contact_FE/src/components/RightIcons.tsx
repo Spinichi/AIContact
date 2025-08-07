@@ -2,7 +2,7 @@ import React from 'react';
 import '../styles/RightIcons.css';
 import chatIcon from '../assets/icons/chat.png';
 import WebRTCgIcon from '../assets/icons/WebRTC Button.png';
-import Growth from '../assets/icons/Growth Button.png';
+import letter from '../assets/icons/letterBtn.svg';
 import cartoonIcon from '../assets/icons/cartoon.png';
 import { useNavigate  } from 'react-router-dom';
 
@@ -25,8 +25,11 @@ const navigate = useNavigate();
       <button onClick={() => navigate('/webrtc')}>
         <img src={WebRTCgIcon} alt="영상통화" />
       </button>
-      <button onClick={() => navigate('cartoon/')}>
+      <button onClick={() => navigate('/cartoon')}>
         <img src={cartoonIcon} alt="만화보기" />
+      </button>
+      <button onClick={() => navigate('/letters')}>
+        <img src={letter} alt="편지보기" />
       </button>
     </div>
   );
