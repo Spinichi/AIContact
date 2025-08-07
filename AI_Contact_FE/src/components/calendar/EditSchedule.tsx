@@ -6,24 +6,25 @@ import '../../styles/AddSchedule.css';
 
 import 'swiper/swiper-bundle.css';
 import { dailySchedulesApi } from '../../apis/dailySchedule';
+import type { DailyScheduleResponse } from '../../apis/dailySchedule/response';
 
 interface AddScheduleProps{
-    title? : string,
-    memo? : string,
+    scheduleInfo : DailyScheduleResponse
     dateInfo : Date;
     onCancel : () => void;
     onDailyScheduleSubmit : () => void;
 }
 
-export default function AddSchedule({title = "", memo = "", onCancel, onDailyScheduleSubmit, dateInfo} : AddScheduleProps){
+export default function EditSchedule({scheduleInfo, onCancel, onDailyScheduleSubmit, dateInfo} : AddScheduleProps){
 
     const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
     const formatNumber = (num: number) => String(num).padStart(2, '0');
-    const hours = Array.from({ length: 24 }, (_, i) => formatNumber((i + 9) % 24));
-    const minutes = Array.from({ length: 60 }, (_, i) => formatNumber(i));
-    const [currentTitle, setCurrentTitle] = useState(title);
-    const [currentMemo, setCurrentMemo] = useState(memo);
+    const defaultDate = new Date(scheduleInfo.scheduleDate);
+    const hours = Array.from({ length: 24 }, (_, i) => formatNumber((i + defaultDate.getHours()) % 24));
+    const minutes = Array.from({ length: 60 }, (_, i) => formatNumber((i + defaultDate.getMinutes()) % 60));
+    const [currentTitle, setCurrentTitle] = useState(scheduleInfo.title);
+    const [currentMemo, setCurrentMemo] = useState(scheduleInfo.memo);
     const [scheduleHour, setScheduleHour] = useState(0);
     const [scheduleMinute, setScheduleMinute] = useState(0);
  
@@ -34,11 +35,12 @@ export default function AddSchedule({title = "", memo = "", onCancel, onDailySch
         scheduleDate.setUTCHours(scheduleHour);
         scheduleDate.setUTCMinutes(scheduleMinute);
         try {
-          await dailySchedulesApi.createSchedule({
+          await dailySchedulesApi.updateSchedule(scheduleInfo.id,
+            {
               title:currentTitle,
-              memo,
+              memo:currentMemo,
               scheduleDate
-          });
+            });
           onDailyScheduleSubmit();
         } catch (error: any) {
           console.error("스케쥴 처리 오류:", error);
@@ -62,7 +64,7 @@ export default function AddSchedule({title = "", memo = "", onCancel, onDailySch
                         <div className = "timer-layout">
                             <Swiper
                             onSlideChange={(swiper) => {
-                                setScheduleHour((swiper.realIndex+9)%24);
+                                setScheduleHour((swiper.realIndex+defaultDate.getHours())%24);
                             }}
                             centeredSlides={true}
                             slidesPerView={3}
@@ -79,7 +81,7 @@ export default function AddSchedule({title = "", memo = "", onCancel, onDailySch
                         </Swiper>
                         <Swiper
                             onSlideChange={(swiper) => {
-                                setScheduleMinute(swiper.realIndex);
+                                setScheduleMinute((swiper.realIndex+defaultDate.getMinutes())%60);
                             }}
                             centeredSlides={true}
                             slidesPerView={3}

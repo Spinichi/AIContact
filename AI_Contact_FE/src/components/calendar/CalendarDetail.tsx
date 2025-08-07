@@ -9,13 +9,14 @@ interface CalendarDetailProps{
     dateInfo : Date
     onAdd : () => void
     onDelete : () => void
+    onEdit : (schedule : DailyScheduleResponse) => void
 }
 
-export default function CalendarDetail({dateInfo, onAdd, onDelete}: CalendarDetailProps){
+export default function CalendarDetail({dateInfo, onAdd, onDelete, onEdit}: CalendarDetailProps){
 
-        const [calendarEvents, setCalendarEvents] = useState<DailyScheduleResponse[]>([]);
+    const [calendarEvents, setCalendarEvents] = useState<DailyScheduleResponse[]>([]);
 
-      useEffect(() => {
+    useEffect(() => {
         const fetchData = async () => {
           try {
             const date = String(dateInfo.toISOString());
@@ -30,7 +31,17 @@ export default function CalendarDetail({dateInfo, onAdd, onDelete}: CalendarDeta
     
         fetchData();
     
-        }, [dateInfo]);
+    }, [dateInfo]);
+
+    const handleEditRequest = (scheduleId : number) => {
+        // schedules 목록에서 id가 일치하는 스케줄을 찾는다.
+        const scheduleToEdit = calendarEvents.find(s => s.id === scheduleId);
+
+        // 데이터를 찾았다면, 부모에게 받은 onEditClick 함수를 호출해 전체 데이터를 넘겨준다.
+        if (scheduleToEdit) {
+            onEdit(scheduleToEdit);
+        }
+    };
 
     const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
@@ -38,7 +49,7 @@ export default function CalendarDetail({dateInfo, onAdd, onDelete}: CalendarDeta
         <div className="calendar-modal">
             <div className="modal-header">
                 <div className="date">
-                    <div className="monthday">{dateInfo.getMonth()+1}월 {dateInfo.getDate()}일</div>
+                    <div className="monthday">{dateInfo.getFullYear()}년 {dateInfo.getMonth()+1}월 {dateInfo.getDate()}일</div>
                     <div className="day">{days[dateInfo.getDay()]}</div>
                 </div>
                 <img src={plusBtn} className="add-btn" onClick={onAdd}/>
@@ -54,6 +65,7 @@ export default function CalendarDetail({dateInfo, onAdd, onDelete}: CalendarDeta
                         title={obj.title} 
                         content={obj.memo} 
                         onDelete={onDelete}
+                        onEditRequest={handleEditRequest}
                     />
                     )
                 })}

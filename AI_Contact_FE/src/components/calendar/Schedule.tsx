@@ -7,9 +7,10 @@ interface ScheduleProps{
     title : string
     content : string
     onDelete : () => void
+    onEditRequest : (id : number) => void
 }
 
-export default function Schedule({id, time, title, content, onDelete} : ScheduleProps){
+export default function Schedule({id, time, title, content, onDelete, onEditRequest} : ScheduleProps){
 
     const [isCollapse, setIsCollapse] = useState(false);
 
@@ -32,6 +33,10 @@ export default function Schedule({id, time, title, content, onDelete} : Schedule
         }
     }
 
+    const handleEdit = () => {
+        onEditRequest(id);
+    }
+
     return(
         <div className="schedule-container">
         <div className="schedule-header"  onClick={() => setIsCollapse(!isCollapse)}>
@@ -40,9 +45,11 @@ export default function Schedule({id, time, title, content, onDelete} : Schedule
         </div>
         {isCollapse && 
             <div className='schedule-content'>
-                <p>{content}</p>
-                <button>수정</button>
-                <button onClick={handleDelete}>삭제</button>
+                <p>{content || "등록된 메모가 없습니다."}</p>
+                <div className='schedule-buttons'>
+                    <div onClick={handleEdit}>수정</div>
+                    <div onClick={handleDelete}>삭제</div>
+                </div>   
             </div>}
         </div>
     )

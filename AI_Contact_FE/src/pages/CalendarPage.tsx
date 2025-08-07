@@ -16,13 +16,16 @@ import interactionPlugin, {type DateClickArg} from '@fullcalendar/interaction';
 import koLocale from '@fullcalendar/core/locales/ko';
 import { type DatesSetArg, type DayCellContentArg, type EventInput } from '@fullcalendar/core/index.js';
 import { dailySchedulesApi } from '../apis/dailySchedule';
+import type { DailyScheduleResponse } from '../apis/dailySchedule/response';
+import EditSchedule from '../components/calendar/EditSchedule';
 
 export default function CalendarPage() {
 
-  type ModalType = 'detail' | 'add' | 'off';
+  type ModalType = 'detail' | 'add' | 'edit' | 'off';
 
   const [modalStatus, setModalStatus] = useState<ModalType>('off');
   const [clickedDateInfo, setClickedDateInfo] = useState<DateClickArg | null>(null);
+  const [editScheduleData, setEditScheduleData] = useState<DailyScheduleResponse>(null);
   const [events, setEvents] = useState<EventInput[]>([]);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth()+1);
@@ -83,6 +86,11 @@ export default function CalendarPage() {
     setRefetchTrigger(prev => prev+1);
   }
 
+  function handleScheduleEdit(scheduleData : DailyScheduleResponse){
+    setEditScheduleData(scheduleData);
+    setModalStatus('edit');
+  }
+
   const updateDate = (dateInfo : DatesSetArg) => {
     setYear(dateInfo.view.currentStart.getFullYear());
     setMonth(dateInfo.view.currentStart.getMonth()+1);
@@ -101,6 +109,7 @@ export default function CalendarPage() {
                   dateInfo={clickedDateInfo.date} 
                   onAdd={()=>setModalStatus('add')}
                   onDelete={handleDailyScheduleDelete}
+                  onEdit={handleScheduleEdit}
                 />}
               </Modal>;
         case 'add':
@@ -108,6 +117,18 @@ export default function CalendarPage() {
               {
                 clickedDateInfo && 
                   <AddSchedule 
+                    dateInfo={clickedDateInfo.date} 
+                    onCancel={() => setModalStatus('detail')} 
+                    onDailyScheduleSubmit={handleDailyScheduleSumbit} 
+                  />
+              }
+            </Modal>;
+        case 'edit':
+          return <Modal onClose={()=>setModalStatus('off')} hasNext={false} hasPrev={false}>
+              {
+                clickedDateInfo && 
+                  <EditSchedule 
+                    scheduleInfo={editScheduleData}
                     dateInfo={clickedDateInfo.date} 
                     onCancel={() => setModalStatus('detail')} 
                     onDailyScheduleSubmit={handleDailyScheduleSumbit} 

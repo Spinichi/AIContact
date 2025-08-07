@@ -146,3 +146,17 @@
 .section.memo .memo::placeholder{
     color : var(--text-light);
 }
+
+.monthday > input{
+    height : inherit;
+    width : auto;
+    font-size : 32px;
+    font-weight : 500;
+    border: 0px;
+    text-align: center;
+}
+
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
