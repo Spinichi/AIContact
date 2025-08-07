@@ -137,6 +137,7 @@ services:
     command: --config /etc/livekit.yaml
     ports:
       - "127.0.0.1:8880:7880"
+      - "8878:8878/udp"
     volumes:
       - ./livekit.yaml:/etc/livekit.yaml:ro
       - ./scripts/entrypoint_openvidu.sh:/scripts/entrypoint.sh:ro
