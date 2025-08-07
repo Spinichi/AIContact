@@ -27,11 +27,15 @@ export default function EditSchedule({scheduleInfo, onCancel, onDailyScheduleSub
     const [currentMemo, setCurrentMemo] = useState(scheduleInfo.memo);
     const [scheduleHour, setScheduleHour] = useState(0);
     const [scheduleMinute, setScheduleMinute] = useState(0);
+    const [year, setYear] = useState<number | string>(dateInfo.getFullYear());
+    const [month, setMonth] = useState<number | string>(dateInfo.getMonth()+1);
+    const [date, setDate] = useState<number | string>(dateInfo.getDate());
+    const [day, setDay] = useState(days[dateInfo.getDay()]);
  
     const handleDailySchedule = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const scheduleDate = new Date(dateInfo);
+        const scheduleDate = new Date(Number(year), Number(month)-1, Number(date)+1);
         scheduleDate.setUTCHours(scheduleHour);
         scheduleDate.setUTCMinutes(scheduleMinute);
         try {
@@ -48,12 +52,37 @@ export default function EditSchedule({scheduleInfo, onCancel, onDailyScheduleSub
         }
       };
 
+    const updateValue = (e : React.FocusEvent<HTMLInputElement, Element>) => {
+        const res = Math.min(Number(e.target.max), Math.max(Number(e.target.min), Number(e.target.value)));
+        setDay(days[ new Date(Number(year), Number(month)-1, Number(date)).getDay()])
+        return res;
+    }
+
         return(
         <div className="calendar-modal add-schedule">
             <div className="modal-header">
                 <div className="date">
-                    <div className="monthday">{dateInfo.getFullYear()}년 {dateInfo.getMonth()+1}월 {dateInfo.getDate()}일</div>
-                    <div className="day">{days[dateInfo.getDay()]}</div>
+                    <div className="monthday">
+                        <input className="year" type="number" 
+                            value={year} 
+                            min={1900} 
+                            max={2099} 
+                            onChange={(e) => setYear(e.target.valueAsNumber)} 
+                            onBlur={(e) => setYear(updateValue(e))} />년
+                        <input type="number" 
+                            value={month} 
+                            min={1} 
+                            max={12} 
+                            onChange={(e) => setMonth(e.target.valueAsNumber)} 
+                            onBlur={(e) => setMonth(updateValue(e))} />월
+                        <input type="number" 
+                            value={date} 
+                            min={1} 
+                            max={new Date(Number(year), Number(month), 0).getDate()} 
+                            onChange={(e) => setDate(e.target.valueAsNumber)} 
+                            onBlur={(e) => setDate(updateValue(e))} />일 
+                    </div>
+                    <div className="day">{day}</div>
                 </div>
             </div>
             <form className="modal-body" onSubmit={handleDailySchedule}>

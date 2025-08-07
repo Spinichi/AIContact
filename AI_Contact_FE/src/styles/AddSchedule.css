@@ -149,11 +149,17 @@
 
 .monthday > input{
     height : inherit;
-    width : auto;
+    width : 48px;
     font-size : 32px;
     font-weight : 500;
     border: 0px;
+    border-bottom : 1px solid black;
+    padding : 0px;
     text-align: center;
+}
+
+.monthday .year{
+    width : 72px;
 }
 
 input[type=number]::-webkit-inner-spin-button {

@@ -23,9 +23,18 @@ export default function CalendarPage() {
 
   type ModalType = 'detail' | 'add' | 'edit' | 'off';
 
+  const initialScheduleData: DailyScheduleResponse = {
+    id: 0,
+    title: "",
+    memo: "",
+    scheduleDate: "",
+    createdAt : "",
+    updatedAt : "",
+  };
+
   const [modalStatus, setModalStatus] = useState<ModalType>('off');
   const [clickedDateInfo, setClickedDateInfo] = useState<DateClickArg | null>(null);
-  const [editScheduleData, setEditScheduleData] = useState<DailyScheduleResponse>(null);
+  const [editScheduleData, setEditScheduleData] = useState<DailyScheduleResponse>(initialScheduleData);
   const [events, setEvents] = useState<EventInput[]>([]);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth()+1);
@@ -41,6 +50,7 @@ export default function CalendarPage() {
           start : element.scheduleDate
         }));
         setEvents(processedData);
+        console.log(events);
       } catch (e) { /* empty */ }
     };
 
@@ -49,8 +59,6 @@ export default function CalendarPage() {
     }, [refetchTrigger]);
 
   function openCalendarDetail(dateInfo : DateClickArg) {
-    console.log(dateInfo);
-    console.log(typeof (dateInfo));
     setClickedDateInfo(dateInfo);
     setModalStatus('detail');
   }
@@ -62,17 +70,30 @@ export default function CalendarPage() {
 
   const handleNextDay = () => {
     if (!clickedDateInfo) return;
+
     const currentDate = new Date(clickedDateInfo.date);
     currentDate.setDate(currentDate.getDate() + 1);
-    setClickedDateInfo(prev => ({ ...(prev || {}), date: currentDate }));
+
+    setClickedDateInfo(prev => ({
+      ...prev!,
+      date: currentDate,
+      dateStr: currentDate.toISOString()
+    }));
   };
 
-  function handlePrevDay() {
+
+  const handlePrevDay = () => {
     if (!clickedDateInfo) return;
+
     const currentDate = new Date(clickedDateInfo.date);
     currentDate.setDate(currentDate.getDate() - 1);
-    setClickedDateInfo(prev => ({ ...(prev || {}), date: currentDate }));
-  }
+
+    setClickedDateInfo(prev => ({
+      ...prev!,
+      date: currentDate,
+      dateStr: currentDate.toISOString()
+    }));
+  };
 
   function handleDailyScheduleSumbit(){
     alert("일정이 등록되었습니다.");
@@ -170,6 +191,7 @@ export default function CalendarPage() {
             dateClick={openCalendarDetail}
             timeZone={'UTC'}
             datesSet={updateDate}
+            defaultTimedEventDuration={'00:01'}
           />
         </div>
       </div>

@@ -8,22 +8,20 @@ import 'swiper/swiper-bundle.css';
 import { dailySchedulesApi } from '../../apis/dailySchedule';
 
 interface AddScheduleProps{
-    title? : string,
-    memo? : string,
     dateInfo : Date;
     onCancel : () => void;
     onDailyScheduleSubmit : () => void;
 }
 
-export default function AddSchedule({title = "", memo = "", onCancel, onDailyScheduleSubmit, dateInfo} : AddScheduleProps){
+export default function AddSchedule({onCancel, onDailyScheduleSubmit, dateInfo} : AddScheduleProps){
 
     const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
     const formatNumber = (num: number) => String(num).padStart(2, '0');
     const hours = Array.from({ length: 24 }, (_, i) => formatNumber((i + 9) % 24));
     const minutes = Array.from({ length: 60 }, (_, i) => formatNumber(i));
-    const [currentTitle, setCurrentTitle] = useState(title);
-    const [currentMemo, setCurrentMemo] = useState(memo);
+    const [title, setTitle] = useState("");
+    const [memo, setMemo] = useState("");
     const [scheduleHour, setScheduleHour] = useState(0);
     const [scheduleMinute, setScheduleMinute] = useState(0);
  
@@ -35,7 +33,7 @@ export default function AddSchedule({title = "", memo = "", onCancel, onDailySch
         scheduleDate.setUTCMinutes(scheduleMinute);
         try {
           await dailySchedulesApi.createSchedule({
-              title:currentTitle,
+              title,
               memo,
               scheduleDate
           });
@@ -55,7 +53,7 @@ export default function AddSchedule({title = "", memo = "", onCancel, onDailySch
                 </div>
             </div>
             <form className="modal-body" onSubmit={handleDailySchedule}>
-                <input className="schedule-title" placeholder='제목' value={currentTitle} onChange={(e) => setCurrentTitle(e.target.value)}></input>
+                <input className="schedule-title" placeholder='제목' value={title} onChange={(e) => setTitle(e.target.value)}></input>
                 <div className="modal-content">
                     <div className="section timer">
                         <p className="title">시간</p>
@@ -100,7 +98,7 @@ export default function AddSchedule({title = "", memo = "", onCancel, onDailySch
                     </div>
                     <div className="section memo">
                         <p className="title">메모</p>
-                        <textarea className="memo" placeholder='메모를 입력하세요.'  value={currentMemo} onChange={(e) => setCurrentMemo(e.target.value)}></textarea>
+                        <textarea className="memo" placeholder='메모를 입력하세요.'  value={memo} onChange={(e) => setMemo(e.target.value)}></textarea>
                     </div>
                 </div>
                 <div className="modal-footer">
