@@ -1,18 +1,25 @@
 package com.aicontact.backend.dailySchedule.controller;
 
+import com.aicontact.backend.auth.dto.CustomUserDetails;
+import com.aicontact.backend.couple.service.CoupleService;
 import com.aicontact.backend.dailySchedule.dto.DailyScheduleRequestDto;
 import com.aicontact.backend.dailySchedule.dto.DailyScheduleResponseDto;
 import com.aicontact.backend.dailySchedule.dto.DailyScheduleUpdateDto;
 import com.aicontact.backend.dailySchedule.entity.DailyScheduleEntity;
 import com.aicontact.backend.dailySchedule.service.DailyScheduleService;
 import com.aicontact.backend.global.dto.response.ApiResponse;
+import com.aicontact.backend.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @RestController
@@ -21,12 +28,20 @@ import java.util.List;
 public class DailyScheduleController {
 
     private final DailyScheduleService dailyScheduleService;
+    private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<DailyScheduleResponseDto>> createSchedule(@RequestBody @Valid DailyScheduleRequestDto dto) {
+    public ResponseEntity<ApiResponse<DailyScheduleResponseDto>> createSchedule(
+            @RequestBody @Valid DailyScheduleRequestDto dto,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        String myEmail = userDetails.getUserEntity().getEmail();
+        Long coupleId = userService.getUserByEmail(myEmail).getCoupleId();
+        Long userId = userService.getUserByEmail(myEmail).getId();
+
         DailyScheduleEntity saved = dailyScheduleService.createSchedule(
-                dto.getCoupleId(),
-                dto.getCreatorId(),
+                coupleId,
+                userId,
                 dto.getScheduleDate(),
                 dto.getTitle(),
                 dto.getMemo()
@@ -50,10 +65,16 @@ public class DailyScheduleController {
 
     @GetMapping("/day")
     public ResponseEntity<ApiResponse<List<DailyScheduleResponseDto>>> getDailySchedules(
-            @RequestParam Long coupleId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date) {
 
-        List<DailyScheduleResponseDto> result = dailyScheduleService.getSchedulesByDate(coupleId, date).stream()
+        String myEmail = userDetails.getUserEntity().getEmail();
+        Long coupleId = userService.getUserByEmail(myEmail).getCoupleId();
+
+        LocalDateTime startDate = date.toLocalDate().atStartOfDay();
+        LocalDateTime endDate = date.toLocalDate().atTime(LocalTime.of(23,59));
+
+        List<DailyScheduleResponseDto> result = dailyScheduleService.getSchedulesByDate(coupleId, startDate, endDate).stream()
                 .map(DailyScheduleResponseDto::fromEntity)
                 .toList();
 
@@ -62,12 +83,18 @@ public class DailyScheduleController {
 
     @GetMapping("/month")
     public ResponseEntity<ApiResponse<List<DailyScheduleResponseDto>>> getMonthlySchedules(
-            @RequestParam Long coupleId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam int year,
             @RequestParam int month) {
 
-        LocalDate start = LocalDate.of(year, month, 1);
-        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+        String myEmail = userDetails.getUserEntity().getEmail();
+        Long coupleId = userService.getUserByEmail(myEmail).getCoupleId();
+
+        LocalDate firstDayOfMonth = LocalDate.of(year, month, 1).minusMonths(1);
+        LocalDate lastDayOfMonth = LocalDate.of(year, month, 1).plusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
+
+        LocalDateTime start = firstDayOfMonth.atStartOfDay();
+        LocalDateTime end = lastDayOfMonth.atTime(23, 59, 59);
 
         List<DailyScheduleResponseDto> result = dailyScheduleService.getSchedulesByMonth(coupleId, start, end).stream()
                 .map(DailyScheduleResponseDto::fromEntity)

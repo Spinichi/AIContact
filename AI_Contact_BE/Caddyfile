@@ -9,7 +9,7 @@
         # LiveKit API
         @openvidu path /twirp/* /rtc/* /rtc /agent
         handle @openvidu {
-                reverse_proxy http://openvidu:7881
+                reverse_proxy http://openvidu:7880
         }
 
         # OpenVidu v2 Custom layout

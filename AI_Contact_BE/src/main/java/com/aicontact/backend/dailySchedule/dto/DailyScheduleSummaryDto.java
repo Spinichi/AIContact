@@ -4,14 +4,14 @@ import com.aicontact.backend.dailySchedule.entity.DailyScheduleEntity;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
 public class DailyScheduleSummaryDto {
     private Long id;
     private String title;
-    private LocalDate scheduleDate;
+    private LocalDateTime scheduleDate;
 
     public static DailyScheduleSummaryDto fromEntity(DailyScheduleEntity schedule) {
         return DailyScheduleSummaryDto.builder()
