@@ -1,5 +1,7 @@
 package com.aicontact.backend.babychat.controller;
 
+import com.aicontact.backend.aiChild.entity.AiChildEntity;
+import com.aicontact.backend.aiChild.service.AiChildService;
 import com.aicontact.backend.auth.dto.CustomUserDetails;
 import com.aicontact.backend.babychat.dto.ChatRequestDTO;
 import com.aicontact.backend.babychat.dto.ChatResponseDTO;
@@ -15,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -26,13 +28,16 @@ public class BabyChatRestController {
     private final GmsChatService service;
     private final BabyChatMessageRepository repo;
     private final UserRepository userRepository;
+    private final AiChildService aiChildService;
 
     public BabyChatRestController(GmsChatService service,
                                   BabyChatMessageRepository repo,
-                                  UserRepository userRepository) {
+                                  UserRepository userRepository,
+                                  AiChildService aiChildService) {
         this.service = service;
         this.repo = repo;
         this.userRepository = userRepository;
+        this.aiChildService = aiChildService;
     }
 
     @PostMapping(
@@ -49,35 +54,34 @@ public class BabyChatRestController {
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
 
+        AiChildEntity aiChild = aiChildService.getMyChild(user.getCoupleId());
+
         BabyChatMessage userMsg = BabyChatMessage.builder()
                 .user(user)
-                .aiChildrenId(req.getAiChildrenId())
+                .aiChild(aiChild)
                 .aiMessageType(AiMessageType.USER)
                 .content(req.getMessage())
                 .conversationSessionId(req.getConversationSessionId())
-                .createdAt(LocalDateTime.now())
                 .build();
         repo.save(userMsg);
 
 
-        List<BabyChatMessage> history = repo.findTop20ByUserIdAndConversationSessionIdOrderByCreatedAtAsc(
+        List<BabyChatMessage> history = repo.findTop20ByUserIdAndConversationSessionIdOrderByCreatedAtDesc(
                 req.getUserId(), req.getConversationSessionId()
         );
 
+        Collections.reverse(history);
 
         String babyReply = service.chatWithBaby(history, req.getMessage());
 
-
         BabyChatMessage aiMsg = BabyChatMessage.builder()
                 .user(user)
-                .aiChildrenId(req.getAiChildrenId())
+                .aiChild(aiChild)
                 .aiMessageType(AiMessageType.AI)
                 .content(babyReply)
                 .conversationSessionId(req.getConversationSessionId())
-                .createdAt(LocalDateTime.now())
                 .build();
         repo.save(aiMsg);
-
 
         ChatResponseDTO res = ChatResponseDTO.builder()
                 .reply(babyReply)
@@ -85,7 +89,6 @@ public class BabyChatRestController {
                 .timestamp(aiMsg.getCreatedAt())
                 .aiMessageType(aiMsg.getAiMessageType())
                 .build();
-
 
         return ResponseEntity
                 .ok()
