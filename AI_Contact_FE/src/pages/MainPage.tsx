@@ -9,16 +9,21 @@ import '../styles/UserInfo.css';
 
 import { UsersApi } from '../apis/user/api';
 import type { MeUserResponse } from '../apis/user/response';
+import type { DailyScheduleResponse } from '../apis/dailySchedule/response';
+import { dailySchedulesApi } from '../apis/dailySchedule';
 
 export default function MainPage() {
   const [userInfo, setUserInfo] = useState<MeUserResponse | null>(null);
+  const [dDay, setDday] = useState<DailyScheduleResponse[]>([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const res = await UsersApi.getMe();
+        const dday = await dailySchedulesApi.getSchedulesDday();
         setUserInfo(res.data);
+        setDday(dday.data);
       } catch (err) {
       }
     };
@@ -39,7 +44,7 @@ export default function MainPage() {
 
         <div className='content-row'>
           <BabyAvatar />
-          <EventCalendar />
+          <EventCalendar data={dDay}/>
           <RightIcons onChatClick={() => setIsChatOpen(true)} />
         </div>
 

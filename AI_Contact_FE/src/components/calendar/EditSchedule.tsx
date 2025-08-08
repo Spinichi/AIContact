@@ -71,9 +71,9 @@ export default function EditSchedule({
     }
   };
 
-  const limitNumberLength = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (e.target.value.length > e.target.maxLength) {
-      e.target.value = e.target.value.slice(0, e.target.maxLength);
+  const limitNumberLength = (e: React.FormEvent<HTMLInputElement>) => {
+    if (e.currentTarget.value.length > e.currentTarget.maxLength) {
+      e.currentTarget.value = e.currentTarget.value.slice(0, e.currentTarget.maxLength);
     }
   };
 
