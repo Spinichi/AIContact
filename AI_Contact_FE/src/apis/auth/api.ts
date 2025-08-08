@@ -4,7 +4,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_PREFIX = import.meta.env.VITE_API_PREFIX;
 
 export const AuthApi = {
-  /** 로그인 요청 */
+  /* 로그인 요청 */
   signIn: async (payload: SignInRequest): Promise<string> => {
     const url = `${BASE_URL}${API_PREFIX}/auth/sign-in`;
 

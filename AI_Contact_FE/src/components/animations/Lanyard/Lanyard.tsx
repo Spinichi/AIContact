@@ -1,13 +1,11 @@
-/* eslint-disable react/no-unknown-property */
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { Canvas, extend, useFrame } from "@react-three/fiber";
 import {
-  useGLTF,
-  useTexture,
   Environment,
   Lightformer,
+  useGLTF,
+  useTexture,
 } from "@react-three/drei";
+import { Canvas, extend, useFrame } from "@react-three/fiber";
 import {
   BallCollider,
   CuboidCollider,
@@ -18,6 +16,7 @@ import {
   type RigidBodyProps,
 } from "@react-three/rapier";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
 // replace with your own imports, see the usage snippet for details

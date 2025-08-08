@@ -1,14 +1,14 @@
 import { apiFetch } from "../fetchClient";
 import type { ApiResponse } from "../types/common";
-import type { MeUserResponse } from "./response";
 import type { SignUpRequest } from "./request";
+import type { MeUserResponse } from "./response";
 
 export const UsersApi = {
-  /** 현재 로그인한 사용자 정보 조회 */
+  /* 현재 로그인한 사용자 정보 조회 */
   getMe: (options?: RequestInit) =>
     apiFetch<ApiResponse<MeUserResponse>>("/users/me", options),
 
-  /** 회원가입 */
+  /* 회원가입 */
   signUp: (payload: SignUpRequest) => {
     const formData = new FormData();
     formData.append("email", payload.email);
@@ -23,7 +23,7 @@ export const UsersApi = {
     });
   },
 
-  /** 회원 탈퇴 */
+  /* 회원 탈퇴 */
   deleteMe: () =>
     apiFetch<ApiResponse<string>>("/users/me", {
       method: "DELETE",

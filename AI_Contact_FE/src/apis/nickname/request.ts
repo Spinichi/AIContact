@@ -1,4 +1,4 @@
 export type NicknameRequest = {
-    word: string;
-    description: string;
-}
+  word: string;
+  description: string;
+};
