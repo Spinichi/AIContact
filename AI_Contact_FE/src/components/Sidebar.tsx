@@ -3,8 +3,8 @@ import NavAi from "../assets/icons/NavAi.svg?react";
 import NavCalendar from "../assets/icons/NavCalendar.svg?react";
 import NavDictionary from "../assets/icons/NavDictionary.svg?react";
 import NavGallery from "../assets/icons/NavGallery.svg?react";
-import NavMypage from "../assets/icons/NavMypage.svg?react";
 import NavLogout from "../assets/icons/NavLogout.svg?react";
+import NavMypage from "../assets/icons/NavMypage.svg?react";
 import "../styles/Sidebar.css";
 import Logo from "./Logo.tsx";
 

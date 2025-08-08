@@ -2,15 +2,14 @@ import { apiFetch } from "../fetchClient";
 import type { ApiResponse } from "../types/common";
 import type { NicknameRequest } from "./request";
 import type {
-  NicknameListResponse,
   NicknameCreateResponse,
+  NicknameListResponse,
   NicknameUpdateResponse,
 } from "./response";
 
 export const NicknameApi = {
   // 전체 닉네임 조회
-  getAll: () =>
-    apiFetch<ApiResponse<NicknameListResponse>>("/nicknames"),
+  getAll: () => apiFetch<ApiResponse<NicknameListResponse>>("/nicknames"),
 
   // 닉네임 등록
   create: (payload: NicknameRequest) =>
@@ -31,7 +30,7 @@ export const NicknameApi = {
         "Content-Type": "application/json",
       },
     }),
-     delete: (id: number) =>
+  delete: (id: number) =>
     apiFetch<void>(`/nicknames/${id}`, {
       method: "DELETE",
     }),

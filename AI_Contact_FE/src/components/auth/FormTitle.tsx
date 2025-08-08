@@ -1,4 +1,3 @@
-import React from "react";
 import symbol from "../../assets/images/symbol.png";
 
 const FormTitle = () => {

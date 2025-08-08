@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
-import "../../styles/AuthFormPanel.css";
 import arrowLeft from "../../assets/icons/ArrowLeft.svg";
 import editIcon from "../../assets/icons/edit.svg";
+import "../../styles/AuthFormPanel.css";
 
 import { UsersApi } from "../../apis/user";
 

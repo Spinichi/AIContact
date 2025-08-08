@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ComicStripsApi } from "../apis/comicStrips";
 import downloadbtn from "../assets/icons/downloadbtn.svg";
-import backgroundImage from "../assets/images/whiteboard.svg";
 import WhiteLeftArrow from "../assets/icons/whiteLeftArrow.svg";
+import backgroundImage from "../assets/images/whiteboard.svg";
 import Sidebar from "../components/Sidebar";
 
 import "../styles/CartoonPage.css";
