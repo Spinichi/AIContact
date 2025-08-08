@@ -102,4 +102,19 @@ public class DailyScheduleController {
 
         return ResponseEntity.ok(ApiResponse.success(result));
     }
+
+    @GetMapping("/dday")
+    public ResponseEntity<ApiResponse<List<DailyScheduleResponseDto>>> getDdaySchedules(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        String myEmail = userDetails.getUserEntity().getEmail();
+        Long coupleId = userService.getUserByEmail(myEmail).getCoupleId();
+
+        LocalDateTime dateCriteria = LocalDateTime.now();
+
+        List<DailyScheduleResponseDto> result = dailyScheduleService.getSchedulesDday(coupleId, dateCriteria).stream()
+                .map(DailyScheduleResponseDto::fromEntity)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
 }
