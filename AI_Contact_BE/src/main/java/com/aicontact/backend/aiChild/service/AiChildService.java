@@ -1,18 +1,16 @@
 package com.aicontact.backend.aiChild.service;
 
-import java.io.IOException;
-
-import org.springframework.stereotype.Service;
-
 import com.aicontact.backend.aiChild.entity.AiChildEntity;
 import com.aicontact.backend.aiChild.repository.AiChildRepository;
 import com.aicontact.backend.couple.entity.CoupleEntity;
 import com.aicontact.backend.couple.repository.CoupleRepository;
 import com.aicontact.backend.global.service.GptScenarioService;
-
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 @Service
 @Transactional
@@ -43,6 +41,20 @@ public class AiChildService {
 
         String attributes = gptScenarioService.getAppearanceAttributes(url1, url2);
         String imageUrl = imagenService.uploadAiChildImageToS3(attributes, coupleId);
+        child.setImageUrl(imageUrl);
+        return childRepo.save(child);
+    }
+
+    public AiChildEntity createChildForCouple(CoupleEntity couple) throws IOException {
+        AiChildEntity child = new AiChildEntity();
+        child.setCouple(couple);
+
+        // 1. 사진 외모 특성 추출하기
+        String url1 = couple.getUser1().getProfileImageUrl();
+        String url2 = couple.getUser2().getProfileImageUrl();
+
+        String attributes = gptScenarioService.getAppearanceAttributes(url1, url2);
+        String imageUrl = imagenService.uploadAiChildImageToS3(attributes, couple.getId());
         child.setImageUrl(imageUrl);
         return childRepo.save(child);
     }
