@@ -5,6 +5,7 @@ import com.aicontact.backend.auth.jwt.JwtUtil;
 import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.user.dto.JoinDto;
 import com.aicontact.backend.user.dto.UpdateUserDto;
+import com.aicontact.backend.user.dto.UpdateUserPasswordRequestDto;
 import com.aicontact.backend.user.dto.UserDto;
 import com.aicontact.backend.user.dto.UserResponseDto;
 import com.aicontact.backend.user.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -97,5 +99,36 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("회원 정보 삭제 완료"));
     }
 
+    @PutMapping(
+    value = "/me/profile-image",
+    consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse<UserDto>> updateMyProfileImage(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestPart("file") MultipartFile file) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false, null));
+        }
+        String token = authHeader.substring(7);
+        String email = jwtUtil.getEmail(token);
+
+        UserDto updated = userService.updateProfileImage(email, file);
+        return ResponseEntity.ok(ApiResponse.success(updated));
+    }
+
+    @PutMapping("/me/password")
+    public ResponseEntity<ApiResponse<String>> changeMyPassword(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody UpdateUserPasswordRequestDto req) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false, "잘못된 토큰 형식"));
+        }
+        String token = authHeader.substring(7);
+        String email = jwtUtil.getEmail(token);
+
+        userService.updatePassword(email, req.getCurrentPassword(), req.getNewPassword());
+        return ResponseEntity.ok(ApiResponse.success("비밀번호가 변경되었습니다."));
+    }
 
 }

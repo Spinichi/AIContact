@@ -15,5 +15,7 @@ public interface DailyScheduleRepository extends JpaRepository<DailyScheduleEnti
     List<DailyScheduleEntity> findByCoupleAndScheduleDate(CoupleEntity couple, LocalDateTime scheduleDate);
 
     List<DailyScheduleEntity> findByCoupleAndScheduleDateBetweenOrderByScheduleDateAsc(CoupleEntity couple, LocalDateTime start, LocalDateTime end);
+
+    List<DailyScheduleEntity> findTop5ByCoupleAndScheduleDateGreaterThanEqualOrderByScheduleDateAsc(CoupleEntity couple, LocalDateTime givenDate);
 }
 
