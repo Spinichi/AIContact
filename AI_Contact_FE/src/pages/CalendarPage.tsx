@@ -50,7 +50,6 @@ export default function CalendarPage() {
           start : element.scheduleDate
         }));
         setEvents(processedData);
-        console.log(events);
       } catch (e) { /* empty */ }
     };
 
