@@ -1,10 +1,10 @@
-import React from "react";
-import "../styles/RightIcons.css";
-import chatIcon from "../assets/icons/chat.png";
-import WebRTCgIcon from "../assets/icons/WebRTC Button.png";
-import Growth from "../assets/icons/Growth Button.png";
-import cartoonIcon from "../assets/icons/cartoon.png";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import '../styles/RightIcons.css';
+import chatIcon from '../assets/icons/chat.png';
+import WebRTCgIcon from '../assets/icons/WebRTC Button.png';
+import letter from '../assets/icons/letterBtn.svg';
+import cartoonIcon from '../assets/icons/cartoon.png';
+import { useNavigate  } from 'react-router-dom';
 
 // 이 컴포넌트가 받는 props의 타입 정의
 interface RightIconsProps {
@@ -27,6 +27,9 @@ const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
       </button>
       <button onClick={() => navigate("/cartoon")}>
         <img src={cartoonIcon} alt="네컷만화" />
+      </button>
+      <button onClick={() => navigate('/letters')}>
+        <img src={letter} alt="편지보기" />
       </button>
     </div>
   );
