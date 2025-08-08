@@ -58,13 +58,13 @@ public class CoupleController {
 
         try {
             AiChildEntity childResp = aiChildService.createChildForCouple(resp);
-            MatchResponse matchResp = new MatchResponse(new CoupleInfoResponse(resp),new AiChildResponse(childResp));
+            MatchResponse matchResp = new MatchResponse(new CoupleInfoResponse(resp), new AiChildResponse(childResp));
             ApiResponse<MatchResponse> response = ApiResponse.success(matchResp);
             return ResponseEntity.ok(response);
         } catch (IOException e) {
             throw new RuntimeException(
-                "AI 아이 생성 중 오류가 발생했습니다: " + e.getMessage(),
-                e
+                    "AI 아이 생성 중 오류가 발생했습니다: " + e.getMessage(),
+                    e
             );
         }
     }
