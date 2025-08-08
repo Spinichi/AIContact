@@ -74,7 +74,7 @@ public class MediaController {
 
     /** 3) media 삭제 → DELETE /api/v1/media/{id} (200 OK) */
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<DeleteMediaResponse>> deleteMedia(@PathVariable Long id) throws IOException {
+    public ResponseEntity<ApiResponse<DeleteMediaResponse>> deleteMedia(@PathVariable("id") Long id) throws IOException {
         mediaFileService.deleteMedia(id);
 
         DeleteMediaResponse payload = new DeleteMediaResponse(
