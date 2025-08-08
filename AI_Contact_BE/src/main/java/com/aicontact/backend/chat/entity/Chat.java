@@ -1,5 +1,6 @@
 package com.aicontact.backend.chat.entity;
 
+import com.aicontact.backend.couple.entity.CoupleEntity;
 import com.aicontact.backend.user.entity.UserEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -9,24 +10,21 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-
 @Entity
-@Table(name = "chat_messages")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@Table(name = "chat")
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChatMessage {
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+public class Chat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
-    private ChatRoom room;
-
+    @JoinColumn(name = "couple_id", nullable = false)
+    private CoupleEntity couple;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
@@ -35,14 +33,6 @@ public class ChatMessage {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "message_type", columnDefinition = "ENUM('TEXT', 'IMAGE') DEFAULT 'TEXT'")
-    private MessageType messageType = MessageType.TEXT;
-
-    @Column(name = "sent_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime sentAt = LocalDateTime.now();
-
-    public enum MessageType {
-        TEXT, IMAGE
-    }
 }

@@ -1,10 +1,10 @@
 package com.aicontact.backend.chat.service;
 
-import com.aicontact.backend.chat.dto.ChatMessageDto;
-import com.aicontact.backend.chat.entity.ChatMessage;
-import com.aicontact.backend.chat.entity.ChatRoom;
-import com.aicontact.backend.chat.repository.ChatMessageRepository;
-import com.aicontact.backend.chat.repository.ChatRoomRepository;
+import com.aicontact.backend.chat.dto.ChatDto;
+import com.aicontact.backend.chat.entity.Chat;
+import com.aicontact.backend.chat.repository.ChatRepository;
+import com.aicontact.backend.couple.entity.CoupleEntity;
+import com.aicontact.backend.couple.repository.CoupleRepository;
 import com.aicontact.backend.user.entity.UserEntity;
 import com.aicontact.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,47 +18,37 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final ChatRoomRepository chatRoomRepository;
-    private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final CoupleRepository coupleRepository;
+    private final ChatRepository chatRepository;
 
-    public void saveAndSend(ChatMessageDto dto) {
-        ChatRoom room = chatRoomRepository.findById(dto.getRoomId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
+    public void saveAndSend(ChatDto dto) {
         UserEntity sender = userRepository.findById(dto.getSenderId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid sender ID"));
+        CoupleEntity couple = coupleRepository.findById(dto.getCoupleId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid couple ID"));
 
-        ChatMessage.MessageType type;
-        try {
-            type = ChatMessage.MessageType.valueOf(
-                    dto.getMessageType() != null ? dto.getMessageType().toUpperCase() : "TEXT"
-            );
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid messageType: " + dto.getMessageType());
-        }
+        Chat chat = new Chat();
+        chat.setContent(dto.getContent());
+        chat.setSender(sender);
+        chat.setCouple(couple);
+        chat.setSentAt(LocalDateTime.now());
 
-        ChatMessage message = new ChatMessage();
-        message.setRoom(room);
-        message.setSender(sender);
-        message.setContent(dto.getContent());
-        message.setMessageType(type);
-        message.setSentAt(LocalDateTime.now());
+        chatRepository.save(chat);
 
-        chatMessageRepository.save(message);
-
-        ChatMessageDto response = new ChatMessageDto(
-                dto.getRoomId(),
+        ChatDto response = new ChatDto(
+                dto.getCoupleId(),
                 dto.getSenderId(),
                 dto.getContent(),
-                type.name(),
-                message.getSentAt().toString()
+                LocalDateTime.now().toString()
         );
 
-        messagingTemplate.convertAndSend("/sub/chat/" + dto.getRoomId(), response);
+        messagingTemplate.convertAndSend("/sub/chat/" + dto.getCoupleId(), response);
     }
 
-    public List<ChatMessage> getHistory(Long roomId) {
-        return chatMessageRepository.findByRoom_IdOrderBySentAtAsc(roomId);
+    public List<Chat> getChatMessagesByCoupleId(Long coupleId) {
+        return chatRepository.findByCoupleIdOrderBySentAtAsc(coupleId);
     }
+
 }
