@@ -9,7 +9,7 @@ openvidu:
 # LiveKit configuration
 port: 7880
 bind_addresses:
-    - ""
+    - "0.0.0.0"
 rtc:
     tcp_port: 7881
     port_range_start: 7900
@@ -22,7 +22,7 @@ redis:
     use_tls: false
 turn:
     enabled: true
-    udp_port: 3478
+    udp_port: 8878
     relay_range_start: 40000
     relay_range_end: 50000
 keys:

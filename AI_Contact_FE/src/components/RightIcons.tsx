@@ -13,20 +13,20 @@ interface RightIconsProps {
 
 // RightIconsProps 타입의 props를 받는다는 뜻
 const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
-    // 오른쪽에 위치할 아이콘 버튼들을 담는 div 
+    // 오른쪽에 위치할 아이콘 버튼들을 담는 div
     <div className="right-icons">
       {/* 첫 번째 버튼에 클릭 핸들러 연결 */}
       {/* 부모 컴포넌트에서 넘겨준 onChatClick 함수를 버튼 클릭 시 실행 */}
       <button onClick={onChatClick}>
         <img src={chatIcon} alt="채팅" />
       </button>
-      <button onClick={() => navigate('/webrtc')}>
+      <button onClick={() => navigate("/webrtc")}>
         <img src={WebRTCgIcon} alt="영상통화" />
       </button>
-      <button onClick={() => navigate('/cartoon')}>
-        <img src={cartoonIcon} alt="만화보기" />
+      <button onClick={() => navigate("/cartoon")}>
+        <img src={cartoonIcon} alt="네컷만화" />
       </button>
       <button onClick={() => navigate('/letters')}>
         <img src={letter} alt="편지보기" />

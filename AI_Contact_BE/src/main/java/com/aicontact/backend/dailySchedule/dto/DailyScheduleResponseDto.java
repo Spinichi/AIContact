@@ -4,7 +4,6 @@ import com.aicontact.backend.dailySchedule.entity.DailyScheduleEntity;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,7 +13,7 @@ public class DailyScheduleResponseDto {
     private Long id;
     private String title;
     private String memo;
-    private LocalDate scheduleDate;
+    private LocalDateTime scheduleDate;
 
     private Long coupleId;
     private Long creatorId;
