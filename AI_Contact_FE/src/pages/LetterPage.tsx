@@ -1,39 +1,43 @@
-import { useState } from "react";
+// src/pages/Letters.tsx
+import { useState, useEffect } from "react";
 import homeIcon from "../assets/icons/homebtn.png";
 import backgroundImage from "../assets/images/talkroom_background.png";
 import Sidebar from "../components/Sidebar";
 import "../styles/LetterPage.css";
 import "../styles/MainPages.css";
 
-interface Letter {
-  id: number;
-  title: string;
-  body: string;
-}
+import { LetterApi } from "../apis/letter";
+import type { LettersResponse } from "../apis/letter";
 
 export default function Letters() {
-  const mockLetters: Letter[] = [
-    {
-      id: 1,
-      title: "첫 번째 편지",
-      body: "정말 오랜만이야...\n이렇게 편지를 쓰는 건 처음이네.",
-    },
-    {
-      id: 2,
-      title: "여름 방학 계획",
-      body: "바다도 가고 캠핑도 가고...\n너의 생각은 어때?",
-    },
-    {
-      id: 3,
-      title: "축하해!",
-      body: "합격 소식 정말 기뻐!\n다 같이 모여서 파티하자.",
-    },
-    { id: 4, title: "오랜만이야", body: "…(본문이 길어요)…" },
-    // 더미 데이터 추가 가능
-  ];
+  const [letters, setLetters] = useState<LettersResponse>([]);
+  const [selectedBody, setSelectedBody] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [letters] = useState<Letter[]>(mockLetters);
-  const [selected, setSelected] = useState<Letter | null>(null);
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    LetterApi.getAll()
+      .then((res) => {
+        if (res.success) {
+          if (res.data.length === 0) {
+            console.log("📭 도착한 편지가 없습니다.");
+          }
+          setLetters(res.data);
+        } else {
+          setError("편지 조회에 실패했습니다.");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("서버 에러가 발생했습니다.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="main-layout">
@@ -44,34 +48,43 @@ export default function Letters() {
       >
         <img src={homeIcon} alt="홈" className="letter-icon-img" />
 
-        {/* 편지 그리드 */}
-        <div className="letters-container">
-          {letters.map((letter) => (
-            <div
-              key={letter.id}
-              className="letter-box"
-              onClick={() => setSelected(letter)}
-            >
-              <h4>{letter.title}</h4>
-            </div>
-          ))}
-        </div>
+        {loading && <div className="status">로딩 중...</div>}
+        {error && <div className="status error">{error}</div>}
 
-        {/* 상세 모달 */}
-        {selected && (
+        {!loading && !error && letters.length === 0 && (
+          <div className="status">📭 도착한 편지가 없습니다.</div>
+        )}
+
+        {!loading && !error && letters.length > 0 && (
+          <div className="letters-container">
+            {letters.map((body, idx) => (
+              <div
+                key={idx}
+                className="letter-box"
+                onClick={() => setSelectedBody(body)}
+              >
+                <h4>{`편지 ${idx + 1}`}</h4>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {selectedBody && (
           <div
             className="letter-modal-backdrop"
-            onClick={() => setSelected(null)}
+            onClick={() => setSelectedBody(null)}
           >
-            <div className="letter-modal" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="letter-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
                 className="modal-close-btn"
-                onClick={() => setSelected(null)}
+                onClick={() => setSelectedBody(null)}
               >
                 ×
               </button>
-              <h2>{selected.title}</h2>
-              <pre className="modal-body">{selected.body}</pre>
+              <pre className="modal-body">{selectedBody}</pre>
             </div>
           </div>
         )}
