@@ -48,7 +48,7 @@
   background: white; /* 내부 내용 배경 */
   padding: 20px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-  border: 1px solid var(--primary);
+  border: 2px solid var(--primary);
   justify-content: space-between;
 }
 

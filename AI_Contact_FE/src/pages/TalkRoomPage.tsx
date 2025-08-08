@@ -1,22 +1,22 @@
-import React, { useState, useEffect, useRef } from "react";
-import Sidebar from "../components/Sidebar";
-import backgroundImage from "../assets/images/talkroom_background.png";
-import homeIcon from "../assets/icons/homebtn.png";
-import babyImage from "../assets/images/AIbaby.png";
-import "../styles/MainPages.css";
-import "../styles/TalkRoom.css";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { babychatapi } from "../apis/babychat";
-import { apiFetch } from "../apis/fetchClient";
+import { aiChildApi } from "../apis/aiChild";
 import type {
+  AiMessageType,
   BabychatRequest,
   BabychatResponse,
-  AiMessageType,
 } from "../apis/babychat";
+import { babychatapi } from "../apis/babychat";
+import { apiFetch } from "../apis/fetchClient";
 import type { ApiResponse } from "../apis/types/common";
 import type { MeUserResponse } from "../apis/user/response";
-import { aiChildApi } from "../apis/aiChild";
+import homeIcon from "../assets/icons/homebtn.png";
+import babyImage from "../assets/images/AIbaby.png";
+import backgroundImage from "../assets/images/talkroom_background.png";
+import Sidebar from "../components/Sidebar";
+import "../styles/MainPages.css";
+import "../styles/TalkRoom.css";
 
 interface Message {
   text: string;

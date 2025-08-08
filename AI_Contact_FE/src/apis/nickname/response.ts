@@ -1,9 +1,9 @@
 export type NicknameItem = {
-    id: number;
-    word: string;
-    description?: string;
-    created_at: string;
-}
+  id: number;
+  word: string;
+  description?: string;
+  created_at: string;
+};
 
 export interface NicknameListResponse {
   nicknames: NicknameItem[];

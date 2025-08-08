@@ -24,6 +24,9 @@
 
   /* 배경 색상 */
   --bg-primary: #ebf0f7;
+
+  /* 사이드바 색상 */
+  --side-bar: #e1dcfa;
 }
 
 a {

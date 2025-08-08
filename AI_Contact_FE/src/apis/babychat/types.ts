@@ -1,1 +1,1 @@
-export type AiMessageType = 'AI' | 'USER';
+export type AiMessageType = "AI" | "USER";
