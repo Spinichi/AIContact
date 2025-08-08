@@ -1,11 +1,15 @@
 package com.aicontact.backend.babychat.service;
 
+import com.aicontact.backend.aiChild.entity.AiChildEntity;
+import com.aicontact.backend.aiChild.service.AiChildService;
 import com.aicontact.backend.babychat.config.GmsProperties;
 import com.aicontact.backend.babychat.entity.AiMessageType;
 import com.aicontact.backend.babychat.entity.BabyChatMessage;
-import com.aicontact.backend.babychat.entity.BabySummaryLetter;
+import com.aicontact.backend.babychat.entity.BabyLetter;
 import com.aicontact.backend.babychat.repository.BabyChatMessageRepository;
-import com.aicontact.backend.babychat.repository.BabySummaryLetterRepository;
+import com.aicontact.backend.babychat.repository.BabyLetterRepository;
+import com.aicontact.backend.couple.entity.CoupleEntity;
+import com.aicontact.backend.couple.repository.CoupleRepository;
 import com.aicontact.backend.user.entity.UserEntity;
 import com.aicontact.backend.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,10 +25,10 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
-
 
 @Service
 public class GmsChatService {
@@ -35,19 +39,26 @@ public class GmsChatService {
     private final GmsProperties props;
     private final BabyChatMessageRepository repo;
     private final UserRepository userRepository;
+    private final CoupleRepository coupleRepository;
+    private final AiChildService aiChildService;
 
 
-    private final BabySummaryLetterRepository letterRepository;
+    private final BabyLetterRepository letterRepository;
 
     public GmsChatService(WebClient.Builder webClientBuilder,
                           GmsProperties props,
                           BabyChatMessageRepository repo,
-                          BabySummaryLetterRepository letterRepository,
-                          UserRepository userRepository) {
+                          BabyLetterRepository letterRepository,
+                          UserRepository userRepository,
+                          CoupleRepository coupleRepository,
+                          AiChildService aiChildService) {
         this.props = props;
         this.repo = repo;
         this.letterRepository = letterRepository;
         this.userRepository = userRepository;
+        this.coupleRepository = coupleRepository;
+        this.aiChildService = aiChildService;
+
 
         ExchangeFilterFunction requestLogger = ExchangeFilterFunction.ofRequestProcessor(request -> {
             log.info("▶ GMS 요청 ▶ {} {}", request.method(), request.url());
@@ -75,8 +86,8 @@ public class GmsChatService {
         JsonNode resp;
         try {
             resp = client.post()
-                    .uri("/v1/chat/completions")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + props.getKey())
+                    .uri(props.getEndpoint())
+                    .header(HttpHeaders.AUTHORIZATION, props.getKey())
                     .bodyValue(body)
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, cr ->
@@ -155,10 +166,19 @@ public class GmsChatService {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        BabySummaryLetter letter = new BabySummaryLetter();
-        letter.setUser(user);
-        letter.setContent(fullLetter);
-        letter.setCreatedAt(LocalDateTime.now());
+        CoupleEntity couple = coupleRepository.findById(user.getCoupleId())
+                .orElseThrow(() -> new RuntimeException("Couple not found"));
+
+        AiChildEntity aiChild = aiChildService.getMyChild(couple.getId());
+
+        // 변경된 부분: 새로운 Entity로 변경
+        BabyLetter letter = BabyLetter.builder()
+                .couple(couple)
+                .senderUser(user)
+                .aiChildren(aiChild)
+                .letterContent(fullLetter)
+                .conversationSessionId(null) // 필요시 특정 세션 ID 설정
+                .build();
         letterRepository.save(letter);
 
         return fullLetter;
@@ -194,8 +214,8 @@ public class GmsChatService {
         JsonNode resp;
         try {
             resp = client.post()
-                    .uri("/v1/chat/completions")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + props.getKey())
+                    .uri(props.getEndpoint())
+                    .header(HttpHeaders.AUTHORIZATION,props.getKey())
                     .bodyValue(body)
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, cr ->

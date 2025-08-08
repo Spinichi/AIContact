@@ -1,39 +1,56 @@
-import { useState } from "react";
-import BabyAvatar from "../components/BabyAvatar";
-import RightIcons from "../components/RightIcons";
-import Sidebar from "../components/Sidebar";
-import "../styles/MainPages.css";
+import { useEffect, useState } from 'react';
+import BabyAvatar from '../components/BabyAvatar';
+import ChatPanel from '../components/ChatPanel';
+import EventCalendar from '../components/MainEventCalendar';
+import RightIcons from '../components/RightIcons';
+import Sidebar from '../components/Sidebar';
+import '../styles/MainPages.css';
+import '../styles/UserInfo.css';
 
-import ChatPanel from "../components/ChatPanel";
-import EventCalendar from "../components/MainEventCalendar";
-import "../styles/UserInfo.css";
+import { UsersApi } from '../apis/user/api';
+import type { MeUserResponse } from '../apis/user/response';
 
 export default function MainPage() {
-  // 채팅창 열기/닫기 상태 선언
+  const [userInfo, setUserInfo] = useState<MeUserResponse | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await UsersApi.getMe();
+        setUserInfo(res.data);
+      } catch (err) {
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
+  if (!userInfo) return <div>로딩 중...</div>;
 
   return (
     <div className="main-layout">
       <Sidebar />
-
-      <div className="main-content">
+      <div className='main-content'>
         <div className="mainpage-header">
-          <p>
-            <span className="mainpage-label">지민 💗 재욱</span>
-          </p>
-          <h3>
-            사랑한지 <strong>87일</strong> 째
-          </h3>
+          <p><span className="mainpage-label">{userInfo.name} 💗</span></p>
+          <h3>사랑한지 <strong>87일</strong> 째</h3> 
         </div>
 
-        <div className="content-row">
+        <div className='content-row'>
           <BabyAvatar />
           <EventCalendar />
           <RightIcons onChatClick={() => setIsChatOpen(true)} />
         </div>
 
-        {/* 채팅 패널 */}
-        <ChatPanel isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+        {userInfo.coupleId && (
+          <ChatPanel
+            isOpen={isChatOpen}
+            onClose={() => setIsChatOpen(false)}
+            coupleId={userInfo.coupleId}
+            senderId={userInfo.id}
+          />
+        )}
       </div>
     </div>
   );

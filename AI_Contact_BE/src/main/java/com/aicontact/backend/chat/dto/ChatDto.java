@@ -9,10 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessageDto {
-    private Long roomId;
+public class ChatDto {
+    private Long coupleId;
     private Long senderId;
     private String content;
-    private String messageType; // TEXT or IMAGE
     private String sentAt;
 }
