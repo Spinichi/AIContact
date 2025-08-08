@@ -1,10 +1,10 @@
-import GalleryImage from "./GalleryImage";
 import image1 from "../../assets/images/Slides/slide1.png";
 import image2 from "../../assets/images/Slides/slide2.png";
 import image3 from "../../assets/images/Slides/slide3.png";
 import image4 from "../../assets/images/Slides/slide4.png";
 import image5 from "../../assets/images/Slides/slide5.png";
 import image6 from "../../assets/images/Slides/slide6.png";
+import GalleryImage from "./GalleryImage";
 
 export default function OnBoardingGallery() {
   return (

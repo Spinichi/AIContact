@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-import "../styles/MainPages.css";
-import "../styles/DictionaryPage.css";
-import Modal from "../components/modal/Modal";
+import React, { useEffect, useState } from "react";
 import dictionarybook from "../assets/images/dictionary.png";
+import Modal from "../components/modal/Modal";
+import Sidebar from "../components/Sidebar";
+import "../styles/DictionaryPage.css";
+import "../styles/MainPages.css";
 
 import { NicknameApi } from "../apis/nickname/api";
 import type { NicknameItem } from "../apis/nickname/response";
@@ -212,9 +212,7 @@ const DictionaryPage: React.FC = () => {
           hasPrev={false}
         >
           <div className="modal">
-            <h3>
-              {modalMode === "create" ? "새로운 단어 추가" : "단어 편집"}
-            </h3>
+            <h3>{modalMode === "create" ? "새로운 단어 추가" : "단어 편집"}</h3>
             <input
               type="text"
               placeholder="단어 입력"

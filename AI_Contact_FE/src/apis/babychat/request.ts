@@ -1,4 +1,3 @@
-
 export type BabychatRequest = {
   userId: number;
   aiChildrenId: number;

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import "../../styles/CoupleConnection.css";
-import heart from "../../assets/images/heart.png";
-import { CouplesApi } from "../../apis/couple";
 import { useNavigate } from "react-router-dom";
+import { CouplesApi } from "../../apis/couple";
+import heart from "../../assets/images/heart.png";
+import "../../styles/CoupleConnection.css";
 
 export default function PartnerConnectionForm() {
   const [code, setCode] = useState("");
