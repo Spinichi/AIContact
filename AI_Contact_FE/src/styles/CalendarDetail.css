@@ -12,8 +12,9 @@
     padding : 40px;
 }
 
-.add-btn{
+.content .add-btn{
     cursor: pointer;
+    box-shadow: none;
 }
 
 .date{

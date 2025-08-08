@@ -12,6 +12,7 @@ import TalkPage from "./pages/TalkRoomPage";
 import CartoonResultPage from "./pages/CartoonResultPage";
 import WebRtcPage from "./pages/WebRtcPage";
 import OnBoardingPage from "./pages/OnBoardingPage";
+import LetterPage from "./pages/LetterPage";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/talk" element={<TalkPage />} />
         <Route path="/webrtc" element={<WebRtcPage />} />
         <Route path="/cartoon" element={<CartoonPage />} />
+        <Route path="/letters" element={<LetterPage /> } />
         <Route path="/cartoon-result" element={<CartoonResultPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/calendar" element={<CalendarPage />} />
