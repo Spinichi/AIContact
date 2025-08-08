@@ -43,7 +43,7 @@ public class MessageSummaryController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ApiResponse<List<String>>> getLetters(
-            @RequestParam Long userId
+            @RequestParam("userId") Long userId
     ) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
