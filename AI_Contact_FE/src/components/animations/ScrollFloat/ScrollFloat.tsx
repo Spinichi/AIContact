@@ -1,3 +1,5 @@
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import React, {
   useEffect,
   useMemo,
@@ -5,8 +7,6 @@ import React, {
   type ReactNode,
   type RefObject,
 } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import "./ScrollFloat.css";
 

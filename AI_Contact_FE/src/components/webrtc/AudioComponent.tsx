@@ -1,6 +1,5 @@
-// AudioComponent.tsx
-import { useEffect, useRef } from "react";
 import { RemoteAudioTrack } from "livekit-client";
+import { useEffect, useRef } from "react";
 
 interface AudioComponentProps {
   track: RemoteAudioTrack;

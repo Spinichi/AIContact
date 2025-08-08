@@ -29,7 +29,7 @@ export default function MainPage() {
   if (!userInfo) return <div>로딩 중...</div>;
 
   return (
-    <div className='main-layout'>
+    <div className="main-layout">
       <Sidebar />
       <div className='main-content'>
         <div className="mainpage-header">

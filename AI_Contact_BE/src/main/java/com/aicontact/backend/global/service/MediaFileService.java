@@ -210,7 +210,7 @@ public class MediaFileService {
     public Page<MediaThumbnailDto> listThumbnails(Long coupleId, int page, int size) {
         Pageable pv = PageRequest.of(page, size, Sort.by("uploadDate").descending());
         return mediaFileRepository.findByCoupleId(coupleId, pv)
-                .map(e -> new MediaThumbnailDto(e.getId(), e.getThumbnailUrl(), e.isFavorite()));
+                .map(e -> new MediaThumbnailDto(e.getId(), e.getThumbnailUrl(), e.isFavorite(), e.getCreatedAt()));
     }
 
     public MediaFileDto getMedia(Long coupleId, Long mediaId) {
@@ -235,7 +235,8 @@ public class MediaFileService {
             FileType fileType,
             LocalDate dateFrom,
             LocalDate dateTo,
-            Long loggedInCoupleId
+            Long loggedInCoupleId,
+            boolean favoriteOnly
     ) {
         // 1) 기본 spec (로그인한 커플)
         Specification<MediaFileEntity> spec = (root, query, cb) ->
@@ -258,9 +259,15 @@ public class MediaFileService {
                     cb.lessThanOrEqualTo(root.get("uploadDate"), dateTo));
         }
 
+        // 4) favoriteOnly 필터 (즐겨찾기 탭일 때만)
+        if (favoriteOnly) {
+            spec = spec.and((root, query, cb) ->
+                    cb.isTrue(root.get("isFavorite")));  // entity 의 boolean favorite 필드
+        }
+
         // 5) 조회 + DTO 변환
         return mediaFileRepository.findAll(spec, pageable)
-                .map(e -> new MediaThumbnailDto(e.getId(), e.getThumbnailUrl(), e.isFavorite()));
+                .map(e -> new MediaThumbnailDto(e.getId(), e.getThumbnailUrl(), e.isFavorite(), e.getCreatedAt()));
     }
 }
 

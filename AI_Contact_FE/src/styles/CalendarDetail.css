@@ -12,8 +12,9 @@
     padding : 40px;
 }
 
-.add-btn{
+.content .add-btn{
     cursor: pointer;
+    box-shadow: none;
 }
 
 .date{
@@ -77,4 +78,24 @@
     transition : grid-template-rows 0.4s ease-in-out;
     grid-template-rows: 0fr;
     margin : 10px;
+}
+
+.schedule-content .schedule-buttons{
+    display: flex;
+    flex-direction: row;
+    gap : 10px;
+}
+
+.schedule-buttons > div{
+    font-size : 12px;
+    border-radius: 10%;
+    padding : 5px 10px;
+    border : 1px solid var(--text-light);
+    cursor : pointer;
+    user-select: none;
+}
+
+.schedule-buttons > div:active{
+    background-color: var(--text-light);
+    color : white;
 }

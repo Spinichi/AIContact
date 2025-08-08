@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LoginBtnGradient from "../../assets/icons/LoginBtnGradient.svg";
 import WhiteLoginBtn from "../../assets/icons/LoginBtnWhite.svg";
-import SignUpBtn from "../../assets/icons/SignUpBtn.svg";
 import TopBtn from "../../assets/icons/TopBtn.svg";
 import "../../styles/FixedButtons.css";
 

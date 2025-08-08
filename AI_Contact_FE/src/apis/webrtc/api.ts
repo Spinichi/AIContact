@@ -4,7 +4,7 @@ import type { GetWebRtcTokenRequest } from "./request";
 import type { GetWebRtcTokenResponse } from "./response";
 
 export const WebRtcApi = {
-  /** WebRTC 토큰 요청 API */
+  /* WebRTC 토큰 요청 API */
   getToken: (
     payload: GetWebRtcTokenRequest,
     accessToken: string

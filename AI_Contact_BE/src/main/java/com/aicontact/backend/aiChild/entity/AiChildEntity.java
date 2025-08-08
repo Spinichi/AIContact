@@ -33,5 +33,4 @@ public class AiChildEntity extends BaseTimeEntity {
 
     @Column(name = "experience_points", nullable = false)
     private Integer experiencePoints = 0;
-
 }
