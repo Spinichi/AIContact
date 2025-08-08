@@ -12,6 +12,8 @@ import com.aicontact.backend.babychat.service.GmsChatService;
 import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.user.entity.UserEntity;
 import com.aicontact.backend.user.repository.UserRepository;
+import com.aicontact.backend.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,22 +25,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/baby")
+@RequiredArgsConstructor
 public class BabyChatRestController {
 
     private final GmsChatService service;
     private final BabyChatMessageRepository repo;
     private final UserRepository userRepository;
     private final AiChildService aiChildService;
-
-    public BabyChatRestController(GmsChatService service,
-                                  BabyChatMessageRepository repo,
-                                  UserRepository userRepository,
-                                  AiChildService aiChildService) {
-        this.service = service;
-        this.repo = repo;
-        this.userRepository = userRepository;
-        this.aiChildService = aiChildService;
-    }
+    private final UserService userService;
 
     @PostMapping(
             path = "/chat",
@@ -50,7 +44,11 @@ public class BabyChatRestController {
             @RequestBody ChatRequestDTO req
     ) {
 
-        UserEntity user = userRepository.findById(req.getUserId())
+
+        String email = userDetails.getUserEntity().getEmail();
+        Long userId = userService.getUserByEmail(email).getId();
+
+        UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
 
@@ -67,7 +65,7 @@ public class BabyChatRestController {
 
 
         List<BabyChatMessage> history = repo.findTop20ByUserIdAndConversationSessionIdOrderByCreatedAtDesc(
-                req.getUserId(), req.getConversationSessionId()
+                userId, req.getConversationSessionId()
         );
 
         Collections.reverse(history);
@@ -102,8 +100,11 @@ public class BabyChatRestController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ApiResponse<List<ChatResponseDTO>>> getChatHistoryByUser(
-            @RequestParam Long userId
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        String email = userDetails.getUserEntity().getEmail();
+        Long userId = userService.getUserByEmail(email).getId();
+
         List<BabyChatMessage> messages = repo
                 .findByUserIdOrderByCreatedAtAsc(userId);
 

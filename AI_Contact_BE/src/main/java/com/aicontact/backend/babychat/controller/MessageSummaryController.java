@@ -1,17 +1,19 @@
 package com.aicontact.backend.babychat.controller;
 
+import com.aicontact.backend.auth.dto.CustomUserDetails;
 import com.aicontact.backend.babychat.entity.BabyLetter;
 import com.aicontact.backend.babychat.repository.BabyLetterRepository;
 import com.aicontact.backend.babychat.service.GmsChatService;
 import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.user.entity.UserEntity;
 import com.aicontact.backend.user.repository.UserRepository;
+import com.aicontact.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,14 +27,19 @@ public class MessageSummaryController {
     private final GmsChatService service;
     private final BabyLetterRepository letterRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping(
             path = "/letter",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ApiResponse<String>> getSummaryLetter(
-            @RequestParam Long userId
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+
+        String email = userDetails.getUserEntity().getEmail();
+        Long userId = userService.getUserByEmail(email).getId();
+
         String letter = service.summarizeToLetter(userId);
         return ResponseEntity
                 .ok()
@@ -46,9 +53,11 @@ public class MessageSummaryController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ApiResponse<List<String>>> getLetters(
-            @RequestParam Long userId
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        UserEntity user = userRepository.findById(userId)
+        String email = userDetails.getUserEntity().getEmail();
+
+        UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
         List<BabyLetter> letters = letterRepository
