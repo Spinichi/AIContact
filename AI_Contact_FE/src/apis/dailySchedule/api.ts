@@ -46,4 +46,9 @@ export const dailySchedulesApi = {
       }
     );
   },
+
+  getSchedulesDday: async () => 
+    apiFetch<ApiResponse<DailyScheduleResponse[]>>('/schedules/dday', {
+        method: "GET",
+    }),
 };

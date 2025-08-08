@@ -74,5 +74,12 @@ public class DailyScheduleService {
                 .orElseThrow(() -> new IllegalArgumentException("커플 없음"));
         return dailyScheduleRepository.findByCoupleAndScheduleDateBetweenOrderByScheduleDateAsc(couple, start, end);
     }
+
+    @Transactional(readOnly = true)
+    public List<DailyScheduleEntity> getSchedulesDday(Long coupleId, LocalDateTime dateCriteria) {
+        CoupleEntity couple = coupleRepository.findById(coupleId)
+                .orElseThrow(() -> new IllegalArgumentException("커플 없음"));
+        return dailyScheduleRepository.findTop5ByCoupleAndScheduleDateGreaterThanEqualOrderByScheduleDateAsc(couple, dateCriteria);
+    }
 }
 
