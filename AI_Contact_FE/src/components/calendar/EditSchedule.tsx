@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel } from 'swiper/modules';
 
@@ -51,10 +51,19 @@ export default function EditSchedule({scheduleInfo, onCancel, onDailyScheduleSub
           alert(error?.message || "스케쥴 등록 중 문제가 발생했습니다.");
         }
       };
+    
+    const limitNumberLength = (e : React.FocusEvent<HTMLInputElement>) => {
+        if(e.target.value.length > e.target.maxLength){
+            e.target.value = e.target.value.slice(0, e.target.maxLength);
+        }
+    }
+
+    useEffect( () => {
+        setDay(days[ new Date(Number(year), Number(month)-1, Number(date)).getDay()])
+    } , [year, month, date]);
 
     const updateValue = (e : React.FocusEvent<HTMLInputElement, Element>) => {
         const res = Math.min(Number(e.target.max), Math.max(Number(e.target.min), Number(e.target.value)));
-        setDay(days[ new Date(Number(year), Number(month)-1, Number(date)).getDay()])
         return res;
     }
 
@@ -67,18 +76,24 @@ export default function EditSchedule({scheduleInfo, onCancel, onDailyScheduleSub
                             value={year} 
                             min={1900} 
                             max={2099} 
+                            maxLength={4}
+                            onInput={(e) => limitNumberLength(e)}
                             onChange={(e) => setYear(e.target.valueAsNumber)} 
                             onBlur={(e) => setYear(updateValue(e))} />년
                         <input type="number" 
                             value={month} 
                             min={1} 
                             max={12} 
+                            maxLength={2}
+                            onInput={(e) => limitNumberLength(e)}
                             onChange={(e) => setMonth(e.target.valueAsNumber)} 
                             onBlur={(e) => setMonth(updateValue(e))} />월
                         <input type="number" 
                             value={date} 
                             min={1} 
                             max={new Date(Number(year), Number(month), 0).getDate()} 
+                            maxLength={2}
+                            onInput={(e) => limitNumberLength(e)}
                             onChange={(e) => setDate(e.target.valueAsNumber)} 
                             onBlur={(e) => setDate(updateValue(e))} />일 
                     </div>
