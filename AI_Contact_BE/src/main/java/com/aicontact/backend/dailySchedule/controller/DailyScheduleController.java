@@ -66,7 +66,7 @@ public class DailyScheduleController {
     @GetMapping("/day")
     public ResponseEntity<ApiResponse<List<DailyScheduleResponseDto>>> getDailySchedules(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date) {
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date) {
 
         String myEmail = userDetails.getUserEntity().getEmail();
         Long coupleId = userService.getUserByEmail(myEmail).getCoupleId();
@@ -84,8 +84,8 @@ public class DailyScheduleController {
     @GetMapping("/month")
     public ResponseEntity<ApiResponse<List<DailyScheduleResponseDto>>> getMonthlySchedules(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam int year,
-            @RequestParam int month) {
+            @RequestParam("year") int year,
+            @RequestParam("month") int month) {
 
         String myEmail = userDetails.getUserEntity().getEmail();
         Long coupleId = userService.getUserByEmail(myEmail).getCoupleId();
