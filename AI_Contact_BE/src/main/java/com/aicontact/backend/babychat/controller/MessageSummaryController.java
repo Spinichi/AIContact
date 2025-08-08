@@ -1,7 +1,7 @@
 package com.aicontact.backend.babychat.controller;
 
-import com.aicontact.backend.babychat.entity.BabySummaryLetter;
-import com.aicontact.backend.babychat.repository.BabySummaryLetterRepository;
+import com.aicontact.backend.babychat.entity.BabyLetter;
+import com.aicontact.backend.babychat.repository.BabyLetterRepository;
 import com.aicontact.backend.babychat.service.GmsChatService;
 import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.user.entity.UserEntity;
@@ -9,7 +9,10 @@ import com.aicontact.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +23,7 @@ import java.util.stream.Collectors;
 public class MessageSummaryController {
 
     private final GmsChatService service;
-    private final BabySummaryLetterRepository letterRepository;
+    private final BabyLetterRepository letterRepository;
     private final UserRepository userRepository;
 
     @GetMapping(
@@ -48,11 +51,11 @@ public class MessageSummaryController {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
-        List<BabySummaryLetter> letters = letterRepository
-                .findByUserOrderByCreatedAtDesc(user);
+        List<BabyLetter> letters = letterRepository
+                .findBySenderUserOrderByCreatedAtDesc(user);
 
         List<String> contents = letters.stream()
-                .map(BabySummaryLetter::getContent)
+                .map(BabyLetter::getLetterContent)
                 .collect(Collectors.toList());
 
         return ResponseEntity
