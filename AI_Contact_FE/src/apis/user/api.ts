@@ -28,4 +28,21 @@ export const UsersApi = {
     apiFetch<ApiResponse<string>>("/users/me", {
       method: "DELETE",
     }),
+
+  /* 프로필 이미지 업데이트 (multipart/form-data) */
+  updateProfileImage: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return apiFetch<ApiResponse<MeUserResponse>>("/users/me/profile-image", {
+      method: "PUT",
+      body: formData,
+    });
+  },
+
+  /* 비밀번호 업데이트 */
+  updatePassword: (payload: { currentPassword: string; newPassword: string }) =>
+    apiFetch<ApiResponse<string>>("/users/me/password", {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    }),
 };
