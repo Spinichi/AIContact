@@ -18,9 +18,9 @@
 
 .content-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  gap: 50px; /* 아기 사진, 캘린더, 아이콘 사이 간격 */
+  gap: 50px;
 }
 
 .page-header {

@@ -1,8 +1,8 @@
 .right-icons {
-  position: fixed;
+  position: absolute;
   top: 50%;
   transform: translate(0, -50%);
-  right: 40px;
+  right: 30px;
   display: flex;
   flex-direction: column;
   gap: 20px;
