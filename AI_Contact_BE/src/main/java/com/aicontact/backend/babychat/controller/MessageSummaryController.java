@@ -4,6 +4,8 @@ import com.aicontact.backend.auth.dto.CustomUserDetails;
 import com.aicontact.backend.babychat.entity.BabyLetter;
 import com.aicontact.backend.babychat.repository.BabyLetterRepository;
 import com.aicontact.backend.babychat.service.GmsChatService;
+import com.aicontact.backend.couple.entity.CoupleEntity;
+import com.aicontact.backend.couple.repository.CoupleRepository;
 import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.user.entity.UserEntity;
 import com.aicontact.backend.user.repository.UserRepository;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/summary")
@@ -28,6 +29,7 @@ public class MessageSummaryController {
     private final BabyLetterRepository letterRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final CoupleRepository coupleRepository;
 
     @GetMapping(
             path = "/letter",
@@ -58,14 +60,27 @@ public class MessageSummaryController {
         String email = userDetails.getUserEntity().getEmail();
 
         UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("유저 없음"));
+                .orElseThrow(() -> new RuntimeException("해당 유저는 존재하지 않습니다."));
+
+        Long myId = user.getId();
+
+        CoupleEntity couple = coupleRepository.findById(user.getCoupleId())
+                .orElseThrow(() -> new RuntimeException("사용자에게 연결된 커플이 없습니다."));
+
+        UserEntity myPartner = couple.getUser1().getId().equals(myId)
+                ? couple.getUser2()
+                : couple.getUser1();
+
+        if (myPartner == null) {
+            throw new RuntimeException("커플 정보 없음");
+        }
 
         List<BabyLetter> letters = letterRepository
-                .findBySenderUserOrderByCreatedAtDesc(user);
+                .findBySenderUserOrderByCreatedAtDesc(myPartner);
 
         List<String> contents = letters.stream()
                 .map(BabyLetter::getLetterContent)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity
                 .ok()
