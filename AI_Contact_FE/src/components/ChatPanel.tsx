@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { ChatApi } from "../apis/chat/api";
-import '../styles/ChatPanel.css';
 import { CouplesApi } from "../apis/couple/api";
+import "../styles/ChatPanel.css";
 
 interface ChatPanelProps {
   coupleId: number;
@@ -19,7 +19,12 @@ interface Message {
   sentAt: string;
 }
 
-export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatPanelProps) {
+export default function ChatPanel({
+  coupleId,
+  senderId,
+  isOpen,
+  onClose,
+}: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
 
@@ -60,10 +65,14 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
 
         const normalized = list.map((m: any) => {
           const sid =
-            m.senderId ?? m.sender_id ??
-            m.userId ?? m.user_id ??
-            m.writerId ?? m.writer_id ??
-            m.sender?.id ?? m.user?.id;
+            m.senderId ??
+            m.sender_id ??
+            m.userId ??
+            m.user_id ??
+            m.writerId ??
+            m.writer_id ??
+            m.sender?.id ??
+            m.user?.id;
 
           const nSid = Number(sid);
 
@@ -71,7 +80,12 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
             senderId: Number.isFinite(nSid) ? nSid : -1,
             content: String(m.content ?? m.message ?? m.text ?? ""),
             messageType: "TEXT" as const,
-            sentAt: m.sentAt ?? m.sent_at ?? m.createdAt ?? m.created_at ?? new Date().toISOString(),
+            sentAt:
+              m.sentAt ??
+              m.sent_at ??
+              m.createdAt ??
+              m.created_at ??
+              new Date().toISOString(),
           };
         });
 
@@ -82,7 +96,6 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
     })();
   }, [coupleId]);
 
-  
   useEffect(() => {
     const socket = new SockJS("/api/v1/ws-chat");
     const stompClient = Stomp.over(socket);
@@ -116,7 +129,6 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
     }
   }, [messages]);
 
-  
   const sendMessage = () => {
     const stompClient = stompClientRef.current;
     const text = input.trim();
@@ -142,11 +154,11 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
       const date = new Date(sentAt);
       const hours = date.getHours();
       const minutes = date.getMinutes();
-      const ampm = hours >= 12 ? '오후' : '오전';
+      const ampm = hours >= 12 ? "오후" : "오전";
       const displayHours = hours % 12 || 12;
-      return `${ampm} ${displayHours}:${minutes.toString().padStart(2, '0')}`;
+      return `${ampm} ${displayHours}:${minutes.toString().padStart(2, "0")}`;
     } catch {
-      return '';
+      return "";
     }
   };
 
@@ -179,9 +191,7 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
                 <div className={`message ${mine ? "from-me" : "from-you"}`}>
                   {msg.content}
                 </div>
-                <div className="message-time">
-                  {formatTime(msg.sentAt)}
-                </div>
+                <div className="message-time">{formatTime(msg.sentAt)}</div>
               </div>
             </div>
           );
@@ -206,7 +216,7 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
           disabled={isBlank}
           title={isBlank ? "메시지를 입력하세요" : ""}
         >
-          전송
+          등록
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 .right-icons {
-  position: fixed; 
-  top: 265px;
+  position: fixed;
+  top: 50%;
+  transform: translate(0, -50%);
   right: 40px;
   display: flex;
   flex-direction: column;
@@ -8,16 +9,10 @@
 }
 
 .right-icons button {
-  /* background: transparent; 배경색 제거하는 거래 */
-  /* background: none; 배경색 제거하는 거래 */
-  background: transparent; 
-  /* background: none; */
+  background: transparent;
   border: none;
-  /* border-radius: 12px; */
   padding: 0px;
-  /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
   cursor: pointer;
-  /* transition: all 0.2s ease; */
 }
 
 .right-icons button:hover {

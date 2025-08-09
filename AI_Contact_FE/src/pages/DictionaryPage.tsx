@@ -157,7 +157,7 @@ const DictionaryPage: React.FC = () => {
         </div>
         <div className="dictionary-container">
           <button className="upload-btn" onClick={openCreateModal}>
-            create
+            애칭 등록
           </button>
           <button
             className="arrow left"

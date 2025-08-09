@@ -11,7 +11,6 @@ import { babychatapi } from "../apis/babychat";
 import { apiFetch } from "../apis/fetchClient";
 import type { ApiResponse } from "../apis/types/common";
 import type { MeUserResponse } from "../apis/user/response";
-import homeIcon from "../assets/icons/homebtn.png";
 import babyImage from "../assets/images/AIbaby.png";
 import backgroundImage from "../assets/images/talkroom_background.png";
 import Sidebar from "../components/Sidebar";
@@ -131,21 +130,14 @@ export default function ChatRoom() {
         className="talkroom-content"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        <img
-          src={homeIcon}
-          alt="홈"
-          className="talkhome-icon-img"
-          onClick={() => navigate("/ai")}
-        />
-        <div className="talkroom-header">
-          <div className="hashtags">
-            <span>#걱정금지</span>
-            <span>#고민해결</span>
-          </div>
-          <div className="title-box">
-            <h1>포비의 고민상담소 🔮</h1>
-          </div>
+        <div className="back-ai" onClick={() => navigate("/ai")}>
+          ←
         </div>
+        <div className="page-header page-header-light">
+          <h4># 걱정금지 # 고민해결</h4>
+          <h3>고민상담소 🔮</h3>
+        </div>
+
         <div className="chatroom-messages" ref={scrollRef}>
           {messages.map((msg, idx) => (
             <div key={idx} className={`chat-line ${msg.aiMessageType}`}>

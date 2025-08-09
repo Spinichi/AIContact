@@ -1,8 +1,10 @@
 .event-calendar {
+  top: 50%;
+  transform: translate(0, -50%);
   width: 220px;
   background: white;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 15px;
   text-align: center;
   align-items: center;
@@ -23,7 +25,7 @@
 }
 
 .calendar-header {
-  background: #735AE1;
+  background: #735ae1;
   color: white;
   font-weight: bold;
   text-align: center;
@@ -39,15 +41,15 @@
 
 .event-calendar li {
   display: flex;
-  align-items: center; 
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
   font-size: 13px;
 }
 
-.event-calendar li .title{
-  display : inline-block;
-  width : 120px;
+.event-calendar li .title {
+  display: inline-block;
+  width: 120px;
   margin-left: 8px;
   white-space: nowrap; /* 줄 바꿈 방지 */
   overflow: hidden;
@@ -55,20 +57,19 @@
   text-overflow: ellipsis;
 }
 
-.event-calendar li .dday{
-  display : inline-block;
-  width : 40px;
+.event-calendar li .dday {
+  display: inline-block;
+  width: 40px;
   color: var(--text-light);
   font-size: 12px;
 }
 
-.event-calendar li .dday.active{
-  color : var(--primary);
-  font-weight : 900;
+.event-calendar li .dday.active {
+  color: var(--primary);
+  font-weight: 900;
 }
 
-.event-list{
-  height : 32px;
+.event-list {
+  height: 32px;
   align-items: center;
 }
-

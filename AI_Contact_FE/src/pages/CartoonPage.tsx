@@ -113,21 +113,12 @@ export default function CartoonPage() {
 
       <div className="cartoon-content">
         <img src={backgroundImage} alt="배경" className="background-img" />
-        <img
-          src={homeIcon}
-          alt="홈"
-          className="home-icon-img"
-          onClick={() => navigate("/ai")}
-        />
-
-        <div className="cartoon-header">
-          <div className="hashtags">
-            <span>#재미있는</span>
-            <span>#네컷만화</span>
-          </div>
-          <div className="title-box">
-            <h1>포비의 네컷만화 제작소</h1>
-          </div>
+        <div className="back-ai" onClick={() => navigate("/ai")}>
+          ←
+        </div>
+        <div className="page-header page-header-light">
+          <h4># 재미있는 # 네컷만화</h4>
+          <h3>네컷만화 제작소</h3>
         </div>
 
         <div className="board-box">

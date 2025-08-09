@@ -195,7 +195,7 @@ export default function CalendarPage() {
 
       <div className="main-content">
         <div className="page-header">
-          <h4># 둘만의 # 공유 </h4>
+          <h4># 일정 # 공유 </h4>
           <h3>캘린더 📆</h3>
         </div>
         <div className="calendar-container">
