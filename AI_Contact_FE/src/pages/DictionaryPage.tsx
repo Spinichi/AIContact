@@ -151,7 +151,8 @@ const DictionaryPage: React.FC = () => {
     <div className="main-layout">
       <Sidebar />
       <div className="main-content">
-        <div className="user-info-header">
+        <div className="page-header">
+          <h4># 우리 # 둘만의 </h4>
           <h3>애칭 백과사전 📖</h3>
         </div>
         <div className="dictionary-container">
@@ -171,7 +172,7 @@ const DictionaryPage: React.FC = () => {
                 key={item.id}
                 className={`dictionary-page ${idx === 0 ? "left" : "right"}`}
               >
-                <h2 className="page-header">
+                <h2 className="dictionary-page-header">
                   <span className="page-title">{item.word}</span>
                   <span className="btn-group">
                     <span

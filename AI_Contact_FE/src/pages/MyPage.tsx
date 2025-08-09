@@ -116,7 +116,7 @@ const MyPage: React.FC = () => {
       <Sidebar />
 
       <div className="main-content">
-        <div className="mypage-header">
+        <div className="page-header">
           <h4># 보안 # 철저 </h4>
           <h3>마이페이지 🍀</h3>
         </div>

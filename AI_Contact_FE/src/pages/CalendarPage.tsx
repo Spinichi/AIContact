@@ -191,14 +191,12 @@ export default function CalendarPage() {
     <div className="main-layout">
       {modalStatus != "off" &&
         createPortal(setModalContent(modalStatus), document.body)}
-      {/* 왼쪽 사이드바 */}
       <Sidebar />
 
-      {/* 메인 컨텐츠 영역 */}
       <div className="main-content">
-        {/* 상단 타이틀 */}
-        <div className="user-info-header">
-          <h3>캘린더</h3>
+        <div className="page-header">
+          <h4># 둘만의 # 공유 </h4>
+          <h3>캘린더 📆</h3>
         </div>
         <div className="calendar-container">
           <FullCalendar

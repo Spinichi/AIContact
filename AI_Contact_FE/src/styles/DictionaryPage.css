@@ -17,9 +17,6 @@
   overflow-y: auto;
 }
 
-
-
-
 /* .dictionary-book {
   display: flex;
   width: 80%;
@@ -49,8 +46,6 @@
   object-fit: contain;
   z-index: 0;
 }
-
-
 
 .dictionary-page {
   position: absolute;
@@ -99,17 +94,17 @@
   /* top: 0; */
   /* right: -45%; */
   font-size: 12px;
-  color: #8A8C90;
+  color: #8a8c90;
   cursor: pointer;
 }
 
 .description {
   margin: 10px 0;
-  white-space: pre-wrap;   /* 줄바꿈(\n)을 그대로 살려줍니다 */
-  word-break: break-word;  /* 단어가 너무 길면 적당히 줄바꿈 */
-  hyphens: auto;              /* 영어 등 하이픈 단어는 적절히 자르기 */
+  white-space: pre-wrap; /* 줄바꿈(\n)을 그대로 살려줍니다 */
+  word-break: break-word; /* 단어가 너무 길면 적당히 줄바꿈 */
+  hyphens: auto; /* 영어 등 하이픈 단어는 적절히 자르기 */
   overflow: visible;
-  }
+}
 
 .example {
   margin-top: 10px;
@@ -136,14 +131,6 @@
   cursor: pointer;
 }
 
-.user-info-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* 제목과 버튼 양쪽 정렬 */
-  margin-bottom: 10px;
-}
-
 .upload-btn {
   position: absolute;
   top: 0;
@@ -165,8 +152,8 @@
   background: #7b4ce3;
 }
 
-/* 1. page-header에 Flex 레이아웃을 걸어서 제목과 버튼 그룹을 한 줄에 배치 */
-.page-header {
+/* 1. dictionary-page-header에 Flex 레이아웃을 걸어서 제목과 버튼 그룹을 한 줄에 배치 */
+.dictionary-page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -182,7 +169,7 @@
 /* 3. worddelete-btn에도 wordedit-btn 스타일을 상속 */
 .worddelete-btn {
   font-size: 12px;
-  color: #8A8C90;
+  color: #8a8c90;
   cursor: pointer;
 }
 
@@ -201,14 +188,12 @@
 }
 
 .dictionary-page .btn-group {
-  position: absolute;  /* .dictionary-page를 기준으로 */
-  top: 12px;           /* 카드 상단 패딩만큼 아래 */
-  right: 12px;         /* 카드 우측 패딩만큼 왼쪽 */
+  position: absolute; /* .dictionary-page를 기준으로 */
+  top: 12px; /* 카드 상단 패딩만큼 아래 */
+  right: 12px; /* 카드 우측 패딩만큼 왼쪽 */
   display: flex;
   gap: 8px;
 }
-
-
 
 /* .modal-overlay {
   position: fixed;
@@ -232,7 +217,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-} 
+}
 
 .modal input,
 .modal textarea {
@@ -240,7 +225,7 @@
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
-} 
+}
 
 .modal-buttons {
   display: flex;
