@@ -1,37 +1,86 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import cartoonIcon from "../assets/icons/cartoon.png";
-import chatIcon from "../assets/icons/chat.png";
-import letter from "../assets/icons/letterBtn.svg";
-import WebRTCgIcon from "../assets/icons/WebRTC Button.png";
+
+import CartoonIcon from "../assets/icons/CartoonIcon.svg";
+import ChatIcon from "../assets/icons/ChatIcon.svg";
+import LetterIcon from "../assets/icons/LetterIcon.svg";
+import WebrtcIcon from "../assets/icons/WebrtcIcon.svg";
+
+import Dock from "../components/animations/Dock/Dock";
 import "../styles/RightIcons.css";
 
-// 이 컴포넌트가 받는 props의 타입 정의
 interface RightIconsProps {
-  onChatClick: () => void; //onChatClick이라는 props는 "아무것도 받지 않고 아무것도 반환하지 않는 함수"여야 함
+  onChatClick: () => void;
 }
 
-// RightIconsProps 타입의 props를 받는다는 뜻
+type DockItem = {
+  key: string;
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+};
+
 const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
   const navigate = useNavigate();
+
+  const items: DockItem[] = [
+    {
+      key: "chat",
+      label: "채팅",
+      onClick: onChatClick,
+      icon: (
+        <img
+          src={ChatIcon}
+          alt="채팅"
+          style={{ width: "28px", height: "28px", objectFit: "contain" }}
+        />
+      ),
+    },
+    {
+      key: "webrtc",
+      label: "영상통화",
+      onClick: () => navigate("/webrtc"),
+      icon: (
+        <img
+          src={WebrtcIcon}
+          alt="영상통화"
+          style={{ width: "28px", height: "28px", objectFit: "contain" }}
+        />
+      ),
+    },
+    {
+      key: "cartoon",
+      label: "네컷만화",
+      onClick: () => navigate("/cartoon"),
+      icon: (
+        <img
+          src={CartoonIcon}
+          alt="네컷만화"
+          style={{ width: "28px", height: "28px", objectFit: "contain" }}
+        />
+      ),
+    },
+    {
+      key: "letters",
+      label: "편지보기",
+      onClick: () => navigate("/letters"),
+      icon: (
+        <img
+          src={LetterIcon}
+          alt="편지보기"
+          style={{ width: "28px", height: "28px", objectFit: "contain" }}
+        />
+      ),
+    },
+  ];
+
   return (
-    // 오른쪽에 위치할 아이콘 버튼들을 담는 div
-    <div className="right-icons">
-      {/* 첫 번째 버튼에 클릭 핸들러 연결 */}
-      {/* 부모 컴포넌트에서 넘겨준 onChatClick 함수를 버튼 클릭 시 실행 */}
-      <button onClick={onChatClick}>
-        <img src={chatIcon} alt="채팅" />
-      </button>
-      <button onClick={() => navigate("/webrtc")}>
-        <img src={WebRTCgIcon} alt="영상통화" />
-      </button>
-      <button onClick={() => navigate("/cartoon")}>
-        <img src={cartoonIcon} alt="네컷만화" />
-      </button>
-      <button onClick={() => navigate("/letters")}>
-        <img src={letter} alt="편지보기" />
-      </button>
-    </div>
+    <Dock
+      items={items}
+      panelHeight={68}
+      baseItemSize={50}
+      magnification={70} // Dock 구현에 맞춰 필요 시 조절
+    />
   );
 };
 

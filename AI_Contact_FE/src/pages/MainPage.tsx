@@ -112,7 +112,7 @@ export default function MainPage() {
         <div className="content-row">
           <BabyAvatar />
           <EventCalendar data={dDay} />
-          <RightIcons onChatClick={() => setIsChatOpen(true)} />
+          <RightIcons onChatClick={() => setIsChatOpen((v) => !v)} />
         </div>
 
         {userInfo?.coupleId && (

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import talkbaby from "../assets/icons/talk.png";
+import TalkIcon from "../assets/icons/TalkIcon.svg?react";
 import babyImage from "../assets/images/AI.png"; /* 이미지 가져오기 */
 import "../styles/BabyAvatar.css"; /* 해당 컴포넌트 전용 스타일 가져오기 */
 
@@ -12,12 +12,10 @@ export default function BabyAvatar() {
         <h1 className="baby-name"> 포비 </h1>
         <div className="image-wrapper">
           <img src={babyImage} alt="포비" className="baby-image" />
-          <img
-            src={talkbaby}
-            alt="이야기하기"
-            className="talk-button"
-            onClick={() => navigate("/talk")}
-          />
+          <div className="talk-button" onClick={() => navigate("/talk")}>
+            <TalkIcon />
+            <div>이야기하기</div>
+          </div>
         </div>
       </div>
 
