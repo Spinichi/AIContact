@@ -1,4 +1,3 @@
-// MainPage.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom"; // ✅ 추가
 import BabyAvatar from "../components/BabyAvatar";
@@ -6,6 +5,7 @@ import ChatPanel from "../components/ChatPanel";
 import EventCalendar from "../components/MainEventCalendar";
 import RightIcons from "../components/RightIcons";
 import Sidebar from "../components/Sidebar";
+import Loading from "../components/animations/Loading";
 import "../styles/MainPages.css";
 import "../styles/UserInfo.css";
 
@@ -94,9 +94,8 @@ export default function MainPage() {
     }
   }, [coupleMeta?.startDate]);
 
-  if (loading) return <div>로딩 중...</div>;
-  if (!userInfo)
-    return <div>세션이 만료되었거나 사용자 정보를 불러오지 못했습니다.</div>;
+  if (loading) return <Loading />;
+  if (!userInfo) return <Loading />;
 
   return (
     <div className="main-layout">
