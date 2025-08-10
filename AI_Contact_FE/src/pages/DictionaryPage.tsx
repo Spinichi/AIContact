@@ -155,54 +155,63 @@ const DictionaryPage: React.FC = () => {
           <h4># 우리 # 둘만의 </h4>
           <h3>애칭 백과사전 📖</h3>
         </div>
-        <div className="dictionary-container">
-          <button className="upload-btn" onClick={openCreateModal}>
-            애칭 등록
-          </button>
-          <button
-            className="arrow left"
-            onClick={handlePrevPage}
-            disabled={pageIndex === 0}
-          >
-            〈
-          </button>
-          <div className="dictionary-book">
-            {pageItems.map((item, idx) => (
-              <div
-                key={item.id}
-                className={`dictionary-page ${idx === 0 ? "left" : "right"}`}
-              >
-                <h2 className="dictionary-page-header">
-                  <span className="page-title">{item.word}</span>
-                  <span className="btn-group">
-                    <span
-                      className="wordedit-btn"
-                      onClick={() => openEditModal(item)}
-                    >
-                      편집
-                    </span>
-                    <span
-                      className="worddelete-btn"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      삭제
-                    </span>
-                  </span>
-                </h2>
-                <p className="description">{item.description}</p>
-                <p className="timestamps">생성 시각: {item.created_at}</p>
-                <p className="timestamps">수정 시각: {item.updated_at}</p>
-              </div>
-            ))}
-            <img src={dictionarybook} alt="" className="dictionary-bg" />
+        <div className="dictionary-container-wrapper">
+          <div className="upload-btn-wrapper">
+            <button className="upload-btn" onClick={openCreateModal}>
+              😘 애칭 등록
+            </button>
           </div>
-          <button
-            className="arrow right"
-            onClick={handleNextPage}
-            disabled={pageIndex >= totalPages - 1}
-          >
-            〉
-          </button>
+          <div className="dictionary-container">
+            <button
+              className="arrow left"
+              onClick={handlePrevPage}
+              disabled={pageIndex === 0}
+            >
+              〈
+            </button>
+            <div className="dictionary-book">
+              {pageItems.map((item, idx) => (
+                <div
+                  key={item.id}
+                  className={`dictionary-page ${idx === 0 ? "left" : "right"}`}
+                >
+                  <div className="dictionary-page-header">
+                    <div className="page-title">{item.word}</div>
+                    <div className="btn-group">
+                      <div
+                        className="wordedit-btn"
+                        onClick={() => openEditModal(item)}
+                      >
+                        편집
+                      </div>
+                      <div
+                        className="worddelete-btn"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        삭제
+                      </div>
+                    </div>
+                  </div>
+                  <div className="description">{item.description}</div>
+                  <div className="time-info">
+                    <div>생성 시각: {item.created_at}</div>
+                    <div>수정 시각: {item.updated_at}</div>
+                  </div>
+                </div>
+              ))}
+              <div className="dictionary-page-mock">
+                <div className="dictionary-page left"></div>
+                <div className="dictionary-page right"></div>
+              </div>
+            </div>
+            <button
+              className="arrow right"
+              onClick={handleNextPage}
+              disabled={pageIndex >= totalPages - 1}
+            >
+              〉
+            </button>
+          </div>
         </div>
       </div>
 
@@ -213,15 +222,15 @@ const DictionaryPage: React.FC = () => {
           hasPrev={false}
         >
           <div className="modal">
-            <h3>{modalMode === "create" ? "새로운 단어 추가" : "단어 편집"}</h3>
+            <h3>{modalMode === "create" ? "애칭 등록" : "애칭 편집"}</h3>
             <input
               type="text"
-              placeholder="단어 입력"
+              placeholder="애칭"
               value={term}
               onChange={(e) => setTerm(e.target.value)}
             />
             <textarea
-              placeholder="설명 입력"
+              placeholder="설명"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />

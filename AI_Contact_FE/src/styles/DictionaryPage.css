@@ -1,127 +1,136 @@
-/* .dictionary-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-  position: relative;
-} */
-.dictionary-container {
-  position: relative;
+.dictionary-container-wrapper {
   width: 100%;
-  max-width: 1200px;
-  overflow: visible;
-  margin-top: 5%;
-  flex: 1;
   display: flex;
-  flex-direction: center;
-  overflow-y: auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-/* .dictionary-book {
+.upload-btn-wrapper {
+  width: 75%;
   display: flex;
-  width: 80%;
-  background: white;
-  border: 1px solid #ddd;
-  padding: 20px;
-  justify-content: space-between;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-} */
+  justify-content: flex-end;
+}
+
+.upload-btn {
+  background: var(--primary);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.upload-btn:hover {
+  background: #7b4ce3;
+}
+
+.dictionary-container {
+  width: 100%;
+  overflow: visible;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+  align-items: center;
+}
+
 .dictionary-book {
   position: relative;
   width: 75%;
-  max-width: 1200px;
   aspect-ratio: 16/9;
-  height: auto;
-  padding: 30px 40px;
+  padding: 10px 50px;
+  margin: 0 40px 20px;
   box-sizing: border-box;
-  margin: 0 auto;
+  background: var(--side-bar);
+  border: 1px solid var(--text-light);
+  border-radius: 20px;
+  box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, 0.25),
+    -4px 4px 8px 0 rgba(0, 0, 0, 0.25);
+  display: flex;
 }
 
-.dictionary-bg {
+.dictionary-page-mock {
+  display: flex;
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  width: calc(100% - 100px);
+  height: calc(100% - 20px);
   z-index: 0;
 }
 
 .dictionary-page {
-  position: absolute;
-  z-index: 1;
-  padding: 10px 30px;
-  top: 30px;
-  width: 45%;
-  max-height: calc(100% - 60px); /* 위 아래 패딩·타이틀 공간 고려 */
-  overflow-y: auto;
   box-sizing: border-box;
+  width: 50%;
+  height: 100%;
+  background: #ffffff;
+  border: 1px solid var(--text-light);
+  padding: 50px 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  z-index: 1;
 }
 
 .dictionary-page.left {
-  top: 10%;
-  margin-left: 1%;
-  height: 100%;
-  z-index: 2;
+  box-shadow: -4px 4px 10px 0 rgba(115, 90, 225, 0.2),
+    -4px 0px 8px 0 rgba(0, 0, 0, 0.2) inset,
+    -20px 0px 8px 0 rgba(0, 0, 0, 0.1) inset,
+    8px 0px 8px 0 rgba(115, 90, 225, 0.1) inset;
 }
 .dictionary-page.right {
-  top: 10%;
-  margin-left: 47%;
-  height: 100%;
-  z-index: 2;
-}
-
-.dictionary-page:first-child {
+  box-shadow: 4px 4px 10px 0 rgba(115, 90, 225, 0.2),
+    4px 0px 8px 0 rgba(0, 0, 0, 0.2) inset,
+    20px 0px 8px 0 rgba(0, 0, 0, 0.1) inset,
+    -8px 0px 8px 0 rgba(115, 90, 225, 0.1) inset;
   border-left: none;
 }
 
-.dictionary-page h2 {
+.dictionary-page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  align-items: flex-start;
   font-size: 20px;
   margin: 0;
   padding: 0;
-  /* justify-content: flex-start; */
-  /* align-items: center; */
   position: relative;
-  /* padding-right: 50px; */
+  font-size: 24px;
+  font-weight: 600;
 }
 
-.wordedit-btn {
-  position: static;
-  margin-left: 8px;
-  /* top: 0; */
-  /* right: -45%; */
+.btn-group {
+  display: flex;
+  gap: 8px;
   font-size: 12px;
-  color: #8a8c90;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.wordedit-btn,
+.worddelete-btn {
   cursor: pointer;
 }
 
+.wordedit-btn:hover,
+.worddelete-btn:hover {
+  color: var(--text-dark);
+}
+
 .description {
-  margin: 10px 0;
   white-space: pre-wrap; /* 줄바꿈(\n)을 그대로 살려줍니다 */
   word-break: break-word; /* 단어가 너무 길면 적당히 줄바꿈 */
   hyphens: auto; /* 영어 등 하이픈 단어는 적절히 자르기 */
   overflow: visible;
-}
-
-.example {
-  margin-top: 10px;
-  font-style: italic;
-  color: #555;
-}
-
-.link {
-  text-decoration: underline;
-  color: #9c6bff;
-  cursor: pointer;
+  flex: 2;
 }
 
 .time-info {
-  margin-top: 10px;
   font-size: 12px;
-  color: #777;
+  color: var(--text-light);
 }
 
 .arrow {
@@ -129,85 +138,12 @@
   border: none;
   font-size: 24px;
   cursor: pointer;
+  padding: 0;
 }
 
-.upload-btn {
-  position: absolute;
-  top: 0;
-  right: 8%;
-  display: flex;
-  font-size: 24;
-  gap: 5px;
-  background: #9c6bff;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  z-index: 5;
+.arrow:focus {
+  outline: none;
 }
-
-.upload-btn:hover {
-  background: #7b4ce3;
-}
-
-/* 1. dictionary-page-header에 Flex 레이아웃을 걸어서 제목과 버튼 그룹을 한 줄에 배치 */
-.dictionary-page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px; /* 필요에 따라 조정 */
-}
-
-/* 2. 버튼 그룹에 flex + gap을 줘서 버튼 간 간격 유지 */
-.btn-group {
-  display: flex;
-  gap: 8px;
-}
-
-/* 3. worddelete-btn에도 wordedit-btn 스타일을 상속 */
-.worddelete-btn {
-  font-size: 12px;
-  color: #8a8c90;
-  cursor: pointer;
-}
-
-/* 4. hover 시 색상을 살짝 바꿔서 구분감 추가 */
-.wordedit-btn:hover,
-.worddelete-btn:hover {
-  color: #5a5c5f;
-}
-
-/* 5. flex-direction: center 오류 제거 (center는 flex-direction이 아니라 justify-content) */
-.dictionary-container {
-  display: flex;
-  flex-direction: row; /* 또는 필요 없다면 flex-direction 속성 삭제 */
-  align-items: center;
-  justify-content: center;
-}
-
-.dictionary-page .btn-group {
-  position: absolute; /* .dictionary-page를 기준으로 */
-  top: 12px; /* 카드 상단 패딩만큼 아래 */
-  right: 12px; /* 카드 우측 패딩만큼 왼쪽 */
-  display: flex;
-  gap: 8px;
-}
-
-/* .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-
-} */
 
 .modal {
   background: white;
