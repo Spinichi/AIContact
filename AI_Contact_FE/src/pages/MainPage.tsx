@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ 추가
+import { useNavigate } from "react-router-dom";
 import BabyAvatar from "../components/BabyAvatar";
 import ChatPanel from "../components/ChatPanel";
 import EventCalendar from "../components/MainEventCalendar";
@@ -94,16 +94,14 @@ export default function MainPage() {
     }
   }, [coupleMeta?.startDate]);
 
-  if (loading) return <Loading />;
-  if (!userInfo) return <Loading />;
-
   return (
     <div className="main-layout">
+      {loading ? <Loading /> : <></>}
       <Sidebar />
       <div className="main-content">
         <div className="page-header">
           <h4>
-            {userInfo.name}
+            {userInfo?.name}
             {partner?.name ? ` 💗 ${partner.name}` : ""}
           </h4>
           <h3>
@@ -117,12 +115,12 @@ export default function MainPage() {
           <RightIcons onChatClick={() => setIsChatOpen(true)} />
         </div>
 
-        {userInfo.coupleId && (
+        {userInfo?.coupleId && (
           <ChatPanel
             isOpen={isChatOpen}
             onClose={() => setIsChatOpen(false)}
-            coupleId={userInfo.coupleId}
-            senderId={userInfo.id}
+            coupleId={userInfo?.coupleId}
+            senderId={userInfo?.id}
           />
         )}
       </div>

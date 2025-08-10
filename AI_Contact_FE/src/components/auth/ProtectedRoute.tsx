@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { UsersApi } from "../../apis/user/api";
-import Loading from "../animations/Loading";
 
 function isJwtExpired(token: string): boolean {
   try {
@@ -86,7 +85,7 @@ export default function ProtectedRoute() {
     })();
   }, []);
 
-  if (loading) return <Loading />;
+  if (loading) return;
   if (ok) return <Outlet />;
 
   return <Navigate to="/auth" replace state={{ reason: redirectReason }} />;

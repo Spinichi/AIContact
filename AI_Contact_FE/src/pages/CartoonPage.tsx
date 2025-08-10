@@ -2,12 +2,13 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { ComicStripsApi } from "../apis/comicStrips";
-import homeIcon from "../assets/icons/homebtn.png";
 import ComicBook from "../assets/images/comicbook.png";
 import backgroundImage from "../assets/images/whiteboard.svg";
+import Loading from "../components/animations/Loading";
 import Cartoon from "../components/cartoon/Cartoon";
 import Modal from "../components/modal/Modal";
 import Sidebar from "../components/Sidebar";
+import Particles from "../components/auth/Particles.tsx";
 import "../styles/Cartoon.css";
 import "../styles/CartoonPage.css";
 import "../styles/MainPages.css";
@@ -95,6 +96,26 @@ export default function CartoonPage() {
 
   return (
     <div className="main-layout">
+      {isLoading ? (
+        <>
+          <div className="loading-background">
+            <Particles
+              particleColors={["#735AE1", "#A66EE0", "#ffffff"]}
+              particleCount={300}
+              particleSpread={10}
+              speed={0.2}
+              particleBaseSize={1000}
+              moveParticlesOnHover={true}
+              alphaParticles={false}
+              disableRotation={false}
+              cameraDistance={10}
+            />
+            <Loading />
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
       {isModalOpen &&
         createPortal(
           <Modal
