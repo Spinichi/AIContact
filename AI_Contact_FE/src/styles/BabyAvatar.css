@@ -18,15 +18,13 @@
 }
 
 .baby-stats {
+  display: flex;
+  gap: 20px;
   text-align: center;
-  font-size: 16px;
   margin-top: 20px;
-  color: #444;
-}
-
-.baby-stats strong {
-  font-weight: bold;
-  color: #222;
+  color: var(--text-dark);
+  font-size: 20px;
+  font-weight: 500;
 }
 
 .image-wrapper {
@@ -46,6 +44,16 @@
   border-radius: 20%; /* 원형 이미지 */
   object-fit: contain; /* 이미지 비율 유지한 상태로 박스에 꽉 채우기 */
   display: block;
+  box-shadow: 0px 0px 10px 0 rgba(115, 90, 225, 0.3),
+    0px 0px 10px 0 rgba(115, 90, 225, 0.3) inset;
+  background: conic-gradient(
+    from 315deg at 52% 52%,
+    rgba(255, 163, 139, 0.3) 0%,
+    rgba(211, 136, 181, 0.3) 25%,
+    rgba(166, 110, 224, 0.3) 50%,
+    rgba(115, 90, 225, 0.3) 75%,
+    rgba(255, 163, 139, 0.3) 100%
+  );
 }
 
 .baby-name {

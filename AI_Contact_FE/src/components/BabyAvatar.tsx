@@ -10,13 +10,8 @@ export default function BabyAvatar() {
     <div className="baby-container">
       <div className="baby-avatar-wrapper">
         <h1 className="baby-name"> 포비 </h1>
-        {/* 아기 사진을 감싸는 최상위 컨테이너
-        이 div는 CSS에서 중앙 정렬 역할을 담당함 */}
         <div className="image-wrapper">
-          {/* 실제로 표시되는 아기 이미지
-        className을 통해서 css 스타일 */}
           <img src={babyImage} alt="포비" className="baby-image" />
-
           <img
             src={talkbaby}
             alt="이야기하기"
@@ -27,11 +22,8 @@ export default function BabyAvatar() {
       </div>
 
       <div className="baby-stats">
-        <div># 아빠와의 친밀도 💗💗💗🤍🤍</div>
-        <div># 엄마와의 친밀도 💗💗💗💗🤍</div>
-        <div>
-          # 나이 <strong>2살</strong> | # 현재 기분 😊 <strong>행복함</strong>
-        </div>
+        <div>2살</div>
+        <div>😊 행복함</div>
       </div>
     </div>
   );
