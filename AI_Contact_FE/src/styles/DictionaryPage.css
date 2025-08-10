@@ -13,6 +13,7 @@
 }
 
 .upload-btn {
+  height: 40px;
   background: var(--primary);
   color: #ffffff;
   padding: 10px 20px;
@@ -24,6 +25,11 @@
   justify-content: center;
   display: flex;
 }
+
+.upload-btn:focus {
+  outline: none;
+}
+
 .upload-btn:hover {
   background: #7b4ce3;
 }
