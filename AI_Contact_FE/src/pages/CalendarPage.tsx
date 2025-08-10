@@ -207,28 +207,34 @@ export default function CalendarPage() {
         </div>
 
         <div className="calendar-container">
-          <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            editable={false}
-            events={events}
-            aspectRatio={1.6}
-            locale={koLocale}
-            headerToolbar={{
-              left: "prev,title,next",
-              center: "",
-              right: "today",
-            }}
-            dayCellContent={handleDayCellContent}
-            displayEventTime={false}
-            dayMaxEventRows={true}
-            dayMaxEvents={2}
-            timeZone={"UTC"}
-            defaultTimedEventDuration={"00:01"}
-            datesSet={updateDate}
-            dateClick={openCalendarDetail}
-            eventClick={openEventDetail}
-          />
+          <div className="calendar-container-top-mid">
+            <div className="calendar-container-top"></div>
+            <div className="calendar-container-mid">
+              <FullCalendar
+                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                initialView="dayGridMonth"
+                editable={false}
+                events={events}
+                aspectRatio={1.6}
+                locale={koLocale}
+                headerToolbar={{
+                  left: "prev,title,next",
+                  center: "",
+                  right: "today",
+                }}
+                dayCellContent={handleDayCellContent}
+                displayEventTime={false}
+                dayMaxEventRows={true}
+                dayMaxEvents={2}
+                timeZone={"UTC"}
+                defaultTimedEventDuration={"00:01"}
+                datesSet={updateDate}
+                dateClick={openCalendarDetail}
+                eventClick={openEventDetail}
+              />
+            </div>
+          </div>
+          <div className="calendar-container-bottom"></div>
         </div>
       </div>
       <div></div>
