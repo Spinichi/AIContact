@@ -2,12 +2,13 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { ComicStripsApi } from "../apis/comicStrips";
-import homeIcon from "../assets/icons/homebtn.png";
 import ComicBook from "../assets/images/comicbook.png";
 import backgroundImage from "../assets/images/whiteboard.svg";
+import Loading from "../components/animations/Loading";
 import Cartoon from "../components/cartoon/Cartoon";
 import Modal from "../components/modal/Modal";
 import Sidebar from "../components/Sidebar";
+import Particles from "../components/auth/Particles.tsx";
 import "../styles/Cartoon.css";
 import "../styles/CartoonPage.css";
 import "../styles/MainPages.css";
@@ -95,6 +96,26 @@ export default function CartoonPage() {
 
   return (
     <div className="main-layout">
+      {isLoading ? (
+        <>
+          <div className="loading-background">
+            <Particles
+              particleColors={["#735AE1", "#A66EE0", "#ffffff"]}
+              particleCount={300}
+              particleSpread={10}
+              speed={0.2}
+              particleBaseSize={1000}
+              moveParticlesOnHover={true}
+              alphaParticles={false}
+              disableRotation={false}
+              cameraDistance={10}
+            />
+            <Loading />
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
       {isModalOpen &&
         createPortal(
           <Modal
@@ -113,21 +134,12 @@ export default function CartoonPage() {
 
       <div className="cartoon-content">
         <img src={backgroundImage} alt="배경" className="background-img" />
-        <img
-          src={homeIcon}
-          alt="홈"
-          className="home-icon-img"
-          onClick={() => navigate("/ai")}
-        />
-
-        <div className="cartoon-header">
-          <div className="hashtags">
-            <span>#재미있는</span>
-            <span>#네컷만화</span>
-          </div>
-          <div className="title-box">
-            <h1>포비의 네컷만화 제작소</h1>
-          </div>
+        <div className="back-ai" onClick={() => navigate("/ai")}>
+          ←
+        </div>
+        <div className="page-header page-header-light">
+          <h4># 재미있는 # 네컷만화</h4>
+          <h3>네컷만화 제작소</h3>
         </div>
 
         <div className="board-box">

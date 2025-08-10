@@ -298,8 +298,11 @@ export default function PhotoBook() {
   return (
     <div className="main-layout">
       <Sidebar />
-
-      <div className="album-content">
+      <div className="main-content">
+        <div className="page-header">
+          <h4># 기록 # 공유 </h4>
+          <h3>갤러리 📸</h3>
+        </div>
         {/* 필터 / 정렬 / 업로드 영역 */}
         <div className="gallery-top-bar">
           <div className="gallery-tabs">

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import HTMLFlipBook from "react-pageflip";
 import dictionarybook from "../assets/images/dictionary.png";
 import Modal from "../components/modal/Modal";
 import Sidebar from "../components/Sidebar";
 import "../styles/DictionaryPage.css";
-import "../styles/MainPages.css";
 
 import { NicknameApi } from "../apis/nickname/api";
 import type { NicknameItem } from "../apis/nickname/response";
+import DictionaryPageCard from "../components/DictionaryPageCard";
 
 // 유틸: ISO 문자열을 'YYYY-MM-DD HH:mm:ss'로 포맷팅
 function formatDate(iso: string): string {
@@ -30,7 +31,7 @@ interface RawNickname {
 }
 
 // 로컬 상태 타입: NicknameItem + updated_at
-type LocalNickname = NicknameItem & { updated_at: string };
+export type LocalNickname = NicknameItem & { updated_at: string };
 
 // API 응답을 로컬 타입으로 변환
 function mapRawToItem(raw: RawNickname): LocalNickname {
@@ -43,16 +44,30 @@ function mapRawToItem(raw: RawNickname): LocalNickname {
   };
 }
 
+// FlipBook ref에서 필요한 메서드 shape만 정의
+type FlipbookRef = {
+  pageFlip(): {
+    flipNext(): void;
+    flipPrev(): void;
+    turnToPage: (index: number) => void;
+  };
+};
+
 const DictionaryPage: React.FC = () => {
   const [nicknames, setNicknames] = useState<LocalNickname[]>([]);
-  const [pageIndex, setPageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [term, setTerm] = useState("");
   const [description, setDescription] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  // 전체 리스트를 불러오는 함수로 분리 (반환값으로 items 배열 리턴)
+  // FlipBook 제어용
+  const bookRef = useRef<FlipbookRef | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  // 리마운트 후 이동해야 하는 페이지를 큐에 저장
+  const [pendingPage, setPendingPage] = useState<number | null>(null);
+
   const fetchNicknames = async (): Promise<LocalNickname[]> => {
     try {
       const res = await NicknameApi.getAll();
@@ -64,9 +79,7 @@ const DictionaryPage: React.FC = () => {
         const numB = parseFloat(b.word);
         const isNumA = !isNaN(numA);
         const isNumB = !isNaN(numB);
-        if (isNumA && isNumB) {
-          return numA - numB;
-        }
+        if (isNumA && isNumB) return numA - numB;
         return a.word.localeCompare(b.word, "ko");
       });
       setNicknames(items);
@@ -77,20 +90,28 @@ const DictionaryPage: React.FC = () => {
     }
   };
 
-  // 컴포넌트 마운트 시 한 번 불러오기
   useEffect(() => {
     fetchNicknames();
   }, []);
 
-  // 페이징 계산
-  const itemsPerPage = 2;
-  const totalPages = Math.ceil(nicknames.length / itemsPerPage);
-  const start = pageIndex * itemsPerPage;
-  const pageItems = nicknames.slice(start, start + itemsPerPage);
+  // ✅ 페이지 구성에 종속된 key (길이/목록 변경 시 FlipBook 리마운트)
+  const pagesKey = useMemo(
+    () =>
+      nicknames.length === 0 ? "empty" : nicknames.map((n) => n.id).join(","),
+    [nicknames]
+  );
 
-  const handlePrevPage = () => setPageIndex((prev) => Math.max(prev - 1, 0));
-  const handleNextPage = () =>
-    setPageIndex((prev) => Math.min(prev + 1, totalPages - 1));
+  // ✅ FlipBook이 리마운트된 뒤에 보류된 이동을 수행
+  useEffect(() => {
+    if (pendingPage != null) {
+      // 다음 프레임에서 안전하게 호출
+      requestAnimationFrame(() => {
+        bookRef.current?.pageFlip().turnToPage(pendingPage);
+        setCurrentPage(pendingPage);
+        setPendingPage(null);
+      });
+    }
+  }, [pagesKey, pendingPage]);
 
   // 모달 열기 함수들
   const openCreateModal = () => {
@@ -109,7 +130,7 @@ const DictionaryPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  // 저장 핸들러: 생성/수정 후 항상 리스트 재조회 및 페이지 이동
+  // 저장 핸들러: 생성/수정 후 항상 리스트 재조회 및 해당 페이지로 이동 (리마운트 후 이동을 위해 pendingPage 사용)
   const handleSave = async () => {
     try {
       if (modalMode === "create") {
@@ -118,13 +139,13 @@ const DictionaryPage: React.FC = () => {
         const createdItem = mapRawToItem(rawCreated);
 
         const items = await fetchNicknames();
-        const newIndex = items.findIndex((it) => it.id === createdItem.id);
-        setPageIndex(Math.floor(newIndex / itemsPerPage));
+        const idx = items.findIndex((it) => it.id === createdItem.id);
+        if (idx >= 0) setPendingPage(idx);
       } else if (modalMode === "edit" && editingId != null) {
         await NicknameApi.update(editingId, { word: term, description });
         const items = await fetchNicknames();
-        const updatedIndex = items.findIndex((it) => it.id === editingId);
-        setPageIndex(Math.floor(updatedIndex / itemsPerPage));
+        const idx = items.findIndex((it) => it.id === editingId);
+        if (idx >= 0) setPendingPage(idx);
       }
     } catch (err) {
       console.error("단어 추가/수정 실패", err);
@@ -133,75 +154,133 @@ const DictionaryPage: React.FC = () => {
     }
   };
 
-  // 삭제 핸들러: 삭제 후 리스트 재조회 및 페이지 인덱스 조정
+  // 삭제 핸들러: 삭제 후 리스트 재조회 및 페이지 보정 (pendingPage로 처리)
   const handleDelete = async (id: number) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     try {
       await NicknameApi.delete(id);
       const items = await fetchNicknames();
-      setPageIndex((prev) =>
-        Math.min(prev, Math.max(Math.ceil(items.length / itemsPerPage) - 1, 0))
-      );
+      const last = Math.max(items.length - 1, 0);
+      const next = Math.min(currentPage, last);
+      setPendingPage(next);
     } catch (err) {
       console.error("삭제 실패", err);
     }
   };
 
+  const flipPrev = () => bookRef.current?.pageFlip().flipPrev();
+  const flipNext = () => bookRef.current?.pageFlip().flipNext();
+
+  const totalPages = Math.max(nicknames.length, 1); // 최소 한 페이지(빈 페이지) 보장
+  const canPrev = currentPage > 0;
+  const canNext = currentPage < totalPages - 1;
+
   return (
     <div className="main-layout">
       <Sidebar />
       <div className="main-content">
-        <div className="user-info-header">
+        <div className="page-header">
+          <h4># 우리 # 둘만의 </h4>
           <h3>애칭 백과사전 📖</h3>
         </div>
-        <div className="dictionary-container">
-          <button className="upload-btn" onClick={openCreateModal}>
-            create
-          </button>
-          <button
-            className="arrow left"
-            onClick={handlePrevPage}
-            disabled={pageIndex === 0}
-          >
-            〈
-          </button>
-          <div className="dictionary-book">
-            {pageItems.map((item, idx) => (
-              <div
-                key={item.id}
-                className={`dictionary-page ${idx === 0 ? "left" : "right"}`}
-              >
-                <h2 className="page-header">
-                  <span className="page-title">{item.word}</span>
-                  <span className="btn-group">
-                    <span
-                      className="wordedit-btn"
-                      onClick={() => openEditModal(item)}
-                    >
-                      편집
-                    </span>
-                    <span
-                      className="worddelete-btn"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      삭제
-                    </span>
-                  </span>
-                </h2>
-                <p className="description">{item.description}</p>
-                <p className="timestamps">생성 시각: {item.created_at}</p>
-                <p className="timestamps">수정 시각: {item.updated_at}</p>
-              </div>
-            ))}
-            <img src={dictionarybook} alt="" className="dictionary-bg" />
+
+        <div className="dictionary-container-wrapper">
+          <div className="upload-btn-wrapper">
+            <button className="upload-btn" onClick={openCreateModal}>
+              😘 애칭 등록
+            </button>
           </div>
-          <button
-            className="arrow right"
-            onClick={handleNextPage}
-            disabled={pageIndex >= totalPages - 1}
-          >
-            〉
-          </button>
+
+          <div className="dictionary-container">
+            <button
+              className="arrow left"
+              onClick={flipPrev}
+              disabled={!canPrev}
+            >
+              〈
+            </button>
+
+            <div className="dictionary-book">
+              <div className="dictionary-page-mock">
+                <div className="flip-page mock-page"></div>
+                <div className="flip-page mock-page"></div>
+              </div>
+              <HTMLFlipBook
+                key={pagesKey}
+                ref={bookRef as any}
+                className="flipbook"
+                style={{}}
+                width={430}
+                height={547}
+                size="stretch"
+                minWidth={320}
+                maxWidth={1000}
+                minHeight={420}
+                maxHeight={1400}
+                startPage={0}
+                flippingTime={700}
+                startZIndex={10}
+                drawShadow={true}
+                maxShadowOpacity={0.3}
+                autoSize={true}
+                showCover={false}
+                mobileScrollSupport={true}
+                usePortrait={true}
+                useMouseEvents={false}
+                swipeDistance={30}
+                clickEventForward={true}
+                showPageCorners={false} // 타입 충돌 회피용 필수 prop
+                disableFlipByClick={true} // 타입 충돌 회피용 필수 prop
+                onFlip={(e: any) => setCurrentPage(e.data)}
+              >
+                {nicknames.length === 0 ? (
+                  <div key="empty" className="flip-page dictionary-page">
+                    <div className="dictionary-page">
+                      <div className="dictionary-page-header">
+                        <div className="page-title">
+                          첫 애칭을 등록해 보세요 ✨
+                        </div>
+                      </div>
+                      <div className="description">
+                        오른쪽 위 <b>"애칭 등록"</b> 버튼을 눌러 우리만의 단어를
+                        만들어 보세요.
+                      </div>
+                      <div className="time-info" />
+                    </div>
+                  </div>
+                ) : (
+                  nicknames.map((item) => (
+                    <DictionaryPageCard
+                      key={`p-${item.id}`}
+                      item={item}
+                      onEdit={openEditModal}
+                      onDelete={handleDelete}
+                    />
+                  ))
+                )}
+                <div key="empty" className="flip-page dictionary-page">
+                  <div className="dictionary-page">
+                    <div className="dictionary-page-header">
+                      <div className="page-title">✨</div>
+                    </div>
+                    <div className="description">
+                      오른쪽 위 <b>"애칭 등록"</b> 버튼을 눌러 다음 애칭을
+                      추가할 수 있어요.
+                    </div>
+                    <div className="time-info" />
+                  </div>
+                </div>
+              </HTMLFlipBook>
+            </div>
+
+            <button
+              className="arrow right"
+              onClick={flipNext}
+              disabled={!canNext}
+            >
+              〉
+            </button>
+          </div>
         </div>
       </div>
 
@@ -212,15 +291,15 @@ const DictionaryPage: React.FC = () => {
           hasPrev={false}
         >
           <div className="modal">
-            <h3>{modalMode === "create" ? "새로운 단어 추가" : "단어 편집"}</h3>
+            <h3>{modalMode === "create" ? "애칭 등록" : "애칭 편집"}</h3>
             <input
               type="text"
-              placeholder="단어 입력"
+              placeholder="애칭"
               value={term}
               onChange={(e) => setTerm(e.target.value)}
             />
             <textarea
-              placeholder="설명 입력"
+              placeholder="설명"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />

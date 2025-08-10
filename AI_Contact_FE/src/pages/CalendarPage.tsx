@@ -12,6 +12,7 @@ import Sidebar from "../components/Sidebar";
 import {
   type DatesSetArg,
   type DayCellContentArg,
+  type EventClickArg,
   type EventInput,
 } from "@fullcalendar/core/index.js";
 import koLocale from "@fullcalendar/core/locales/ko";
@@ -20,13 +21,16 @@ import interactionPlugin, {
   type DateClickArg,
 } from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
-import timeGridPlugin from "@fullcalendar/timegrid"; // 'timeGridWeek' 뷰를 위해 필요합니다.
+import timeGridPlugin from "@fullcalendar/timegrid";
 import { dailySchedulesApi } from "../apis/dailySchedule";
 import type { DailyScheduleResponse } from "../apis/dailySchedule/response";
 import EditSchedule from "../components/calendar/EditSchedule";
 
 export default function CalendarPage() {
   type ModalType = "detail" | "add" | "edit" | "off";
+
+  // 클릭된 날짜를 최소 정보만 갖는 타입으로 관리 (이벤트/셀 클릭 모두 호환)
+  type ClickedDate = { date: Date; dateStr: string };
 
   const initialScheduleData: DailyScheduleResponse = {
     id: 0,
@@ -38,9 +42,9 @@ export default function CalendarPage() {
   };
 
   const [modalStatus, setModalStatus] = useState<ModalType>("off");
-  const [clickedDateInfo, setClickedDateInfo] = useState<DateClickArg | null>(
+  const [clickedDateInfo, setClickedDateInfo] = useState<ClickedDate | null>(
     null
-  );
+  ); // 🔄 타입 변경
   const [editScheduleData, setEditScheduleData] =
     useState<DailyScheduleResponse>(initialScheduleData);
   const [events, setEvents] = useState<EventInput[]>([]);
@@ -67,10 +71,19 @@ export default function CalendarPage() {
     };
 
     fetchData();
-  }, [refetchTrigger]);
+  }, [refetchTrigger, year, month]); // 연/월 바뀌면 재요청
 
-  function openCalendarDetail(dateInfo: DateClickArg) {
-    setClickedDateInfo(dateInfo);
+  // 날짜 셀 클릭 → detail
+  function openCalendarDetail(arg: DateClickArg) {
+    const date = arg.date;
+    setClickedDateInfo({ date, dateStr: date.toISOString() });
+    setModalStatus("detail");
+  }
+
+  // 이벤트 클릭 → detail
+  function openEventDetail(arg: EventClickArg) {
+    const date = arg.event.start ?? new Date(arg.event.startStr);
+    setClickedDateInfo({ date, dateStr: date.toISOString() });
     setModalStatus("detail");
   }
 
@@ -81,28 +94,22 @@ export default function CalendarPage() {
 
   const handleNextDay = () => {
     if (!clickedDateInfo) return;
-
     const currentDate = new Date(clickedDateInfo.date);
     currentDate.setDate(currentDate.getDate() + 1);
-
-    setClickedDateInfo((prev) => ({
-      ...prev!,
+    setClickedDateInfo({
       date: currentDate,
       dateStr: currentDate.toISOString(),
-    }));
+    });
   };
 
   const handlePrevDay = () => {
     if (!clickedDateInfo) return;
-
     const currentDate = new Date(clickedDateInfo.date);
     currentDate.setDate(currentDate.getDate() - 1);
-
-    setClickedDateInfo((prev) => ({
-      ...prev!,
+    setClickedDateInfo({
       date: currentDate,
       dateStr: currentDate.toISOString(),
-    }));
+    });
   };
 
   function handleDailyScheduleSumbit() {
@@ -189,39 +196,45 @@ export default function CalendarPage() {
 
   return (
     <div className="main-layout">
-      {modalStatus != "off" &&
+      {modalStatus !== "off" &&
         createPortal(setModalContent(modalStatus), document.body)}
-      {/* 왼쪽 사이드바 */}
       <Sidebar />
 
-      {/* 메인 컨텐츠 영역 */}
       <div className="main-content">
-        {/* 상단 타이틀 */}
-        <div className="user-info-header">
-          <h3>캘린더</h3>
+        <div className="page-header">
+          <h4># 일정 # 공유 </h4>
+          <h3>캘린더 📆</h3>
         </div>
+
         <div className="calendar-container">
-          <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            editable={false}
-            events={events}
-            aspectRatio={1.6}
-            locale={koLocale}
-            headerToolbar={{
-              left: "prev,title,next",
-              center: "",
-              right: "today",
-            }}
-            dayCellContent={handleDayCellContent}
-            displayEventTime={false}
-            dayMaxEventRows={true}
-            dayMaxEvents={2}
-            dateClick={openCalendarDetail}
-            timeZone={"UTC"}
-            datesSet={updateDate}
-            defaultTimedEventDuration={"00:01"}
-          />
+          <div className="calendar-container-top-mid">
+            <div className="calendar-container-top"></div>
+            <div className="calendar-container-mid">
+              <FullCalendar
+                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                initialView="dayGridMonth"
+                editable={false}
+                events={events}
+                aspectRatio={1.6}
+                locale={koLocale}
+                headerToolbar={{
+                  left: "prev,title,next",
+                  center: "",
+                  right: "today",
+                }}
+                dayCellContent={handleDayCellContent}
+                displayEventTime={false}
+                dayMaxEventRows={true}
+                dayMaxEvents={2}
+                timeZone={"UTC"}
+                defaultTimedEventDuration={"00:01"}
+                datesSet={updateDate}
+                dateClick={openCalendarDetail}
+                eventClick={openEventDetail}
+              />
+            </div>
+          </div>
+          <div className="calendar-container-bottom"></div>
         </div>
       </div>
       <div></div>
