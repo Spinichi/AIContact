@@ -8,6 +8,8 @@ import AdditionalInfoModal, { type formDataType } from "../modal/AdditionalInfoM
 import { createPortal } from "react-dom";
 import type { ApiResponse } from "../../apis/types/common";
 import type { CoupleInfoResponse } from "../../apis/couple/response";
+import Particles from "../auth/Particles";
+import Loading from "../animations/Loading";
 
 export default function PartnerConnectionForm() {
   const [code, setCode] = useState("");
@@ -75,26 +77,19 @@ export default function PartnerConnectionForm() {
   };
 
   const handleFinalSubmit = async (modalData: formDataType) => {
-    setIsModalOpen(false);
-    setIsFinalizing(true);
     setErrorMsg("");
-
+    setIsFinalizing(true);
     try {
-      const promises = [
-        backgroundTaskPromiseRef.current,
-        CouplesApi.patchCouple({
-          coupleName: modalData.coupleName, 
-          startDate: modalData.coupleDate
-        }),
-        updateChildInfoTask(modalData.childName)
-      ];
-
-      const [matchingResult, patchCoupleResult, updateChildResult] = await Promise.all(promises);
-      
+      const matchingResult = await backgroundTaskPromiseRef.current;
+      const patchCoupleResult = await CouplesApi.patchCouple({
+        coupleName: modalData.coupleName, 
+        startDate: modalData.coupleDate
+      });
+      const updateChildResult = await updateChildInfoTask(modalData.childName);    
       console.log("모든 프로세스 최종 완료!", { matchingResult, patchCoupleResult, updateChildResult });
       alert("연결 및 모든 설정이 완료되었습니다!");
+      setIsModalOpen(false);
       navigate("/ai");
-
     } catch (e: any) {
       setErrorMsg(e.message || "최종 처리 중 오류가 발생했습니다.");
       console.error(e);
@@ -133,6 +128,26 @@ export default function PartnerConnectionForm() {
         />, 
       document.body)
     }
+    {isFinalizing ? (createPortal(
+        <>
+          <div className="loading-background">
+            <Particles
+              particleColors={["#735AE1", "#A66EE0", "#ffffff"]}
+              particleCount={300}
+              particleSpread={10}
+              speed={0.2}
+              particleBaseSize={1000}
+              moveParticlesOnHover={true}
+              alphaParticles={false}
+              disableRotation={false}
+              cameraDistance={10}
+            />
+            <Loading />
+          </div>
+        </>
+      , document.body)) : (
+        <></>
+      ) }
     </>
   );
 }

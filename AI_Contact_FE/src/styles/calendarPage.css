@@ -202,3 +202,11 @@
 .fc .fc-daygrid-more-link {
   color: var(--text-light);
 }
+
+.fc-col-header > thead > tr > th:first-child > div > a{
+  color : #f00;
+}
+
+.fc-col-header > thead > tr > th:last-child > div > a{
+  color : #00f;
+}
