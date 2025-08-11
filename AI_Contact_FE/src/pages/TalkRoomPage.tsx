@@ -16,6 +16,17 @@ import backgroundImage from "../assets/images/talkroom_background.png";
 import Sidebar from "../components/Sidebar";
 import "../styles/MainPages.css";
 import "../styles/TalkRoom.css";
+import { generateLetter, canGenerateToday, remainText } from "../apis/letter/generate";
+
+/**
+ * ============================
+ *  COOLDOWN UI SWITCH (주석 토글)
+ * ============================
+ * 쿨타임 UI/가드 켜기 → 아래 true 라인 사용
+ * 쿨타임 UI/가드 끄기 → 아래 false 라인 사용 (기본)
+ */
+// const COOLDOWN_UI_ENABLED = true;   // ← ON
+const COOLDOWN_UI_ENABLED = false;      // ← OFF (기본)
 
 interface Message {
   text: string;
@@ -31,6 +42,8 @@ export default function ChatRoom() {
   const [userId, setUserId] = useState<number | null>(null);
   const [aiChildrenId, setAiChildrenId] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  // 생성 버튼
+  const [generating, setGenerating] = useState(false);
 
   const [sessionId] = useState<string>(() => {
     const existing = localStorage.getItem("conversationSessionId");
@@ -56,7 +69,6 @@ export default function ChatRoom() {
       .then((res) => {
         if (res.success && res.data) {
           setUserId(res.data.id);
-
           setAiChildrenId((res.data as any).aiChildrenId ?? null);
         }
       })
@@ -123,6 +135,32 @@ export default function ChatRoom() {
     setInput("");
   };
 
+  const handleGenerateLetter = async () => {
+    if (generating) return;
+    if (!userId) return;
+
+    // COOLDOWN UI/가드: 스위치가 ON일 때만 검사
+    if (COOLDOWN_UI_ENABLED && !canGenerateToday(userId)) {
+      alert(`다음 생성까지 ${remainText(userId)} 남았어요.`);
+      return;
+    }
+
+    setGenerating(true);
+    const r = await generateLetter({ timeoutMs: 6500, userId });
+    setGenerating(false);
+
+    if (r.ok) {
+      alert("편지를 보냈어요! 📮 상대방 편지함에서 확인할 수 있어요.");
+    } else if (r.reason === "no-token") {
+      alert("로그인이 필요합니다.");
+    } else if (r.reason === "cooldown") {
+      // UI 스위치가 OFF여도 generate.ts에서 COOLDOWN_ENABLED가 ON이면 여기로 들어올 수 있음
+      alert(`다음 생성까지 ${remainText(userId)} 남았어요.`);
+    } else {
+      alert("편지 생성에 실패했어요. 잠시 후 다시 시도해 주세요.");
+    }
+  };
+
   return (
     <div className="main-layout">
       <Sidebar />
@@ -162,7 +200,17 @@ export default function ChatRoom() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
-          <button onClick={handleSend}>전송</button>
+        <button onClick={handleSend}>전송</button>
+        <button
+          onClick={handleGenerateLetter}
+          disabled={
+            generating ||
+            !userId ||
+            (COOLDOWN_UI_ENABLED && !canGenerateToday(userId))
+          }
+        >
+          {generating ? "생성 중..." : "편지 생성"}
+        </button>
         </div>
       </div>
     </div>

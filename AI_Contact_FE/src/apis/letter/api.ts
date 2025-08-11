@@ -8,6 +8,5 @@ export const LetterApi = {
     apiFetch<ApiResponse<LettersResponse>>(`/summary/letters`),
 
 
-  // create: () =>
-  //   apiFetch<ApiResponse<string>>('/summary/letter'),
+  create: () => apiFetch<ApiResponse<string>>("/summary/letter", {method: "GET"}),
 };
