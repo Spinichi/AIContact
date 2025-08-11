@@ -46,7 +46,7 @@ export default function AddSchedule({
     scheduleDate.setUTCMinutes(scheduleMinute);
     try {
       await dailySchedulesApi.createSchedule({
-        title,
+        title:title.length==0?"새로운 일정":title,
         memo,
         scheduleDate,
       });
@@ -127,9 +127,9 @@ export default function AddSchedule({
         </div>
         <div className="modal-footer">
           <button className="cancel-btn" onClick={onCancel}>
-            취소
+            x 취소
           </button>
-          <button className="submit-btn">등록</button>
+          <button className="submit-btn">+ 등록</button>
         </div>
       </form>
     </div>

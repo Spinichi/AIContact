@@ -60,7 +60,7 @@ export default function EditSchedule({
     scheduleDate.setUTCMinutes(scheduleMinute);
     try {
       await dailySchedulesApi.updateSchedule(scheduleInfo.id, {
-        title: currentTitle,
+        title: currentTitle.length==0?"새로운 일정":currentTitle,
         memo: currentMemo,
         scheduleDate,
       });
@@ -200,9 +200,9 @@ export default function EditSchedule({
         </div>
         <div className="modal-footer">
           <button className="cancel-btn" onClick={onCancel}>
-            취소
+            x 취소
           </button>
-          <button className="submit-btn">등록</button>
+          <button className="submit-btn">+ 수정</button>
         </div>
       </form>
     </div>
