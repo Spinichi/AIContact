@@ -51,14 +51,14 @@ public class DailyScheduleController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<DailyScheduleResponseDto>> updateSchedule(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody DailyScheduleUpdateDto dto) {
         DailyScheduleEntity updated = dailyScheduleService.updateSchedule(id, dto.getTitle(), dto.getMemo(), dto.getScheduleDate());
         return ResponseEntity.ok(ApiResponse.success(DailyScheduleResponseDto.fromEntity(updated)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<String>> deleteSchedule(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<String>> deleteSchedule(@PathVariable("id") Long id) {
         dailyScheduleService.deleteSchedule(id);
         return ResponseEntity.ok(ApiResponse.success("일정이 성공적으로 삭제되었습니다."));
     }
