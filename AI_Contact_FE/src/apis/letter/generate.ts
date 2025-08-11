@@ -46,10 +46,10 @@ export async function generateLetter(options?: {
   timeoutMs?: number;
   userId?: number | string | null;
 }): Promise<GenerateLetterResult> {
-  const { timeoutMs = 6500 /*, userId*/ } = options || {};
+  const { timeoutMs = 6500 , userId } = options || {};
 
   // [COOLDOWN_OFF] 생성 차단 가드 — 쿨타임 켜려면 주석 해제
-  // if (!canGenerateToday(userId)) return { ok: false, reason: "cooldown" };
+  if (!canGenerateToday(userId)) return { ok: false, reason: "cooldown" };
 
   const token = localStorage.getItem("accessToken");
   if (!token) return { ok: false, reason: "no-token" };
@@ -73,7 +73,7 @@ export async function generateLetter(options?: {
     const json = (await res.json()) as { success?: boolean; data?: string };
     if (json?.success && typeof json.data === "string") {
       // [COOLDOWN_OFF] 성공 시 쿨타임 기록 — 다시 켜려면 주석 해제
-      // localStorage.setItem(key(userId), String(Date.now()));
+      localStorage.setItem(key(userId), String(Date.now()));
       return { ok: true, body: json.data };
     }
     return { ok: false, reason: "invalid-json" };

@@ -6,9 +6,10 @@ import backgroundImage from "../assets/images/talkroom_background.png";
 import Sidebar from "../components/Sidebar";
 import "../styles/LetterPage.css";
 import "../styles/MainPages.css";
+import { apiFetch } from "../apis/fetchClient";
 
 // ⬇️ generate 유틸만 사용 (canGenerateToday는 무제한 모드면 굳이 안 써도 됨)
-import { generateLetter as generateLetterSilentFromUtil /*, canGenerateToday */ } from "../apis/letter/generate";
+import { generateLetter as generateLetterSilentFromUtil , canGenerateToday } from "../apis/letter/generate";
 
 import { LetterApi } from "../apis/letter";
 import type { LettersResponse } from "../apis/letter";
@@ -29,7 +30,7 @@ export default function Letters() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
+    // const [meId, setMeId] = useState<number | null>(null); // ⬅️ 추가
   // StrictMode 2회 실행 방지
   const didInit = useRef(false);
 
@@ -57,7 +58,7 @@ export default function Letters() {
 
   // 조용한 자동 생성 (실패는 무시)
   const generateLetterSilent = async () => {
-    const r = await generateLetterSilentFromUtil({ /* userId: meId */ silent: true });
+    const r = await generateLetterSilentFromUtil({ silent: true });
     if (r.ok && r.body) {
       setSelectedBody(r.body);
     }
@@ -74,9 +75,9 @@ export default function Letters() {
       if (!mounted) return;
 
       // 2) [AUTO_GEN_SWITCH] true면 자동 생성 1회 시도
-      if (AUTO_GENERATE_ON_MOUNT /* && canGenerateToday(meId) */) {
+      if (AUTO_GENERATE_ON_MOUNT && canGenerateToday()) {
         setTimeout(async () => {
-          await generateLetterSilent(); // 실패해도 조용히
+          await generateLetterSilentFromUtil({silent: true}); // 실패해도 조용히
           await loadList();             // 목록 동기화
         }, 1500);
       }
@@ -153,4 +154,5 @@ export default function Letters() {
       - import { apiFetch } ... MeUserResponse 로 /users/me 호출 후 setMeId
       - AUTO_GENERATE_ON_MOUNT 조건에서 canGenerateToday(meId) 체크
       - generateLetterSilentFromUtil({ userId: meId, silent: true }) 로 호출
+
 ────────────────────────────────────────────────────────────────────────── */
