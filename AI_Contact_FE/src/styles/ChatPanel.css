@@ -10,6 +10,8 @@
   display: flex;
   flex-direction: column;
   z-index: 10000;
+  /* 오버레이가 안 잘리도록(이미지 살짝 커져도 안전) */
+  overflow: hidden;
 }
 
 .chat-panel.open {
@@ -78,7 +80,6 @@
   flex-direction: row;
 }
 
-
 .avatar {
   width: 32px;
   height: 32px;
@@ -88,7 +89,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
   flex-shrink: 0; 
 }
-
 
 .message {
   padding: 8px 12px;
@@ -117,7 +117,6 @@
   margin-bottom: 2px;
   flex-shrink: 0;
 }
-
 
 .chat-input {
   padding: 0.75rem;
@@ -149,7 +148,6 @@
   cursor: not-allowed;
 }
 
-
 .chat-messages::-webkit-scrollbar {
   width: 8px;
 }
@@ -157,7 +155,6 @@
   background: #d9d9d9;
   border-radius: 4px;
 }
-
 
 @media (max-width: 768px) {
   .chat-panel {
@@ -172,4 +169,96 @@
   .message {
     max-width: calc(100vw - 100px);
   }
+}
+
+/* === ❤️ 하트 오버레이 추가 === */
+.heart-overlay {
+  position: absolute;
+  bottom: 100px;           /* 입력창 위쪽에 뜨도록 */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;              /* 패널 내부 컨텐츠 위에 */
+  pointer-events: none;    /* 클릭 방해 X */
+  animation: heartFadeUp 2s ease forwards;
+}
+
+.heart-overlay img {
+  width: 80px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.2));
+}
+
+@keyframes heartFadeUp {
+  0%   { opacity: 0; transform: translate(-50%, 20px) scale(0.9); }
+  20%  { opacity: 1; transform: translate(-50%, 0)     scale(1.0); }
+  80%  { opacity: 1; transform: translate(-50%, -20px) scale(1.0); }
+  100% { opacity: 0; transform: translate(-50%, -40px) scale(1.1); }
+}
+
+/* 접근성: 모션 줄이기 옵션 */
+@media (prefers-reduced-motion: reduce) {
+  .heart-overlay {
+    animation: none;
+  }
+}
+
+/* === 여러 하트 === */
+.floating-heart {
+  position: absolute;
+  bottom: 100px;                 /* 입력창 위 */
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+  animation-name: heartFloatUpDrift;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  animation-duration: var(--heart-duration, 2s);
+  animation-delay: var(--heart-delay, 0s);
+}
+
+/* === 여러 하트 (업그레이드) === */
+.floating-heart {
+  position: absolute;
+  bottom: var(--heart-bottom, 260px); /* ↑ 더 위에서 출발 (200~320px 랜덤) */
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+  animation-name: heartFloatBezier;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  animation-duration: var(--heart-duration, 2.4s);
+  animation-delay: var(--heart-delay, 0s);
+}
+
+.floating-heart img {
+  width: var(--heart-size, 72px);   /* 36~110px 랜덤 */
+  height: auto;
+  opacity: var(--heart-opacity, 0.9); /* 0.5~1.0 랜덤 */
+  display: block;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.2));
+}
+
+/* S-곡선 느낌으로 위로 더 높게 + 좌우로 크게 퍼지도록 */
+@keyframes heartFloatBezier {
+  0% {
+    transform: translate(-50%, 0) scale(0.9);
+    opacity: 0;
+  }
+  18% {
+    transform: translate(calc(-50% + var(--heart-drift1, 0px) * 0.3), -35px) scale(1.0);
+    opacity: 1;
+  }
+  55% {
+    transform: translate(calc(-50% + var(--heart-drift1, 0px)), -140px) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--heart-drift2, 160px)), -300px) scale(1.12);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-heart { animation: none; }
 }
