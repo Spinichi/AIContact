@@ -16,6 +16,14 @@
   background-color: var(--bg-primary);
 }
 
+.fc .fc-daygrid-block-event{
+  background-color: var(--primary);
+}
+
+.fc .fc-daygrid-block-event .fc-event-title{
+  color : white;
+}
+
 .fc-theme-standard .fc-col-header-cell {
   background: none; 
   border-left: none; 
