@@ -97,4 +97,18 @@ public class AiChildService {
         }
         childRepo.deleteById(id);
     }
+
+    @Transactional
+    public AiChildEntity growChild(Long id) throws IOException {
+        AiChildEntity child = childRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("AiChild not found: " + id));
+
+        // 1. 사진 외모 특성 추출하기
+        String url = child.getImageUrl();
+
+        String attributes = gptScenarioService.getAppearanceAttributesForGrowth(url);
+        String imageUrl = imagenService.uploadAiChildImageToS3ForGrowth(attributes, child.getCouple().getId());
+        child.setImageUrl(imageUrl);
+        return childRepo.save(child);
+    }
 }

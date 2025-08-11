@@ -137,4 +137,63 @@ public class GptScenarioService {
         }
     }
 
+    public String getAppearanceAttributesForGrowth(
+            String photoAUrl) throws IOException {
+        // 1) OkHttpClient 재사용 가능하다면 빈으로 분리해도 좋습니다.
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .build();
+
+        String promptSystem = """
+                You will receive one user message containing a reference image of a young child. Analyze and output exactly one concise sentence describing the child's facial features including eye size and color, eyelid shape, nose bridge height and tip shape, lip fullness and shape, and hair features (length, texture, color) into a factual, objective description without using abstract terms. Use clear language such as "large round eyes", "straight medium-height nose", "full lips", "short straight hair", etc.
+                """;
+
+        // 2) messages 배열 구성
+        JSONArray messages = new JSONArray()
+                // system 메시지
+                .put(new JSONObject()
+                        .put("role", "system")
+                        .put("content", promptSystem))
+                // 첫 번째 사용자 메시지 (이미지 A)
+                .put(new JSONObject()
+                        .put("role", "user")
+                        .put("content", "ChildPhoto")
+                        .put("image_url", photoAUrl));
+
+        // 3) 페이로드 전체 조립
+        JSONObject payload = new JSONObject()
+                .put("model", "gpt-4o")
+                .put("messages", messages)
+                .put("temperature", 0.1)
+                .put("max_completion_tokens", 200);
+
+        // 4) Request 빌드
+        Request request = new Request.Builder()
+                .url(ENDPOINT)
+                .header("Authorization", OPENAI_API_KEY)
+                .post(RequestBody.create(
+                        payload.toString(),
+                        MediaType.get("application/json")))
+                .build();
+
+        // 5) 동기 호출 및 파싱
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful() || response.body() == null) {
+                String err = response.body() != null
+                        ? response.body().string()
+                        : "(empty)";
+                throw new IOException("Chat API failed: "
+                        + response.code() + " / " + err);
+            }
+
+            // 최종 JSON 파싱 후 message.content만 꺼내서 리턴
+            JSONObject resJson = new JSONObject(response.body().string());
+            return resJson
+                    .getJSONArray("choices") // choices 배열
+                    .getJSONObject(0) // 첫 번째 요소
+                    .getJSONObject("message") // message 객체
+                    .getString("content"); // content 필드
+        }
+    }
+
 }
