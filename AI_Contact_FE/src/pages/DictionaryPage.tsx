@@ -53,6 +53,36 @@ type FlipbookRef = {
   };
 };
 
+// ✅ 추가: localStorage 유틸과 키
+const LS_KEY = "nicknames"; // ← localStorage key
+
+function saveNicknamesToLocal(items: LocalNickname[]) {
+  try {
+    // word 값만 배열로 추출
+    const words = items.map((item) => item.word);
+    localStorage.setItem(LS_KEY, JSON.stringify(words)); // ← 저장
+  } catch (e) {
+    console.warn("Failed to save nicknames to localStorage:", e);
+  }
+}
+
+function loadNicknamesFromLocal(): LocalNickname[] | null {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    // 최소한의 타입 검증 (id, word 존재 여부)
+    if (Array.isArray(parsed)) {
+      return parsed.filter(
+        (x) => x && typeof x.id === "number" && typeof x.word === "string"
+      );
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 const DictionaryPage: React.FC = () => {
   const [nicknames, setNicknames] = useState<LocalNickname[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,6 +97,16 @@ const DictionaryPage: React.FC = () => {
 
   // 리마운트 후 이동해야 하는 페이지를 큐에 저장
   const [pendingPage, setPendingPage] = useState<number | null>(null);
+
+  // ✅ 최초 마운트 시 localStorage 먼저 반영 → 이어서 서버 최신화
+  useEffect(() => {
+    const cached = loadNicknamesFromLocal(); // ← localStorage 로드
+    if (cached && cached.length > 0) {
+      setNicknames(cached);
+    }
+    // 이후 서버에서 최신 목록으로 동기화
+    fetchNicknames();
+  }, []);
 
   const fetchNicknames = async (): Promise<LocalNickname[]> => {
     try {
@@ -83,16 +123,13 @@ const DictionaryPage: React.FC = () => {
         return a.word.localeCompare(b.word, "ko");
       });
       setNicknames(items);
+      saveNicknamesToLocal(items); // ✅ 변경: 서버 데이터로 로컬 저장 갱신
       return items;
     } catch (err) {
       console.error("닉네임 목록 불러오기 실패", err);
       return [];
     }
   };
-
-  useEffect(() => {
-    fetchNicknames();
-  }, []);
 
   // ✅ 페이지 구성에 종속된 key (길이/목록 변경 시 FlipBook 리마운트)
   const pagesKey = useMemo(
@@ -138,12 +175,12 @@ const DictionaryPage: React.FC = () => {
         const rawCreated = (createRes as any).data as RawNickname;
         const createdItem = mapRawToItem(rawCreated);
 
-        const items = await fetchNicknames();
+        const items = await fetchNicknames(); // ✅ 서버 동기화 + localStorage 저장
         const idx = items.findIndex((it) => it.id === createdItem.id);
         if (idx >= 0) setPendingPage(idx);
       } else if (modalMode === "edit" && editingId != null) {
         await NicknameApi.update(editingId, { word: term, description });
-        const items = await fetchNicknames();
+        const items = await fetchNicknames(); // ✅ 서버 동기화 + localStorage 저장
         const idx = items.findIndex((it) => it.id === editingId);
         if (idx >= 0) setPendingPage(idx);
       }
@@ -159,7 +196,7 @@ const DictionaryPage: React.FC = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     try {
       await NicknameApi.delete(id);
-      const items = await fetchNicknames();
+      const items = await fetchNicknames(); // ✅ 서버 동기화 + localStorage 저장
       const last = Math.max(items.length - 1, 0);
       const next = Math.min(currentPage, last);
       setPendingPage(next);
@@ -238,13 +275,10 @@ const DictionaryPage: React.FC = () => {
                     <div className="dictionary-page">
                       <div className="dictionary-page-header">
                         <div className="page-title">
-                          첫 애칭을 등록해 보세요 ✨
+                          첫 애칭을 등록해 보세요
                         </div>
                       </div>
-                      <div className="description">
-                        오른쪽 위 <b>"애칭 등록"</b> 버튼을 눌러 우리만의 단어를
-                        만들어 보세요.
-                      </div>
+                      <div className="description"></div>
                       <div className="time-info" />
                     </div>
                   </div>
@@ -264,7 +298,7 @@ const DictionaryPage: React.FC = () => {
                       <div className="page-title">✨</div>
                     </div>
                     <div className="description">
-                      오른쪽 위 <b>"애칭 등록"</b> 버튼을 눌러 다음 애칭을
+                      오른쪽 위 <b>애칭 등록</b> 버튼을 눌러 새로운 애칭을
                       추가할 수 있어요.
                     </div>
                     <div className="time-info" />
