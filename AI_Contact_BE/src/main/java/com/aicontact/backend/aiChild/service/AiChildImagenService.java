@@ -80,9 +80,12 @@ public class AiChildImagenService {
                 .readTimeout(60, TimeUnit.SECONDS)
                 .build();
 
+//        String prompt = "Create an ultra-cute 7-8 year old child character in strong Apple Memoji style with simplified cartoon features, sitting pose facing directly forward toward the camera with a bright cheerful smile. Based on the child with "
+//                + attributes
+//                + "but keep it very simple and minimal. The child has large expressive round eyes, less chubby but still round face showing growth, short neat hair like Apple emoji style, and East Asian features with fair skin. Age-appropriate Apple Memoji proportions with slightly smaller head-to-body ratio than baby, longer limbs showing growth. Pure Apple iOS emoji aesthetic with smooth simplified 3D rendering and unified pastel gradient background in soft pink and blue tones, not split in half.";
         String prompt = "Create an ultra-cute 7-8 year old child character in strong Apple Memoji style with simplified cartoon features, sitting pose facing directly forward toward the camera with a bright cheerful smile. Based on the child with "
                 + attributes
-                + "but keep it very simple and minimal. The child has large expressive round eyes, less chubby but still round face showing growth, short neat hair like Apple emoji style, and East Asian features with fair skin. Age-appropriate Apple Memoji proportions with slightly smaller head-to-body ratio than baby, longer limbs showing growth. Pure Apple iOS emoji aesthetic with smooth simplified 3D rendering and unified pastel gradient background in soft pink and blue tones, not split in half.";
+                + "and maintain the same gender as the original child but keep it very simple and minimal. The child has large expressive round eyes, less chubby but still round face showing growth, short neat hair like Apple emoji style, and East Asian features with fair skin. Age-appropriate Apple Memoji proportions with slightly smaller head-to-body ratio than baby, longer limbs showing growth. Pure Apple iOS emoji aesthetic with smooth simplified 3D rendering and unified pastel gradient background in soft pink and blue tones, not split in half.";
 
         JSONObject payload = new JSONObject()
                 .put("instances", new JSONArray()

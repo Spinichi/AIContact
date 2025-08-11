@@ -144,8 +144,12 @@ public class GptScenarioService {
                 .readTimeout(60, TimeUnit.SECONDS)
                 .build();
 
+//        String promptSystem = """
+//                You will receive one user message containing a reference image of a young child. Analyze and output exactly one concise sentence describing the child's facial features including eye size and color, eyelid shape, nose bridge height and tip shape, lip fullness and shape, and hair features (length, texture, color) into a factual, objective description without using abstract terms. Use clear language such as "large round eyes", "straight medium-height nose", "full lips", "short straight hair", etc.
+//                """;
+
         String promptSystem = """
-                You will receive one user message containing a reference image of a young child. Analyze and output exactly one concise sentence describing the child's facial features including eye size and color, eyelid shape, nose bridge height and tip shape, lip fullness and shape, and hair features (length, texture, color) into a factual, objective description without using abstract terms. Use clear language such as "large round eyes", "straight medium-height nose", "full lips", "short straight hair", etc.
+                You will receive one user message containing a reference image of a young child. Analyze and output exactly one concise sentence describing the child's facial features including eye size and color, eyelid shape, nose bridge height and tip shape, lip fullness and shape, hair features (length, texture, color), and apparent gender into a factual, objective description without using abstract terms. Use clear language such as "large round eyes", "straight medium-height nose", "full lips", "short straight hair", "appears to be a boy/girl", etc.
                 """;
 
         // 2) messages 배열 구성
