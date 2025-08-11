@@ -1,20 +1,20 @@
-import type { formDataType } from "../../components/modal/AdditionalInfoModal";
 import { apiFetch } from "../fetchClient";
 import type { ApiResponse } from "../types/common";
-import type { UpdateAiChildRequest } from "./request";
+import type { UpdateAiChildRequest, CreateAiChildRequest } from "./request";
 import type { AiChildResponse } from "./response";
 
 const BASE_PATH = "/children";
 
 export const aiChildApi = {
-  createChild: () =>
+  createChild: (payload: CreateAiChildRequest) =>
     apiFetch<ApiResponse<AiChildResponse>>(BASE_PATH, {
       method: "POST",
+      body: JSON.stringify(payload), // 아이 이름 전달
     }),
 
   getMyChildren: () => apiFetch<ApiResponse<AiChildResponse>>(BASE_PATH),
 
-  updateChild: (id: number, payload: UpdateAiChildRequest) =>
+  updateChild: (id: number, payload: Partial<UpdateAiChildRequest>) =>
     apiFetch<ApiResponse<AiChildResponse>>(`${BASE_PATH}/${id}`, {
       method: "PUT",
       body: JSON.stringify(payload),
