@@ -8,25 +8,49 @@ import image6 from "../../assets/images/Slides/slide6.png";
 // import GalleryImage from "./GalleryImage"; // ← 더 이상 사용 안 하면 삭제
 import Carousel, { type CarouselItem } from "../animations/Carousel/Carousel";
 
-
 const slides: CarouselItem[] = [
-  { id: 1, title: "채팅",     description: "실시간으로 대화해요",          icon: null },
-  { id: 2, title: "고민상담소", description: "연애 고민을 털어놔요",         icon: null },
-  { id: 3, title: "네컷만화",   description: "우리 둘만의 만화 만들기",       icon: null },
-  { id: 4, title: "공유캘린더", description: "기념일/일정을 함께 관리",      icon: null },
-  { id: 5, title: "공유갤러리", description: "사진을 모아 추억을 저장",      icon: null },
-  { id: 6, title: "화상통화",   description: "멀리 있어도 얼굴 보고 얘기",   icon: null },
+  { id: 1, title: "채팅", description: "실시간으로 대화해요", icon: null },
+  {
+    id: 2,
+    title: "고민상담소",
+    description: "연애 고민을 털어놔요",
+    icon: null,
+  },
+  {
+    id: 3,
+    title: "네컷만화",
+    description: "우리 둘만의 만화 만들기",
+    icon: null,
+  },
+  {
+    id: 4,
+    title: "공유캘린더",
+    description: "기념일/일정을 함께 관리",
+    icon: null,
+  },
+  {
+    id: 5,
+    title: "공유갤러리",
+    description: "사진을 모아 추억을 저장",
+    icon: null,
+  },
+  {
+    id: 6,
+    title: "화상통화",
+    description: "멀리 있어도 얼굴 보고 얘기",
+    icon: null,
+  },
 ];
 
 const slideImages = [image1, image2, image3, image4, image5, image6];
 
 export default function OnBoardingGallery() {
   return (
-    <div className="on-boarding-gallery">
+    <div className="onboarding-gallery">
       <Carousel
         items={slides}
-        baseWidth={970}         // 슬라이드 폭 (적당히 320~400 사이 추천)
-        autoplay={false}
+        baseWidth={800}
+        autoplay={true}
         autoplayDelay={3000}
         pauseOnHover
         loop
@@ -35,21 +59,17 @@ export default function OnBoardingGallery() {
           const idx = item.id - 1;
           const img = slideImages[idx];
           return (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", height: "100%", padding: 20 }}>
+            <div className="onboarding-gallery-img-wrapper">
               <img
+                className="onboarding-gallery-img"
                 src={img}
                 alt={item.title}
-                style={{
-                  width: "90%",
-                  height: "100%",           // 필요시 조정
-                  objectFit: "contain",
-                  borderRadius: 16,
-                  border: "1px solid #333",
-                }}
               />
-              <div style={{ color: "#fff" }}>
-                <div style={{ fontSize: 18, fontWeight: 900, marginBottom: 4 }}>{item.title}</div>
-                <div style={{ fontSize: 14 }}>{item.description}</div>
+              <div className="onboarding-gallery-title-description">
+                <div className="onboarding-gallery-title">{item.title}</div>
+                <div className="onboarding-gallery-description">
+                  {item.description}
+                </div>
               </div>
             </div>
           );

@@ -64,8 +64,8 @@ export default function OnBoardingPage() {
           interactive={false}
           className="text-decoration"
         />
-        <OnBoardingInfo />
         <FixedButtons />
+        <OnBoardingInfo />
         <OnBoardingGallery />
         <OnBoardingFooter />
       </div>
