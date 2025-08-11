@@ -75,7 +75,7 @@ export default function CalendarDetail({
         </div>
       </div>
       <div className="modal-body">
-        {calendarEvents.map((obj) => {
+        {calendarEvents.length > 0 ? (calendarEvents.map((obj) => {
           return (
             <Schedule
               key={`${obj.scheduleDate}+${obj.createdAt}`}
@@ -87,7 +87,7 @@ export default function CalendarDetail({
               onEditRequest={handleEditRequest}
             />
           );
-        })}
+        })) : (<p style={{color:"var(--text-light)", fontSize:"24px", textAlign:"center"}}>등록된 일정이 없습니다.</p>)}
       </div>
     </div>
   );
