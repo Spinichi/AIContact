@@ -46,7 +46,7 @@ export default function AddSchedule({
     scheduleDate.setUTCMinutes(scheduleMinute);
     try {
       await dailySchedulesApi.createSchedule({
-        title,
+        title:title.length==0?"새로운 일정":title,
         memo,
         scheduleDate,
       });
