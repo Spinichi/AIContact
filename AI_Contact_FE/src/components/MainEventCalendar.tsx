@@ -16,14 +16,20 @@ export default function EventCalendar(props: {data : DailyScheduleResponse[]}) {
   return (
     <div className="event-calendar">
       <div className="calendar-header">{nowDate.toLocaleDateString()}</div>
-      <ul>
-        {props.data && props.data.map((event) => (
-          <li key={`${event.scheduleDate}+${event.id}`} className="event-list">
-            <span className="title">{event.title}</span>
-            <span className={`dday ${nowDate.toDateString() === new Date(event.scheduleDate).toDateString() ? "active" : ""}`}>{calcDate(event.scheduleDate)}</span>
-          </li>
-        ))}
-      </ul>
+      {props.data && props.data.length > 0? (
+  <ul>
+    {props.data.map((event) => (
+      <li key={`${event.scheduleDate}+${event.id}`} className="event-list">
+        <span className="title">{event.title}</span>
+        <span className={`dday ${nowDate.toDateString() === new Date(event.scheduleDate).toDateString() ? "active" : ""}`}>
+          {calcDate(event.scheduleDate)}
+        </span>
+      </li>
+    ))}
+  </ul>
+) : (
+  <p style={{color:"var(--text-light)"}}>일정이 없습니다.</p>
+)}
     </div>
   );
 }

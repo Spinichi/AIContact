@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { CouplesApi } from "../../apis/couple";
 import heart from "../../assets/images/heart.png";
 import "../../styles/CoupleConnection.css";
+import { aiChildApi } from "../../apis/aiChild";
+import AdditionalInfoModal, { type formDataType } from "../modal/AdditionalInfoModal";
+import { createPortal } from "react-dom";
+import type { ApiResponse } from "../../apis/types/common";
+import type { CoupleInfoResponse } from "../../apis/couple/response";
 
 export default function PartnerConnectionForm() {
   const [code, setCode] = useState("");
@@ -10,50 +15,97 @@ export default function PartnerConnectionForm() {
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const [isStarting, setIsStarting] = useState(false); // 초기 버튼 클릭 시 로딩 상태
+  const [isFinalizing, setIsFinalizing] = useState(false); // 최종 제출 시 로딩 상태
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
+
+  // 백그라운드 작업의 Promise를 저장할 ref
+  const backgroundTaskPromiseRef = useRef<ApiResponse<CoupleInfoResponse> | null>(null);
+
+  const matchingTask = async (partnerId : number) => {
+    const matchingResult = await CouplesApi.matching({ partnerId });
+    return matchingResult;
+  };
+
+  const updateChildInfoTask = async (childName: string) => {
+    const aiInfo = await aiChildApi.getMyChildren();
+    const childId = aiInfo.data.id;
+    return aiChildApi.updateChild(childId, {
+      name: childName,
+      imageUrl: aiInfo.data.imageUrl, 
+      growthLevel: aiInfo.data.growthLevel, 
+      experiencePoints: aiInfo.data.experiencePoints
+    });
+  };
+
+  const handleStartConnection = async (e) => {
     e.preventDefault();
-    if (submitting) return;
-    setSubmitting(true);
+    if (isStarting || isFinalizing) return;
+
+    setIsStarting(true);
     setErrorMsg("");
 
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      setErrorMsg("로그인이 필요합니다.");
-      setSubmitting(false);
-      return;
-    }
-
-    try {
-      const joinRes = await CouplesApi.joinByCode(code.trim());
-      const join = joinRes.data;
-
-      if (!join.matched || !join.partnerId) {
-        setErrorMsg("매칭할 수 없습니다. 상대의 상태를 확인해 주세요.");
+    try { 
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        setErrorMsg("로그인이 필요합니다.");
         setSubmitting(false);
         return;
       }
 
-      await CouplesApi.matching({ partnerId: join.partnerId });
+      const joinRes = await CouplesApi.joinByCode(code.trim());
+      const join = joinRes.data;
 
-      alert("연결이 완료되었습니다!");
-      navigate("/connection");
-    } catch (e: any) {
-      const msg = e?.message || "";
-      if (msg === "UNAUTHORIZED") {
-        setErrorMsg("세션이 만료되었습니다. 다시 로그인해 주세요.");
-      } else if (msg === "FORBIDDEN") {
-        setErrorMsg("접근 권한이 없습니다.");
-      } else {
-        setErrorMsg("잘못된 코드입니다. 다시 확인하고 입력해 주세요.");
+      if (!join.matched || !join.partnerId) {
+        throw new Error("매칭할 수 없습니다. 상대의 상태를 확인해 주세요.");
       }
+
+      // 성공 시, 백그라운드 작업을 시작하고 Promise를 ref에 저장
+      console.log("백그라운드 작업 시작!");
+      backgroundTaskPromiseRef.current = matchingTask(join.partnerId);
+
+      setIsModalOpen(true);
+
+    } catch (e) {
+      setErrorMsg(e.message || "잘못된 코드입니다. 다시 확인해 주세요.");
       console.error(e);
     } finally {
-      setSubmitting(false);
+      setIsStarting(false);
+    }
+  };
+
+  const handleFinalSubmit = async (modalData: formDataType) => {
+    setIsModalOpen(false);
+    setIsFinalizing(true);
+    setErrorMsg("");
+
+    try {
+      const promises = [
+        backgroundTaskPromiseRef.current,
+        CouplesApi.patchCouple({
+          coupleName: modalData.coupleName, 
+          startDate: modalData.coupleDate
+        }),
+        updateChildInfoTask(modalData.childName)
+      ];
+
+      const [matchingResult, patchCoupleResult, updateChildResult] = await Promise.all(promises);
+      
+      console.log("모든 프로세스 최종 완료!", { matchingResult, patchCoupleResult, updateChildResult });
+      alert("연결 및 모든 설정이 완료되었습니다!");
+      navigate("/ai");
+
+    } catch (e: any) {
+      setErrorMsg(e.message || "최종 처리 중 오류가 발생했습니다.");
+      console.error(e);
+    } finally {
+      setIsFinalizing(false);
     }
   };
 
   return (
-    <form className="connection-container" onSubmit={onSubmit}>
+    <>
+    <form className="connection-container" onSubmit={handleStartConnection}>
       <div className="heart">
         <img src={heart} alt="heart" />
       </div>
@@ -73,5 +125,14 @@ export default function PartnerConnectionForm() {
 
       {errorMsg && <p className="error-message">{errorMsg}</p>}
     </form>
+    {isModalOpen &&
+      createPortal(    
+        <AdditionalInfoModal
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleFinalSubmit}
+        />, 
+      document.body)
+    }
+    </>
   );
 }
