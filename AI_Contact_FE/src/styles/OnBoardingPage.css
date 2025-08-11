@@ -165,3 +165,12 @@
     background-position: 0% 50%;
   }
 }
+
+.on-boarding-gallery {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  background: var(--bg-primary); 
+}
