@@ -51,8 +51,8 @@ export default function AuthPage() {
           email={signUpData.email}
           password={signUpData.password}
           onProfileSubmit={handleProfileSubmit}
-          isVisible={isSignUp} // Only show if isSignUp is true
-          onBack={() => setSignUpStep("emailPassword")} // Add onBack prop
+          isVisible={isSignUp}
+          onBack={() => setSignUpStep("emailPassword")}
         />
       )}
     </div>

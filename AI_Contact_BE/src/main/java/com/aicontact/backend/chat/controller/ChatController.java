@@ -29,7 +29,7 @@ public class ChatController {
     }
 
     @GetMapping("/{coupleId}/messages")
-    public ResponseEntity<ApiResponse<List<Chat>>> getChatMessages(@PathVariable Long coupleId) {
+    public ResponseEntity<ApiResponse<List<Chat>>> getChatMessages(@PathVariable("coupleId") Long coupleId) {
         List<Chat> messages = chatService.getChatMessagesByCoupleId(coupleId);
         return ResponseEntity.ok(ApiResponse.success(messages));
     }
