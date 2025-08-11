@@ -25,8 +25,8 @@ import { generateLetter, canGenerateToday, remainText } from "../apis/letter/gen
  * 쿨타임 UI/가드 켜기 → 아래 true 라인 사용
  * 쿨타임 UI/가드 끄기 → 아래 false 라인 사용 (기본)
  */
-// const COOLDOWN_UI_ENABLED = true;   // ← ON
-const COOLDOWN_UI_ENABLED = false;      // ← OFF (기본)
+const COOLDOWN_UI_ENABLED = true;   // ← ON
+// const COOLDOWN_UI_ENABLED = false;      // ← OFF (기본)
 
 interface Message {
   text: string;
@@ -205,8 +205,8 @@ export default function ChatRoom() {
           onClick={handleGenerateLetter}
           disabled={
             generating ||
-            !userId ||
-            (COOLDOWN_UI_ENABLED && !canGenerateToday(userId))
+            !userId 
+            // (COOLDOWN_UI_ENABLED && !canGenerateToday(userId))
           }
         >
           {generating ? "생성 중..." : "편지 생성"}
