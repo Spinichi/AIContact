@@ -19,9 +19,9 @@ import type { DailyScheduleResponse } from "../apis/dailySchedule/response";
 import { UsersApi } from "../apis/user/api";
 import type { MeUserResponse } from "../apis/user/response";
 
-// ✅ 추가: 아이 정보 API/타입 임포트
 import { aiChildApi } from "../apis/aiChild";
 import type { AiChildResponse } from "../apis/aiChild/response";
+import Particles from "../components/auth/Particles";
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -31,8 +31,8 @@ export default function MainPage() {
   const [dDay, setDday] = useState<DailyScheduleResponse[]>([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  // ✅ 추가: 아이 상태 관리
+  const [imgVersion, setImgVersion] = useState(0);
+  const [growing, setGrowing] = useState(false);
   const [child, setChild] = useState<AiChildResponse | null>(null);
 
   useEffect(() => {
@@ -64,12 +64,12 @@ export default function MainPage() {
             setCoupleMeta(null);
           }
 
-          // ✅ 추가: 커플 상태라면 아이 정보도 조회
+          // 커플 상태라면 아이 정보도 조회
           try {
             const childRes = await aiChildApi.getMyChildren();
             if (!cancelled) setChild(childRes.data);
           } catch (e) {
-            // 아이가 아직 없을 수 있음 → 조용히 무시하고 null 유지
+            // 아이가 아직 없을 수 있음 → null 유지
             if (!cancelled) setChild(null);
           }
         } else {
@@ -114,6 +114,22 @@ export default function MainPage() {
   return (
     <div className="main-layout">
       {loading ? <Loading /> : <></>}
+      {growing && (
+        <div className="loading-overlay">
+          <Particles
+            particleColors={["#735AE1", "#A66EE0", "#ffffff"]}
+            particleCount={300}
+            particleSpread={10}
+            speed={0.2}
+            particleBaseSize={1000}
+            moveParticlesOnHover={true}
+            alphaParticles={false}
+            disableRotation={false}
+            cameraDistance={10}
+          />
+          <Loading />
+        </div>
+      )}
       <Sidebar />
       <div className="main-content">
         <div className="page-header">
@@ -122,7 +138,7 @@ export default function MainPage() {
             {partner?.name ? ` 💗 ${partner.name}` : ""}
           </h4>
           <h3>
-            사랑한지 <span>{loveDays ?? 87}일</span> 째
+            사랑한지 <span>{loveDays ?? ""}일</span> 째
           </h3>
         </div>
 
@@ -131,6 +147,29 @@ export default function MainPage() {
           <BabyAvatar
             name={child?.name || "이름 없음"}
             imageUrl={child?.imageUrl || "Ai.png"}
+            canGrow={
+              !!child &&
+              child.experiencePoints >= 500 &&
+              child.growthLevel === 1
+            }
+            imgVersion={imgVersion}
+            // 성장 버튼 클릭 시 로딩 오버레이 표시/해제
+            onGrowClick={async () => {
+              if (!child) return;
+              try {
+                setGrowing(true); // ← 시작: 오버레이 ON
+                await aiChildApi.growChild(child.id);
+                const updated = await aiChildApi.getMyChildren();
+                setChild(updated.data);
+                setImgVersion((v) => v + 1); // 이미지 강제 리렌더
+              } catch (err) {
+                console.error("성장 실패:", err);
+              } finally {
+                setGrowing(false); // ← 종료: 오버레이 OFF
+              }
+            }}
+            // 성장 중일 때 버튼 비활성화
+            isProcessing={growing}
           />
 
           <div className="baby-stats">

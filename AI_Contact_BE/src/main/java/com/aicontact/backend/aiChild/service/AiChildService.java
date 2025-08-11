@@ -103,6 +103,8 @@ public class AiChildService {
         AiChildEntity child = childRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("AiChild not found: " + id));
 
+        child.setGrowthLevel(child.getGrowthLevel() + 1);
+        
         // 1. 사진 외모 특성 추출하기
         String url = child.getImageUrl();
 

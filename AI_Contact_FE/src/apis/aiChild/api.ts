@@ -20,6 +20,12 @@ export const aiChildApi = {
       body: JSON.stringify(payload),
     }),
 
+  /* 아이 성장 */
+  growChild: (id: number) =>
+    apiFetch<ApiResponse<AiChildResponse>>(`${BASE_PATH}/${id}/grow`, {
+      method: "GET",
+    }),
+
   deleteChild: (id: number) =>
     apiFetch<ApiResponse<string>>(`${BASE_PATH}/${id}`, {
       method: "DELETE",
