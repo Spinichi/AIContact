@@ -25,6 +25,10 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { dailySchedulesApi } from "../apis/dailySchedule";
 import type { DailyScheduleResponse } from "../apis/dailySchedule/response";
 import EditSchedule from "../components/calendar/EditSchedule";
+import rrulePlugin from '@fullcalendar/rrule';
+import { UsersApi } from "../apis/user";
+import { CouplesApi } from "../apis/couple";
+import { aiChildApi } from "../apis/aiChild";
 
 export default function CalendarPage() {
   type ModalType = "detail" | "add" | "edit" | "off";
@@ -48,13 +52,64 @@ export default function CalendarPage() {
   const [editScheduleData, setEditScheduleData] =
     useState<DailyScheduleResponse>(initialScheduleData);
   const [events, setEvents] = useState<EventInput[]>([]);
+  const [recurringEvents, setRecurringEvents] = useState<EventInput[]>([]);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAllInfoAndCreateEvents = async () => {
       try {
+        const [myInfoRes, partnerInfoRes, coupleInfoRes, aiChildInfoRes] = await Promise.all([
+          UsersApi.getMe(),
+          CouplesApi.getPartnerInfo(),
+          CouplesApi.getCoupleInfo(),
+          aiChildApi.getMyChildren()
+        ]);
+
+        const myInfo = myInfoRes.data;
+        const partnerInfo = partnerInfoRes.data;
+        const coupleInfo = coupleInfoRes.data;
+        const aiChildInfo = aiChildInfoRes.data
+
+        const events = [];
+        events.push({
+          title: `🎂 ${myInfo.name}의 생일`,
+          rrule: {
+            dtstart: myInfo.birthDate,
+            freq: 'yearly',
+            until: '2099-12-31'
+          },
+        });
+        events.push({
+          title: `🎂 ${partnerInfo.name}의 생일`,
+          rrule: {
+            dtstart: partnerInfo.birthDate,
+            freq: 'yearly',
+            until: '2099-12-31'
+          },
+        });
+        events.push({
+          title: `❤️ 우리 기념일`,
+          rrule: {
+            dtstart: coupleInfo.startDate,
+            freq: 'yearly',
+            until: '2099-12-31'
+          },
+        });
+        
+        setRecurringEvents(events);
+
+      } catch (error) {
+        console.error("정보를 불러오는 중 오류가 발생했습니다:", error);
+      }
+    };
+    fetchAllInfoAndCreateEvents();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {    
         const response = await dailySchedulesApi.getSchedulesByMonth(
           year,
           month
@@ -64,14 +119,14 @@ export default function CalendarPage() {
           title: element.title,
           start: element.scheduleDate,
         }));
-        setEvents(processedData);
+        setEvents([...processedData, ...recurringEvents]);
       } catch (e) {
         /* empty */
       }
     };
 
     fetchData();
-  }, [refetchTrigger, year, month]); // 연/월 바뀌면 재요청
+  }, [refetchTrigger, year, month, recurringEvents]); // 연/월 바뀌면 재요청
 
   // 날짜 셀 클릭 → detail
   function openCalendarDetail(arg: DateClickArg) {
@@ -211,7 +266,7 @@ export default function CalendarPage() {
             <div className="calendar-container-top"></div>
             <div className="calendar-container-mid">
               <FullCalendar
-                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, rrulePlugin]}
                 initialView="dayGridMonth"
                 editable={false}
                 events={events}
