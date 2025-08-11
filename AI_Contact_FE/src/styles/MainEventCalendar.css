@@ -1,11 +1,10 @@
 .event-calendar {
-  position: absolute;
-  right: 100px;
   width: 250px;
   text-align: center;
   align-items: center;
   border-radius: 0 0 14px 14px;
   box-shadow: 4px 4px 4px 0 rgba(115, 90, 225, 0.25);
+  margin: 25px;
 }
 
 .event-calendar ul {

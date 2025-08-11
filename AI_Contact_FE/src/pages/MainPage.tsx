@@ -110,10 +110,14 @@ export default function MainPage() {
         </div>
 
         <div className="content-row">
-          <BabyAvatar />
           <EventCalendar data={dDay} />
-          <RightIcons onChatClick={() => setIsChatOpen((v) => !v)} />
+          <BabyAvatar />
+          <div className="baby-stats">
+            <div>2살</div>
+            <div>😊 행복함</div>
+          </div>
         </div>
+        <RightIcons onChatClick={() => setIsChatOpen((v) => !v)} />
 
         {userInfo?.coupleId && (
           <ChatPanel

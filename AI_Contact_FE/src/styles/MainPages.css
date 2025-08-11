@@ -19,8 +19,8 @@
 .content-row {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 50px;
+  padding-bottom: 50px;
 }
 
 .page-header {

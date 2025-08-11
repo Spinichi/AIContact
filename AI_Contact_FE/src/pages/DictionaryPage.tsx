@@ -238,13 +238,10 @@ const DictionaryPage: React.FC = () => {
                     <div className="dictionary-page">
                       <div className="dictionary-page-header">
                         <div className="page-title">
-                          첫 애칭을 등록해 보세요 ✨
+                          첫 애칭을 등록해 보세요
                         </div>
                       </div>
-                      <div className="description">
-                        오른쪽 위 <b>"애칭 등록"</b> 버튼을 눌러 우리만의 단어를
-                        만들어 보세요.
-                      </div>
+                      <div className="description"></div>
                       <div className="time-info" />
                     </div>
                   </div>
@@ -264,7 +261,7 @@ const DictionaryPage: React.FC = () => {
                       <div className="page-title">✨</div>
                     </div>
                     <div className="description">
-                      오른쪽 위 <b>"애칭 등록"</b> 버튼을 눌러 다음 애칭을
+                      오른쪽 위 <b>애칭 등록</b> 버튼을 눌러 새로운 애칭을
                       추가할 수 있어요.
                     </div>
                     <div className="time-info" />
