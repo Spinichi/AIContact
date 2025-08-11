@@ -1,3 +1,4 @@
+// pages/MyPage.tsx
 import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import "../styles/MainPages.css";
@@ -9,6 +10,10 @@ import { CouplesApi } from "../apis/couple";
 import type { PartnerInfoResponse } from "../apis/couple/response";
 import { UsersApi } from "../apis/user";
 import type { MeUserResponse } from "../apis/user/response";
+
+// ✅ 추가: AiChild API/타입 임포트
+import { aiChildApi } from "../apis/aiChild";
+import type { AiChildResponse } from "../apis/aiChild/response";
 
 const MyPage: React.FC = () => {
   const [me, setMe] = useState<MeUserResponse | null>(null);
@@ -24,6 +29,16 @@ const MyPage: React.FC = () => {
 
   const navigate = useNavigate();
 
+  // ✅ 추가: 아이 상태 & 로딩/에러 상태
+  const [child, setChild] = useState<AiChildResponse | null>(null);
+  const [childLoading, setChildLoading] = useState(false);
+  const [childError, setChildError] = useState<string | null>(null);
+
+  // ✅ 추가: 아이 생성/수정용 폼 상태
+  const [childNameInput, setChildNameInput] = useState("귀요미");
+  const [childEditingName, setChildEditingName] = useState(false);
+  const [childSaving, setChildSaving] = useState(false);
+
   // 내 정보 + (커플이면) 연인 정보 로딩
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -34,6 +49,12 @@ const MyPage: React.FC = () => {
         if (meRes.data.coupleStatus === "COUPLED") {
           const partnerRes = await CouplesApi.getPartnerInfo();
           setPartner(partnerRes.data);
+
+          // ✅ 커플인 경우 아이 정보도 같이 로드
+          await loadChild();
+        } else {
+          // 커플이 아니면 아이 정보 초기화
+          setChild(null);
         }
       } catch (error) {
         console.error("정보 조회 실패:", error);
@@ -41,7 +62,26 @@ const MyPage: React.FC = () => {
     };
 
     fetchUserInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // ✅ 아이 정보 로딩 함수
+  const loadChild = async () => {
+    setChildLoading(true);
+    setChildError(null);
+    try {
+      const res = await aiChildApi.getMyChildren();
+      setChild(res.data); // ApiResponse 래핑 가정
+      setChildNameInput(res.data.name || "귀요미");
+    } catch (e: any) {
+      // 백엔드에서 자녀 없을 때 404/500 매핑에 따라 다를 수 있음
+      console.warn("아이 정보 없음 또는 조회 실패:", e?.message || e);
+      setChild(null);
+      setChildError("아이 정보가 없습니다.");
+    } finally {
+      setChildLoading(false);
+    }
+  };
 
   // 프로필 이미지 수정 버튼 -> 숨겨진 파일 입력 클릭
   const handleClickChangeProfile = () => {
@@ -84,10 +124,6 @@ const MyPage: React.FC = () => {
       alert("모든 비밀번호 입력칸을 채워주세요.");
       return;
     }
-    // if (pwForm.next.length < 8) {
-    //   alert("새 비밀번호는 8자 이상이어야 합니다.");
-    //   return;
-    // }
     if (pwForm.next !== pwForm.confirm) {
       alert("새 비밀번호가 일치하지 않습니다.");
       return;
@@ -108,6 +144,40 @@ const MyPage: React.FC = () => {
       alert("비밀번호 변경에 실패했습니다.\n" + (e?.message || ""));
     } finally {
       setPwSaving(false);
+    }
+  };
+
+  // ✅ 아이 생성
+  const handleCreateChild = async () => {
+    try {
+      setChildSaving(true);
+      const res = await aiChildApi.createChild({ name: childNameInput }); // ← 수정된 API 사용
+      setChild(res.data);
+      alert("아이 생성이 완료되었습니다.");
+    } catch (e: any) {
+      console.error(e);
+      alert("아이 생성 중 오류가 발생했습니다.\n" + (e?.message || ""));
+    } finally {
+      setChildSaving(false);
+    }
+  };
+
+  // ✅ 아이 이름 수정
+  const handleSaveChildName = async () => {
+    if (!child) return;
+    try {
+      setChildSaving(true);
+      const res = await aiChildApi.updateChild(child.id, {
+        name: childNameInput,
+      }); // 필요한 필드만 보냄
+      setChild(res.data);
+      setChildEditingName(false);
+      alert("아이 이름이 변경되었습니다.");
+    } catch (e: any) {
+      console.error(e);
+      alert("아이 정보 수정 중 오류가 발생했습니다.\n" + (e?.message || ""));
+    } finally {
+      setChildSaving(false);
     }
   };
 
@@ -321,6 +391,127 @@ const MyPage: React.FC = () => {
               </div>
             )}
 
+            {/* 아이 정보 */}
+            <div className="mypage-card-wrapper">
+              <div className="mypage-card-title">아이 정보</div>
+              <div className="mypage-card">
+                {childLoading ? (
+                  <div style={{ padding: 16 }}>로딩 중...</div>
+                ) : !me || me.coupleStatus !== "COUPLED" ? (
+                  <div style={{ padding: 16 }}>
+                    커플 연결 후 아이 정보를 생성할 수 있습니다.
+                  </div>
+                ) : child ? (
+                  <div className="mypage-card-section-wrapper">
+                    {/* 이름 */}
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">이름</div>
+                      <div className="mypage-card-section-value">
+                        {!childEditingName ? (
+                          child.name
+                        ) : (
+                          <input
+                            value={childNameInput}
+                            onChange={(e) => setChildNameInput(e.target.value)}
+                            className="text-input"
+                          />
+                        )}
+                      </div>
+                      <div
+                        className="mypage-card-section-btn"
+                        style={{ gap: 8 }}
+                      >
+                        {!childEditingName ? (
+                          <button
+                            className="useredit-btn"
+                            onClick={() => setChildEditingName(true)}
+                          >
+                            변경
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              className="useredit-btn"
+                              onClick={() => {
+                                setChildEditingName(false);
+                                setChildNameInput(child.name || "귀요미");
+                              }}
+                              disabled={childSaving}
+                            >
+                              취소
+                            </button>
+                            <button
+                              className="useredit-btn"
+                              onClick={handleSaveChildName}
+                              disabled={childSaving}
+                            >
+                              {childSaving ? "저장 중..." : "저장"}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 프로필사진 */}
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">프로필사진</div>
+                      <div className="mypage-card-section-value">
+                        <img
+                          src={child.imageUrl || "/child.png"}
+                          alt="아이 프로필"
+                          className="profile-img"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 나이/친밀도 */}
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">나이</div>
+                      <div className="mypage-card-section-value">
+                        {Math.floor(child.experiencePoints / 100)}살
+                      </div>
+                    </div>
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">친밀도</div>
+                      <div className="mypage-card-section-value">
+                        {child.experiencePoints}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mypage-card-section-wrapper">
+                    {/* 아이 없음 → 생성 UI */}
+                    <div className="mypage-card-section">
+                      <div className="mypage-card-section-name">아이 이름</div>
+                      <div className="mypage-card-section-value">
+                        <input
+                          value={childNameInput}
+                          onChange={(e) => setChildNameInput(e.target.value)}
+                          className="text-input"
+                          placeholder="아이 이름을 입력하세요"
+                        />
+                      </div>
+                      <div className="mypage-card-section-btn">
+                        <button
+                          className="useredit-btn"
+                          onClick={handleCreateChild}
+                          disabled={childSaving}
+                        >
+                          {childSaving ? "생성 중..." : "아이 생성"}
+                        </button>
+                      </div>
+                    </div>
+                    {childError && (
+                      <div style={{ padding: 8, color: "var(--text-light)" }}>
+                        {childError}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+            {/* /아이 정보 */}
+
             {/* 연인 정보 */}
             {partner && (
               <div className="mypage-card-wrapper">
@@ -383,39 +574,6 @@ const MyPage: React.FC = () => {
                 </div>
               </div>
             )}
-
-            {/* 아이 정보 (임시 고정 데이터) */}
-            <div className="mypage-card-wrapper">
-              <div className="mypage-card-title">아이 정보</div>
-              <div className="mypage-card">
-                <div className="mypage-card-section-wrapper">
-                  <div className="mypage-card-section">
-                    <div className="mypage-card-section-name">이름</div>
-                    <div className="mypage-card-section-value">김포비</div>
-                    <div className="mypage-card-section-btn">
-                      <button className="useredit-btn">변경</button>
-                    </div>
-                  </div>
-                  <div className="mypage-card-section">
-                    <div className="mypage-card-section-name">프로필사진</div>
-                    <div className="mypage-card-section-value">
-                      <img
-                        src="/child.png"
-                        alt="아이 프로필"
-                        className="profile-img"
-                      />
-                    </div>
-                  </div>
-                  <div className="mypage-card-section">
-                    <div className="mypage-card-section-name">생년월일</div>
-                    <div className="mypage-card-section-value">
-                      2025년 7월 27일
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* /아이 정보 */}
           </div>
         </div>
       </div>
