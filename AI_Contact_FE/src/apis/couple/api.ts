@@ -1,6 +1,6 @@
 import { apiFetch } from "../fetchClient";
 import type { ApiResponse } from "../types/common";
-import type { CoupleMatchingRequest } from "./request";
+import type { CoupleMatchingRequest, CoupleUpdateRequest } from "./request";
 import type {
   CoupleInfoResponse,
   CoupleJoinResponse,
@@ -37,5 +37,12 @@ export const CouplesApi = {
   deleteCouple: () =>
     apiFetch<ApiResponse<string>>("/couples", {
       method: "DELETE",
+    }),
+
+  /* 커플 정보 업데이트 */
+  patchCouple: (payload : CoupleUpdateRequest) =>
+    apiFetch<ApiResponse<string>>("/couples", {
+      method: "PATCH",
+      body: JSON.stringify(payload),
     }),
 };
