@@ -6,4 +6,8 @@ import type { LettersResponse } from "./response";
 export const LetterApi = {
   getAll: () =>
     apiFetch<ApiResponse<LettersResponse>>(`/summary/letters`),
+
+
+  // create: () =>
+  //   apiFetch<ApiResponse<string>>('/summary/letter'),
 };
