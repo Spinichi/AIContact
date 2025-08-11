@@ -72,6 +72,20 @@ public class AiChildController {
                 .ok(ApiResponse.success(new AiChildResponse(updated)));
     }
 
+    @GetMapping("/{id}/grow")
+    public ResponseEntity<ApiResponse<AiChildResponse>> growChild(
+            @PathVariable("id") Long id
+    ) throws IOException {
+        try {
+            AiChildEntity grownChild = aiChildService.growChild(id);
+            AiChildResponse dto = new AiChildResponse(grownChild);
+            return ResponseEntity.ok(ApiResponse.success(dto));
+        } catch (IOException e) {
+            System.out.println("AI 이미지 생성 실패 - childId: " + id + ", error: " + e.getMessage());
+            throw e;
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteChild(
             @PathVariable("id") Long id
