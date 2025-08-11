@@ -23,7 +23,7 @@ public class AiChildEntity extends BaseTimeEntity {
     private CoupleEntity couple;
 
     @Column(nullable = false, length = 50)
-    private String name;
+    private String name = "귀요미";
 
     @Column(name = "image_url", length = 500)
     private String imageUrl;
@@ -33,5 +33,4 @@ public class AiChildEntity extends BaseTimeEntity {
 
     @Column(name = "experience_points", nullable = false)
     private Integer experiencePoints = 0;
-
 }

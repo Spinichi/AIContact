@@ -1,5 +1,7 @@
 package com.aicontact.backend.babychat.controller;
 
+import com.aicontact.backend.aiChild.entity.AiChildEntity;
+import com.aicontact.backend.aiChild.service.AiChildService;
 import com.aicontact.backend.auth.dto.CustomUserDetails;
 import com.aicontact.backend.babychat.dto.ChatRequestDTO;
 import com.aicontact.backend.babychat.dto.ChatResponseDTO;
@@ -10,30 +12,27 @@ import com.aicontact.backend.babychat.service.GmsChatService;
 import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.user.entity.UserEntity;
 import com.aicontact.backend.user.repository.UserRepository;
+import com.aicontact.backend.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 
 @RestController
 @RequestMapping("/baby")
+@RequiredArgsConstructor
 public class BabyChatRestController {
 
     private final GmsChatService service;
     private final BabyChatMessageRepository repo;
     private final UserRepository userRepository;
-
-    public BabyChatRestController(GmsChatService service,
-                                  BabyChatMessageRepository repo,
-                                  UserRepository userRepository) {
-        this.service = service;
-        this.repo = repo;
-        this.userRepository = userRepository;
-    }
+    private final AiChildService aiChildService;
+    private final UserService userService;
 
     @PostMapping(
             path = "/chat",
@@ -45,46 +44,49 @@ public class BabyChatRestController {
             @RequestBody ChatRequestDTO req
     ) {
 
-        UserEntity user = userRepository.findById(req.getUserId())
+
+        String email = userDetails.getUserEntity().getEmail();
+        Long userId = userService.getUserByEmail(email).getId();
+
+        UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
 
+        AiChildEntity aiChild = aiChildService.getMyChild(user.getCoupleId());
+
         BabyChatMessage userMsg = BabyChatMessage.builder()
                 .user(user)
-                .aiChildrenId(req.getAiChildrenId())
+                .aiChild(aiChild)
                 .aiMessageType(AiMessageType.USER)
                 .content(req.getMessage())
                 .conversationSessionId(req.getConversationSessionId())
-                .createdAt(LocalDateTime.now())
                 .build();
         repo.save(userMsg);
 
 
-        List<BabyChatMessage> history = repo.findTop20ByUserIdAndConversationSessionIdOrderByCreatedAtAsc(
-                req.getUserId(), req.getConversationSessionId()
+        List<BabyChatMessage> history = repo.findTop20ByUserIdAndConversationSessionIdOrderByCreatedAtDesc(
+                userId, req.getConversationSessionId()
         );
 
+        Collections.reverse(history);
 
         String babyReply = service.chatWithBaby(history, req.getMessage());
 
-
         BabyChatMessage aiMsg = BabyChatMessage.builder()
                 .user(user)
-                .aiChildrenId(req.getAiChildrenId())
+                .aiChild(aiChild)
                 .aiMessageType(AiMessageType.AI)
                 .content(babyReply)
                 .conversationSessionId(req.getConversationSessionId())
-                .createdAt(LocalDateTime.now())
                 .build();
         repo.save(aiMsg);
-
 
         ChatResponseDTO res = ChatResponseDTO.builder()
                 .reply(babyReply)
                 .conversationSessionId(req.getConversationSessionId())
                 .timestamp(aiMsg.getCreatedAt())
+                .aiMessageType(aiMsg.getAiMessageType())
                 .build();
-
 
         return ResponseEntity
                 .ok()
@@ -98,8 +100,11 @@ public class BabyChatRestController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ApiResponse<List<ChatResponseDTO>>> getChatHistoryByUser(
-            @RequestParam Long userId
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        String email = userDetails.getUserEntity().getEmail();
+        Long userId = userService.getUserByEmail(email).getId();
+
         List<BabyChatMessage> messages = repo
                 .findByUserIdOrderByCreatedAtAsc(userId);
 

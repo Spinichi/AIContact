@@ -63,7 +63,7 @@ public class CoupleService {
     }
 
     @Transactional
-    public CoupleInfoResponse createCouple(Long currentUserId,
+    public CoupleEntity createCouple(Long currentUserId,
                                            CoupleMatchingRequest req) {
         // 1) 유저 조회
         UserEntity me      = userRepository.findById(currentUserId)
@@ -103,7 +103,7 @@ public class CoupleService {
         userRepository.saveAll(Arrays.asList(me, partner));
 
         // 7) 생성된 Couple 정보 반환
-        return new CoupleInfoResponse(couple);
+        return couple;
     }
 
     @Transactional

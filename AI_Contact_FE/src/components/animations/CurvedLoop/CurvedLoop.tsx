@@ -1,9 +1,9 @@
 import {
-  useRef,
   useEffect,
-  useState,
-  useMemo,
   useId,
+  useMemo,
+  useRef,
+  useState,
   type FC,
   type PointerEvent,
 } from "react";
@@ -20,7 +20,7 @@ interface CurvedLoopProps {
 
 const CurvedLoop: FC<CurvedLoopProps> = ({
   marqueeText = "",
-  speed = 2,
+  speed = 1.5,
   className,
   curveAmount = 400,
   direction = "left",
@@ -150,7 +150,12 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
           />
         </defs>
         {ready && (
-          <text fontWeight="bold" xmlSpace="preserve" className={className}>
+          <text
+            height="100px"
+            fontWeight="bold"
+            xmlSpace="preserve"
+            className={className}
+          >
             <textPath
               ref={textPathRef}
               href={`#${pathId}`}

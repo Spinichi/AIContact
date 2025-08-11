@@ -9,5 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DeleteMediaResponse {
     private String message;
-    private Long deleted_media_id;
+    private Long deletedMediaId;
 }

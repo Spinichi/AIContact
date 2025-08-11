@@ -58,7 +58,7 @@ public class AiChildController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<AiChildResponse>> updateChild(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody UpdateAiChildRequest req
     ) {
         AiChildEntity updated = aiChildService.updateChild(
@@ -74,7 +74,7 @@ public class AiChildController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteChild(
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
         aiChildService.deleteChild(id);
         return ResponseEntity

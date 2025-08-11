@@ -1,21 +1,25 @@
 package com.aicontact.backend.couple.controller;
 
+import com.aicontact.backend.aiChild.dto.response.AiChildResponse;
+import com.aicontact.backend.aiChild.entity.AiChildEntity;
+import com.aicontact.backend.aiChild.service.AiChildService;
 import com.aicontact.backend.auth.dto.CustomUserDetails;
 import com.aicontact.backend.couple.dto.request.CoupleMatchingRequest;
 import com.aicontact.backend.couple.dto.request.CoupleUpdateRequest;
 import com.aicontact.backend.couple.dto.request.VerificationCodeRequest;
-import com.aicontact.backend.couple.dto.response.CoupleInfoResponse;
-import com.aicontact.backend.couple.dto.response.CoupleResponse;
-import com.aicontact.backend.couple.dto.response.PartnerResponse;
-import com.aicontact.backend.couple.dto.response.VerificationCodeResponse;
+import com.aicontact.backend.couple.dto.response.*;
+import com.aicontact.backend.couple.entity.CoupleEntity;
 import com.aicontact.backend.couple.service.CoupleService;
 import com.aicontact.backend.global.dto.response.ApiResponse;
 import com.aicontact.backend.user.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/couples")
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class CoupleController {
     private final UserService userService;
     private final CoupleService coupleService;
+    private final AiChildService aiChildService;
 
     @PostMapping("/join")
     public ResponseEntity<ApiResponse<CoupleResponse>> join(
@@ -41,16 +46,27 @@ public class CoupleController {
         return ResponseEntity.ok(response);
     }
 
+    @Transactional
     @PostMapping("/matching")
-    public ResponseEntity<ApiResponse<CoupleInfoResponse>> matchCouple(
+    public ResponseEntity<ApiResponse<MatchResponse>> matchCouple(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody CoupleMatchingRequest req) {
 
         String email = userDetails.getUserEntity().getEmail();
         Long userId = userService.getUserByEmail(email).getId();
-        CoupleInfoResponse resp = coupleService.createCouple(userId, req);
-        ApiResponse<CoupleInfoResponse> response = ApiResponse.success(resp);
-        return ResponseEntity.ok(response);
+        CoupleEntity resp = coupleService.createCouple(userId, req);
+
+        try {
+            AiChildEntity childResp = aiChildService.createChildForCouple(resp);
+            MatchResponse matchResp = new MatchResponse(new CoupleInfoResponse(resp), new AiChildResponse(childResp));
+            ApiResponse<MatchResponse> response = ApiResponse.success(matchResp);
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "AI 아이 생성 중 오류가 발생했습니다: " + e.getMessage(),
+                    e
+            );
+        }
     }
 
     @GetMapping("")

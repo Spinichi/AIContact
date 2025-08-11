@@ -1,148 +1,315 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import HTMLFlipBook from "react-pageflip";
+import dictionarybook from "../assets/images/dictionary.png";
+import Modal from "../components/modal/Modal";
 import Sidebar from "../components/Sidebar";
-import "../styles/MainPages.css";
 import "../styles/DictionaryPage.css";
-import Modal from "../components/modal/Modal"
-import dictionarybook from '../assets/images/dictionary.png'
+
+import { NicknameApi } from "../apis/nickname/api";
+import type { NicknameItem } from "../apis/nickname/response";
+import DictionaryPageCard from "../components/DictionaryPageCard";
+
+// 유틸: ISO 문자열을 'YYYY-MM-DD HH:mm:ss'로 포맷팅
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  const Y = d.getFullYear();
+  const M = String(d.getMonth() + 1).padStart(2, "0");
+  const D = String(d.getDate()).padStart(2, "0");
+  const h = String(d.getHours()).padStart(2, "0");
+  const m = String(d.getMinutes()).padStart(2, "0");
+  const s = String(d.getSeconds()).padStart(2, "0");
+  return `${Y}-${M}-${D} ${h}:${m}:${s}`;
+}
+
+// Raw API 데이터 타입
+interface RawNickname {
+  id: number;
+  nickname: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 로컬 상태 타입: NicknameItem + updated_at
+export type LocalNickname = NicknameItem & { updated_at: string };
+
+// API 응답을 로컬 타입으로 변환
+function mapRawToItem(raw: RawNickname): LocalNickname {
+  return {
+    id: raw.id,
+    word: raw.nickname,
+    description: raw.description,
+    created_at: formatDate(raw.createdAt),
+    updated_at: formatDate(raw.updatedAt),
+  };
+}
+
+// FlipBook ref에서 필요한 메서드 shape만 정의
+type FlipbookRef = {
+  pageFlip(): {
+    flipNext(): void;
+    flipPrev(): void;
+    turnToPage: (index: number) => void;
+  };
+};
 
 const DictionaryPage: React.FC = () => {
-  // ------------------- 상태 -------------------
-  
-  // 모달 알림 여부 (true일 때, 모달 보임)
-  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 여부
-  
-  // 모달 모드: create는 새로운 단어 추가, edit는 기존 단어 수정
-  const [modalMode, setModalMode] = useState<"create" | "edit">("create"); // 모달 모드
-
-  // 단어입력과 설명 상태 (편집 & 생성 모두 공통으로 사용)
+  const [nicknames, setNicknames] = useState<LocalNickname[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [term, setTerm] = useState("");
   const [description, setDescription] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-  // ------------------- 이벤트 함수 -------------------
-  // create 버튼 클릭 시
-  const handleCreateClick = () => {
-    setModalMode("create");   // 모달을 생성 모드로
-    setTerm("");              // 입력 필드 초기화
-    setDescription("");       // 설명 입력창 초기화
-    setIsModalOpen(true);     // 모달 열기
-  };
+  // FlipBook 제어용
+  const bookRef = useRef<FlipbookRef | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  // 편집 버튼 클릭 시
-  const handleEditClick = (term: string, description: string) => {
-    setModalMode("edit");     // 모달을 편집 모드로
-    setTerm(term);            // 선택된 단어를 입력창에 미리 넣어
-    setDescription(description);  // 선택된 단어 설명 미리 넣어랑
-    setIsModalOpen(true);   // 모달 열어랑
-  };
+  // 리마운트 후 이동해야 하는 페이지를 큐에 저장
+  const [pendingPage, setPendingPage] = useState<number | null>(null);
 
-  // 저장 버튼 클릭 시
-  const handleSave = () => {
-    if (modalMode === "create") {
-      // 생성모드일 때 처리
-      // 새로운 단어를 배열 or DB에 저장하는 로직 작성
-      console.log("새 단어 추가됨:", term, description);
-    } else {
-      // 편집 로직 작성
-      // 단어 업데이트 로직 작성
-      console.log("단어 수정됨:", term, description);
+  const fetchNicknames = async (): Promise<LocalNickname[]> => {
+    try {
+      const res = await NicknameApi.getAll();
+      const rawList = (res as any).data as RawNickname[];
+      const items = rawList.map(mapRawToItem);
+      // 숫자 문자열은 숫자 비교, 그 외 문자열은 한글 가나다순 비교
+      items.sort((a, b) => {
+        const numA = parseFloat(a.word);
+        const numB = parseFloat(b.word);
+        const isNumA = !isNaN(numA);
+        const isNumB = !isNaN(numB);
+        if (isNumA && isNumB) return numA - numB;
+        return a.word.localeCompare(b.word, "ko");
+      });
+      setNicknames(items);
+      return items;
+    } catch (err) {
+      console.error("닉네임 목록 불러오기 실패", err);
+      return [];
     }
-
-    // 모달 닫기
-    setIsModalOpen(false);
   };
-  // 화면 렌더링
+
+  useEffect(() => {
+    fetchNicknames();
+  }, []);
+
+  // ✅ 페이지 구성에 종속된 key (길이/목록 변경 시 FlipBook 리마운트)
+  const pagesKey = useMemo(
+    () =>
+      nicknames.length === 0 ? "empty" : nicknames.map((n) => n.id).join(","),
+    [nicknames]
+  );
+
+  // ✅ FlipBook이 리마운트된 뒤에 보류된 이동을 수행
+  useEffect(() => {
+    if (pendingPage != null) {
+      // 다음 프레임에서 안전하게 호출
+      requestAnimationFrame(() => {
+        bookRef.current?.pageFlip().turnToPage(pendingPage);
+        setCurrentPage(pendingPage);
+        setPendingPage(null);
+      });
+    }
+  }, [pagesKey, pendingPage]);
+
+  // 모달 열기 함수들
+  const openCreateModal = () => {
+    setModalMode("create");
+    setTerm("");
+    setDescription("");
+    setEditingId(null);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (item: LocalNickname) => {
+    setModalMode("edit");
+    setTerm(item.word);
+    setDescription(item.description ?? "");
+    setEditingId(item.id);
+    setIsModalOpen(true);
+  };
+
+  // 저장 핸들러: 생성/수정 후 항상 리스트 재조회 및 해당 페이지로 이동 (리마운트 후 이동을 위해 pendingPage 사용)
+  const handleSave = async () => {
+    try {
+      if (modalMode === "create") {
+        const createRes = await NicknameApi.create({ word: term, description });
+        const rawCreated = (createRes as any).data as RawNickname;
+        const createdItem = mapRawToItem(rawCreated);
+
+        const items = await fetchNicknames();
+        const idx = items.findIndex((it) => it.id === createdItem.id);
+        if (idx >= 0) setPendingPage(idx);
+      } else if (modalMode === "edit" && editingId != null) {
+        await NicknameApi.update(editingId, { word: term, description });
+        const items = await fetchNicknames();
+        const idx = items.findIndex((it) => it.id === editingId);
+        if (idx >= 0) setPendingPage(idx);
+      }
+    } catch (err) {
+      console.error("단어 추가/수정 실패", err);
+    } finally {
+      setIsModalOpen(false);
+    }
+  };
+
+  // 삭제 핸들러: 삭제 후 리스트 재조회 및 페이지 보정 (pendingPage로 처리)
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+    try {
+      await NicknameApi.delete(id);
+      const items = await fetchNicknames();
+      const last = Math.max(items.length - 1, 0);
+      const next = Math.min(currentPage, last);
+      setPendingPage(next);
+    } catch (err) {
+      console.error("삭제 실패", err);
+    }
+  };
+
+  const flipPrev = () => bookRef.current?.pageFlip().flipPrev();
+  const flipNext = () => bookRef.current?.pageFlip().flipNext();
+
+  const totalPages = Math.max(nicknames.length, 1); // 최소 한 페이지(빈 페이지) 보장
+  const canPrev = currentPage > 0;
+  const canNext = currentPage < totalPages - 1;
+
   return (
     <div className="main-layout">
-      {/* 사이드바 */}
       <Sidebar />
-
-      {/* 메인 컨텐츠 영역 */}
       <div className="main-content">
-        {/* 상단 헤더 */}
-        <div className="user-info-header">
+        <div className="page-header">
+          <h4># 우리 # 둘만의 </h4>
           <h3>애칭 백과사전 📖</h3>
         </div>
 
-        {/* 사전 본문 */}
-        <div className="dictionary-container">
-          {/* create 버튼 : 새로운 단어 추가 모드로 모달 열기*/}
-          <button className="upload-btn" onClick={handleCreateClick}>
-            create
-          </button>
-
-          <button className="arrow left">〈</button>
-          <div className="dictionary-book">
-            {/* 왼쪽 페이지 */}
-            <div className="dictionary-page left">
-              <h2>
-                빵떡이{" "}
-                <span
-                  className="wordedit-btn"
-                  // 편집 버튼 클릭 시 해당 단어 데이터를 넣은 편집 모달 열기
-                  onClick={() =>
-                    handleEditClick("빵떡이", "찹쌀떡이나 빵같을 때 쓰는 말임")
-                  }
-                >
-                  편집
-                </span>
-              </h2>
-              <p className="description">
-                찹쌀떡이나 빵처럼 보일 때 쓰는 말
-              </p>
-            </div>
-
-            {/* 오른쪽 페이지 */}
-            <div className="dictionary-page right">
-              <h2>
-                빵떡이{" "}
-                <span
-                  className="wordedit-btn"
-                  onClick={() =>
-                    handleEditClick("빵떡이", "얼굴이 동글동글하고 통통해서")
-                  }
-                >
-                  편집
-                </span>
-              </h2>
-              <p className="description">얼굴이 동글동글하고 통통해서</p>
-           
-            </div>
-              <img src={dictionarybook} alt="" className="dictionary-bg" />
+        <div className="dictionary-container-wrapper">
+          <div className="upload-btn-wrapper">
+            <button className="upload-btn" onClick={openCreateModal}>
+              😘 애칭 등록
+            </button>
           </div>
-          <button className="arrow right">〉</button>
-        </div>
 
+          <div className="dictionary-container">
+            <button
+              className="arrow left"
+              onClick={flipPrev}
+              disabled={!canPrev}
+            >
+              〈
+            </button>
 
-        {/* ------------------- 통합 모달 ------------------- */}
-        {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} hasNext={false} hasPrev={false}> 
-          (
-            <div className="modal">
-              {/* 모드에 따라 제목 변경 */}
-              <h3>{modalMode === "create" ? "새로운 단어 추가" : "단어 편집"}</h3>
-
-              {/* 단어 입력 */}
-              <input
-                type="text"
-                placeholder="단어 입력"
-                value={term}
-                onChange={(e) => setTerm(e.target.value)}
-              />
-
-              {/* 설명 입력 */}
-              <textarea
-                placeholder="설명 입력"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-
-              <div className="modal-buttons">
-                <button onClick={() => setIsModalOpen(false)}>취소</button>
-                <button onClick={handleSave}>저장</button>
+            <div className="dictionary-book">
+              <div className="dictionary-page-mock">
+                <div className="flip-page mock-page"></div>
+                <div className="flip-page mock-page"></div>
               </div>
+              <HTMLFlipBook
+                key={pagesKey}
+                ref={bookRef as any}
+                className="flipbook"
+                style={{}}
+                width={734 / 2}
+                height={467}
+                size="stretch"
+                minWidth={320}
+                maxWidth={1000}
+                minHeight={420}
+                maxHeight={1400}
+                startPage={0}
+                flippingTime={700}
+                startZIndex={10}
+                drawShadow={true}
+                maxShadowOpacity={0.3}
+                autoSize={true}
+                showCover={false}
+                mobileScrollSupport={true}
+                usePortrait={true}
+                useMouseEvents={false}
+                swipeDistance={30}
+                clickEventForward={true}
+                showPageCorners={false} // 타입 충돌 회피용 필수 prop
+                disableFlipByClick={true} // 타입 충돌 회피용 필수 prop
+                onFlip={(e: any) => setCurrentPage(e.data)}
+              >
+                {nicknames.length === 0 ? (
+                  <div key="empty" className="flip-page dictionary-page">
+                    <div className="dictionary-page">
+                      <div className="dictionary-page-header">
+                        <div className="page-title">
+                          첫 애칭을 등록해 보세요 ✨
+                        </div>
+                      </div>
+                      <div className="description">
+                        오른쪽 위 <b>"애칭 등록"</b> 버튼을 눌러 우리만의 단어를
+                        만들어 보세요.
+                      </div>
+                      <div className="time-info" />
+                    </div>
+                  </div>
+                ) : (
+                  nicknames.map((item) => (
+                    <DictionaryPageCard
+                      key={`p-${item.id}`}
+                      item={item}
+                      onEdit={openEditModal}
+                      onDelete={handleDelete}
+                    />
+                  ))
+                )}
+                <div key="empty" className="flip-page dictionary-page">
+                  <div className="dictionary-page">
+                    <div className="dictionary-page-header">
+                      <div className="page-title">✨</div>
+                    </div>
+                    <div className="description">
+                      오른쪽 위 <b>"애칭 등록"</b> 버튼을 눌러 다음 애칭을
+                      추가할 수 있어요.
+                    </div>
+                    <div className="time-info" />
+                  </div>
+                </div>
+              </HTMLFlipBook>
             </div>
-        )
-        </Modal>}
+
+            <button
+              className="arrow right"
+              onClick={flipNext}
+              disabled={!canNext}
+            >
+              〉
+            </button>
+          </div>
+        </div>
       </div>
+
+      {isModalOpen && (
+        <Modal
+          onClose={() => setIsModalOpen(false)}
+          hasNext={false}
+          hasPrev={false}
+        >
+          <div className="modal">
+            <h3>{modalMode === "create" ? "애칭 등록" : "애칭 편집"}</h3>
+            <input
+              type="text"
+              placeholder="애칭"
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+            />
+            <textarea
+              placeholder="설명"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <div className="modal-buttons">
+              <button onClick={() => setIsModalOpen(false)}>취소</button>
+              <button onClick={handleSave}>저장</button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

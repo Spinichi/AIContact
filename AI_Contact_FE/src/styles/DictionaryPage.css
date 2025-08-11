@@ -1,174 +1,183 @@
-/* .dictionary-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-  position: relative;
-} */
-.dictionary-container {
-  position: relative;
+.dictionary-container-wrapper {
   width: 100%;
-  max-width: 1200px;
-  overflow: visible;
-  margin-top: 5%;
-  flex: 1;
   display: flex;
-  flex-direction: center;
-  overflow-y: auto;
-}
-
-
-
-
-/* .dictionary-book {
-  display: flex;
-  width: 80%;
-  background: white;
-  border: 1px solid #ddd;
-  padding: 20px;
-  justify-content: space-between;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-} */
-.dictionary-book {
-  position: relative;
-  width: 75%;
-  max-width: 1200px;
-  aspect-ratio: 16/9;
-  height: auto;
-  padding: 30px 40px;
-  box-sizing: border-box;
-  margin: 0 auto;
-}
-
-.dictionary-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  z-index: 0;
-}
-
-
-
-.dictionary-page {
-  position: absolute;
-  z-index: 1;
-  padding: 10px 30px;
-  top: 30px;
-}
-
-.dictionary-page.left {
-  top: 10%;
-  margin-left: 1%;
-  height: 100%;
-  z-index: 2;
-}
-.dictionary-page.right {
-  top: 10%;
-  margin-left: 47%;
-  height: 100%;
-  z-index: 2;
-}
-
-.dictionary-page:first-child {
-  border-left: none;
-}
-
-.dictionary-page h2 {
-  font-size: 20px;
-  display: flex;
-  justify-content: space-between;
-  justify-content: flex-start;
-  align-items: flex-start;
-  /* align-items: center; */
-  position: relative;
-  padding-right: 50px;
-}
-
-.wordedit-btn {
-  position: absolute;
-  top: 0;
-  right: -45%;
-  font-size: 12px;
-  color: #8A8C90;
-  cursor: pointer;
-}
-
-.description {
-  margin: 10px 0;
-}
-
-.example {
-  margin-top: 10px;
-  font-style: italic;
-  color: #555;
-}
-
-.link {
-  text-decoration: underline;
-  color: #9c6bff;
-  cursor: pointer;
-}
-
-.time-info {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #777;
-}
-
-.arrow {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.user-info-header {
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  /* 제목과 버튼 양쪽 정렬 */
-  margin-bottom: 10px;
+  gap: 20px;
+}
+
+.upload-btn-wrapper {
+  width: 65%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .upload-btn {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  display: flex;
-  font-size: 24;
-  gap: 5px;
-  background: #9c6bff;
-  color: white;
-  padding: 6px 12px;
+  height: 40px;
+  background: var(--primary);
+  color: #ffffff;
+  padding: 10px 20px;
   border-radius: 8px;
-  border: none;
-  font-size: 14px;
   cursor: pointer;
-  z-index: 5;
+  font-size: 16px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.upload-btn:focus {
+  outline: none;
 }
 
 .upload-btn:hover {
   background: #7b4ce3;
 }
 
-/* .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+.dictionary-container {
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
+  overflow: visible;
+  flex: 1;
+  display: flex; /* 좌/우 버튼 + 책 영역 배치 */
+  justify-items: center;
   align-items: center;
-  z-index: 999;
+  justify-content: center;
+  gap: 12px;
+}
 
-} */
+.dictionary-book {
+  position: relative;
+  width: 65%;
+  padding: 10px 50px;
+  margin: 0 20px 20px;
+  box-sizing: border-box;
+  background: var(--side-bar);
+  border: 1px solid var(--text-light);
+  border-radius: 20px;
+  box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, 0.25),
+    -4px 4px 8px 0 rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* flip shadow/overflow 정리 */
+}
 
-/* .modal {
+.flip-page {
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid var(--text-light);
+  padding: 50px 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  z-index: 1;
+}
+
+.flip-page:nth-child(odd) {
+  box-shadow: -4px 4px 10px 0 rgba(115, 90, 225, 0.2),
+    -4px 0px 8px 0 rgba(0, 0, 0, 0.2) inset,
+    -20px 0px 8px 0 rgba(0, 0, 0, 0.1) inset,
+    8px 0px 8px 0 rgba(115, 90, 225, 0.1) inset;
+  border-right: 1px solid var(--text-light);
+}
+
+.flip-page:nth-child(even) {
+  box-shadow: 4px 4px 10px 0 rgba(115, 90, 225, 0.2),
+    4px 0px 8px 0 rgba(0, 0, 0, 0.2) inset,
+    20px 0px 8px 0 rgba(0, 0, 0, 0.1) inset,
+    -8px 0px 8px 0 rgba(115, 90, 225, 0.1) inset;
+  border-left: none;
+}
+
+.dictionary-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.dictionary-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.page-title {
+  font-weight: 700;
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.wordedit-btn,
+.worddelete-btn {
+  z-index: 10;
+  cursor: pointer;
+}
+
+.wordedit-btn:hover,
+.worddelete-btn:hover {
+  color: var(--text-dark);
+}
+
+.description {
+  white-space: pre-wrap;
+  word-break: break-word;
+  hyphens: auto;
+  overflow: visible;
+  flex: 2;
+}
+
+.time-info {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.dictionary-page-mock {
+  display: flex;
+  position: absolute;
+  width: calc(100% - 100px);
+  height: calc(100% - 20px);
+  z-index: 0;
+}
+
+.mock-page {
+  width: 100%;
+}
+
+/* 좌/우 화살표 버튼 */
+.arrow {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background-color: transparent;
+}
+.arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.arrow:focus {
+  outline: none;
+}
+
+/* 모달 */
+.modal {
   background: white;
   padding: 20px;
   border-radius: 10px;
@@ -176,31 +185,38 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-} */
-
-
-/* .modal input,
+}
+.modal input,
 .modal textarea {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
-} */
-
-/* .modal-buttons {
+}
+.modal-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
 }
-
 .modal-buttons button {
   padding: 6px 12px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
-
 .modal-buttons button:last-child {
   background: #9c6bff;
   color: white;
-} */
+}
+
+/* 은은한 배경 이미지 (선택) */
+.dictionary-bg-under {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0.08;
+  z-index: -1;
+}

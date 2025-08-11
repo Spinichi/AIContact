@@ -1,13 +1,11 @@
-/* eslint-disable react/no-unknown-property */
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { Canvas, extend, useFrame } from "@react-three/fiber";
 import {
-  useGLTF,
-  useTexture,
   Environment,
   Lightformer,
+  useGLTF,
+  useTexture,
 } from "@react-three/drei";
+import { Canvas, extend, useFrame } from "@react-three/fiber";
 import {
   BallCollider,
   CuboidCollider,
@@ -18,6 +16,7 @@ import {
   type RigidBodyProps,
 } from "@react-three/rapier";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
 // replace with your own imports, see the usage snippet for details
@@ -46,9 +45,13 @@ export default function Lanyard({
       <Canvas
         camera={{ position, fov }}
         gl={{ alpha: transparent }}
-        onCreated={({ gl }) =>
-          gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)
-        }
+        onCreated={({ gl }) => {
+          gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1);
+          // ▼ 톤매핑/노출/색공간 설정
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1;
+          gl.outputColorSpace = THREE.SRGBColorSpace;
+        }}
       >
         <ambientLight intensity={Math.PI} />
         <Physics gravity={gravity} timeStep={1 / 60}>
@@ -268,13 +271,21 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
             <mesh geometry={nodes.card.geometry}>
               <meshPhysicalMaterial
                 map={materials.base.map}
-                map-anisotropy={16}
+                // ▼ 텍스처에 곱해지는 색 → 1보다 조금 크게 주면 전체가 산뜻해짐
+                color={new THREE.Color(0.9, 0.9, 1.0)}
+                // ▼ 살짝의 자체발광으로 평탄한 영역이 더 밝게
+                emissive={new THREE.Color(0, 0, 0)}
+                emissiveIntensity={1.0}
+                // ▼ 환경광 반사 세기 (금속/반사 텍스처가 있을 때 효과적)
+                envMapIntensity={1.2}
+                map-anisotropy={1}
                 clearcoat={1}
-                clearcoatRoughness={0.15}
-                roughness={0.9}
-                metalness={0.8}
+                clearcoatRoughness={0.5}
+                roughness={0.7} // 0.9 → 0.8로 살짝 낮추면 하이라이트가 살아남
+                metalness={1.3}
               />
             </mesh>
+
             <mesh
               geometry={nodes.clip.geometry}
               material={materials.metal}

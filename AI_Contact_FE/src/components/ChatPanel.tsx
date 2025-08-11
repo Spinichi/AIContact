@@ -1,87 +1,224 @@
-import React, { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
+import { ChatApi } from "../apis/chat/api";
+import { CouplesApi } from "../apis/couple/api";
 import "../styles/ChatPanel.css";
 
-// 부모한테 받을 props 타입 정의
 interface ChatPanelProps {
-  isOpen: boolean;    // 패널 열림 여부 (true면 오른쪽에서 슬라이드로 쨘 나옴)
-  onClose: () => void;    // 닫기 버튼하면 사라진다
+  coupleId: number;
+  senderId: number;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-// 메세지 타입 정의
 interface Message {
-  text: string;   // 메세지 내용
-  sender: "me" | "you";   // 보낸 사람 나랑 너임
+  senderId: number;
+  content: string;
+  messageType: "TEXT";
+  sentAt: string;
 }
 
-// 컴포넌트 정의
-const ChatPanel: React.FC<ChatPanelProps> = ({ isOpen, onClose }) => {
-  
-  // 입력창 상태 (input에 입력 중인 텍스트 저장하는 거임)
-  const [input, setInput] = useState(""); 
+export default function ChatPanel({
+  coupleId,
+  senderId,
+  isOpen,
+  onClose,
+}: ChatPanelProps) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
 
-  // 채팅 메세지 배열(기본 메세지 2개 일단 정해놓고 확인할라고 넣은 거임 뺴도 댐)
-  const [messages, setMessages] = useState<Message[]>([
-    { text: "하이티비!", sender: "me" },
-    { text: "ㅇㅇ ㅎㅇ?", sender: "you" },
-  ]);
+  const stompClientRef = useRef<any>(null);
+  const socketRef = useRef<any>(null);
 
-  // 엔터나 전송버튼 누르면 실행되는 함수임
-  const handleSend = () => {
-    // input.trim()은 사용자가 입력한 문자열에서 앞뒤 공백 제거해주는 함수
-    if (!input.trim()) return;  // 공백만 있으면 전송안되게 해둠
-    // 내가 입력한 메세지 배열에 추가
-    // setMessages는 상태 업데이트 함수, prev는 이전 메세지 배열임
-    // text: input은 현재 입력한 내용
-    // sender: "me"는 내가 전송한 메세지
-    setMessages((prev) => [...prev, { text: input, sender: "me" }]);
-    // 보내고 나면 초기화 시키기
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  const myId = Number(senderId);
+  if (!Number.isFinite(myId)) {
+    return null;
+  }
+
+  const isBlank = input.trim().length === 0;
+
+  const [partnerAvatarUrl, setPartnerAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPartnerInfo = async () => {
+      try {
+        const res = await CouplesApi.getPartnerInfo();
+        const partner = (res as any)?.data ?? res;
+        setPartnerAvatarUrl(partner?.profileImageUrl ?? null);
+      } catch (err) {
+        console.error("파트너 정보 불러오기 실패:", err);
+      }
+    };
+
+    fetchPartnerInfo();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res: any = await ChatApi.getMessages(coupleId);
+        const list = res?.data ?? res;
+        if (!Array.isArray(list)) return;
+
+        const normalized = list.map((m: any) => {
+          const sid =
+            m.senderId ??
+            m.sender_id ??
+            m.userId ??
+            m.user_id ??
+            m.writerId ??
+            m.writer_id ??
+            m.sender?.id ??
+            m.user?.id;
+
+          const nSid = Number(sid);
+
+          return {
+            senderId: Number.isFinite(nSid) ? nSid : -1,
+            content: String(m.content ?? m.message ?? m.text ?? ""),
+            messageType: "TEXT" as const,
+            sentAt:
+              m.sentAt ??
+              m.sent_at ??
+              m.createdAt ??
+              m.created_at ??
+              new Date().toISOString(),
+          };
+        });
+
+        setMessages(normalized);
+      } catch (e) {
+        console.error("메시지 히스토리 로드 실패:", e);
+      }
+    })();
+  }, [coupleId]);
+
+  useEffect(() => {
+    const socket = new SockJS("/api/v1/ws-chat");
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, () => {
+      stompClient.subscribe(`/sub/chat/${coupleId}`, (message: any) => {
+        const raw = JSON.parse(message.body);
+        const payload: Message = {
+          senderId: Number(raw.senderId),
+          content: String(raw.content ?? ""),
+          messageType: "TEXT",
+          sentAt: raw.sentAt ?? new Date().toISOString(),
+        };
+        setMessages((prev) => [...prev, payload]);
+      });
+
+      stompClientRef.current = stompClient;
+      socketRef.current = socket;
+    });
+
+    return () => {
+      if (stompClientRef.current && stompClientRef.current.connected) {
+        stompClientRef.current.disconnect();
+      }
+    };
+  }, [coupleId]);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const sendMessage = () => {
+    const stompClient = stompClientRef.current;
+    const text = input.trim();
+    if (!text) return;
+
+    if (!stompClient || !stompClient.connected) {
+      return;
+    }
+
+    const chatMessage = {
+      coupleId: coupleId,
+      senderId: senderId,
+      content: input.trim(),
+      sentAt: new Date().toISOString(),
+    };
+
+    stompClient.send("/pub/chat/sendMessage", {}, JSON.stringify(chatMessage));
     setInput("");
+  };
 
-    // AI가 가짜로 일단 대답해줌 0.5초 뒤에 자동 전송하게 만듦
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { text: "뭐해?", sender: "you" },
-      ]);
-    }, 500);
+  const formatTime = (sentAt: string) => {
+    try {
+      const date = new Date(sentAt);
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? "오후" : "오전";
+      const displayHours = hours % 12 || 12;
+      return `${ampm} ${displayHours}:${minutes.toString().padStart(2, "0")}`;
+    } catch {
+      return "";
+    }
+  };
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    target.src = "/images/default-avatar.png";
   };
 
   return (
-    // 슬라이드 패널 컨테이너 (isOpen이 true면 .open 클래스 -> right:0 해둔 거)
     <div className={`chat-panel ${isOpen ? "open" : ""}`}>
       <div className="chat-header">
         <span>채팅</span>
-        <button onClick={onClose}>✖</button>
-      </div>
-      {/* 말풍선 쌓이는 영역임 */}
-      <div className="chat-messages">
-        {/* 메세지 배열 map 돌면서 하나씩 출력 
-        .map((msg, idx) => ...) 는 배열의 각 msg를 꺼내서 div 태그로 바꿔줌*/}
-        {messages.map((msg, idx) => (
-          <div
-            key={idx} // key={idx}는 반복 렌더링할 때, 각 요소를 구분하기 위한 고유 키
-            className={`message ${msg.sender === "me" ? "from-me" : "from-you"}`}
-          >
-            {msg.text}
-          </div>
-        ))}
+        <button onClick={onClose}>닫기</button>
       </div>
 
-      {/* 채팅 입력창 */}
+      <div className="chat-messages" ref={messagesEndRef}>
+        {messages.map((msg, idx) => {
+          const mine = msg.senderId === myId;
+          return (
+            <div key={idx} className={`message-row ${mine ? "right" : "left"}`}>
+              {!mine && (
+                <img
+                  className="avatar"
+                  src={partnerAvatarUrl || "/images/default-avatar.png"}
+                  alt="상대 프로필"
+                  onError={handleImageError}
+                />
+              )}
+              <div className={`message-container ${mine ? "right" : "left"}`}>
+                <div className={`message ${mine ? "from-me" : "from-you"}`}>
+                  {msg.content}
+                </div>
+                <div className="message-time">{formatTime(msg.sentAt)}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
       <div className="chat-input">
         <input
           type="text"
-          placeholder="메세지 입력"
-          value={input}   //현재 입력 상태와 연결됨
-          onChange={(e) => setInput(e.target.value)}  // 입력할 때마다 상태 업데이트
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="메시지를 입력하세요"
           onKeyDown={(e) => {
-            if (e.key === "Enter") handleSend();  // 엔터로 전송하기
+            if (e.key === "Enter") {
+              e.preventDefault();
+              if (!isBlank) sendMessage();
+            }
           }}
         />
-        <button onClick={handleSend}>전송</button>  {/* 버튼 클릭해도 전송 가능 */}
+        <button
+          onClick={sendMessage}
+          disabled={isBlank}
+          title={isBlank ? "메시지를 입력하세요" : ""}
+        >
+          등록
+        </button>
       </div>
     </div>
   );
-};
-
-export default ChatPanel;
+}

@@ -1,5 +1,6 @@
 package com.aicontact.backend.babychat.entity;
 
+import com.aicontact.backend.aiChild.entity.AiChildEntity;
 import com.aicontact.backend.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,7 +24,9 @@ public class BabyChatMessage {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    private Long aiChildrenId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ai_children_id", nullable = false)
+    private AiChildEntity aiChild;
 
     @Enumerated(EnumType.STRING)
     private AiMessageType aiMessageType;
@@ -31,7 +34,17 @@ public class BabyChatMessage {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "conversation_session_id", length = 36)
     private String conversationSessionId;
 
-    private LocalDateTime createdAt;
+    @Column(name = "created_at")
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 }

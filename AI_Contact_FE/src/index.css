@@ -24,6 +24,9 @@
 
   /* 배경 색상 */
   --bg-primary: #ebf0f7;
+
+  /* 사이드바 색상 */
+  --side-bar: #e1dcfa;
 }
 
 a {
@@ -64,7 +67,7 @@ button:hover {
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: none;
 }
 
 @media (prefers-color-scheme: light) {
@@ -78,4 +81,32 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* 스크롤바 전체 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* 스크롤 트랙 */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 스크롤 thumb */
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 20px; /* 완전 둥글게 */
+  transition: background 0.1s;
+}
+
+/* hover 시 강조 */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
 }

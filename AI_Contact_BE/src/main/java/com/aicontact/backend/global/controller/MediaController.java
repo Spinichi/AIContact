@@ -74,7 +74,7 @@ public class MediaController {
 
     /** 3) media 삭제 → DELETE /api/v1/media/{id} (200 OK) */
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<DeleteMediaResponse>> deleteMedia(@PathVariable Long id) throws IOException {
+    public ResponseEntity<ApiResponse<DeleteMediaResponse>> deleteMedia(@PathVariable("id") Long id) throws IOException {
         mediaFileService.deleteMedia(id);
 
         DeleteMediaResponse payload = new DeleteMediaResponse(
@@ -146,6 +146,8 @@ public class MediaController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "limit", defaultValue = "20") int limit,
+            @RequestParam(value = "sortDir", defaultValue = "desc") String sortDir,
+            @RequestParam(value = "favoriteOnly", defaultValue = "false") boolean favoriteOnly,
             @ModelAttribute MediaSearchCondition cond
     ) {
 
@@ -153,13 +155,19 @@ public class MediaController {
         UserDto me = userService.getUserByEmail(email);
         Long coupleId = me.getCoupleId();
 
-        Pageable pageable = PageRequest.of(page, limit, Sort.by("uploadDate").descending());
+        // 1) sortDir → Sort.Direction
+        Sort.Direction dir = "asc".equalsIgnoreCase(sortDir)
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(dir,"uploadDate"));
         Page<MediaThumbnailDto> pageResult = mediaFileService.findThumbnails(
                 pageable,
                 cond.getFileType(),
                 cond.getDateFrom(),
                 cond.getDateTo(),
-                coupleId
+                coupleId,
+                favoriteOnly
         );
 
         MediaThumbnailListResponse body = new MediaThumbnailListResponse(pageResult);

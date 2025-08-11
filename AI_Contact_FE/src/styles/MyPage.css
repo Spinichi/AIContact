@@ -1,25 +1,3 @@
-.mypage-header {
-  position: absolute;
-  top: 50px;
-  left: 70px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.mypage-header h4 {
-  font-size: 16px;
-  font-weight: 400;
-  margin: 0;
-  line-height: 1.2;
-}
-
-.mypage-header h3 {
-  font-size: 24px;
-  margin: 0;
-  line-height: 1.2;
-}
-
 .mypage-container {
   width: 100%;
 }
@@ -28,12 +6,14 @@
   display: flex;
   justify-content: space-between;
   padding: 0 70px;
+  gap: 50px;
 }
 
 .mypage-card-wrapper {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex: 1;
 }
 
 .mypage-card-wrapper > h4 {
@@ -41,14 +21,15 @@
 }
 
 .mypage-card {
-  height: 100%;
+  height: 320px;
   display: flex;
   flex-direction: column;
   border-radius: 14px;
   background: white; /* 내부 내용 배경 */
   padding: 20px;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-  border: 1px solid var(--primary);
+  box-shadow: 4px 4px 10px rgba(166, 110, 224, 0.25),
+    4px 4px 10px rgba(166, 110, 224, 0.25) inset;
+  border: 2px solid var(--primary);
   justify-content: space-between;
 }
 
@@ -93,6 +74,7 @@
 .mypage-card-section-btn {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .useredit-btn {
@@ -107,15 +89,24 @@
   cursor: pointer;
 }
 
-.danger-btn-wrapper {
+.mypage-card-title-wrapper {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mypage-card-title {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.danger-btn-wrapper {
   height: 30px;
 }
 
 .danger-btn {
   width: fit-content;
-  background: white;
+  background: var(--bg-primary);
   color: var(--text-light);
   border: 1px solid var(--text-light);
   padding: 5px 10px;
@@ -123,4 +114,27 @@
   font-size: 13px;
   font-weight: 400;
   cursor: pointer;
+}
+
+.password-btn {
+  justify-content: flex-end;
+}
+
+.password-input {
+  width: 90%;
+  border: 2px solid var(--primary);
+  border-radius: 14px;
+  padding: 10px;
+  /* font-size: 16px; */
+  color: var(--primary);
+}
+
+.password-input::placeholder {
+  color: var(--text-light);
+}
+
+.mypage-card-section-password {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }

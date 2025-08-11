@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface BabyChatMessageRepository extends JpaRepository<BabyChatMessage, Long> {
 
-    List<BabyChatMessage> findTop20ByUserIdAndConversationSessionIdOrderByCreatedAtAsc(
+    List<BabyChatMessage> findTop20ByUserIdAndConversationSessionIdOrderByCreatedAtDesc(
             Long userId, String conversationSessionId
     );
 
