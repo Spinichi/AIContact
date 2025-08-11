@@ -73,7 +73,10 @@ export default function EditSchedule({
 
   const limitNumberLength = (e: React.FormEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.length > e.currentTarget.maxLength) {
-      e.currentTarget.value = e.currentTarget.value.slice(0, e.currentTarget.maxLength);
+      e.currentTarget.value = e.currentTarget.value.slice(
+        0,
+        e.currentTarget.maxLength
+      );
     }
   };
 
@@ -199,7 +202,7 @@ export default function EditSchedule({
           <button className="cancel-btn" onClick={onCancel}>
             취소
           </button>
-          <button className="submit-btn">전송</button>
+          <button className="submit-btn">등록</button>
         </div>
       </form>
     </div>

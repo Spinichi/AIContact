@@ -68,7 +68,11 @@ export default function CalendarDetail({
           </div>
           <div className="day">{days[dateInfo.getDay()]}</div>
         </div>
-        <img src={plusBtn} className="add-btn" onClick={onAdd} />
+        <div className="add-btn-wrapper">
+          <button className="add-btn" onClick={onAdd}>
+            + 일정 등록
+          </button>
+        </div>
       </div>
       <div className="modal-body">
         {calendarEvents.map((obj) => {

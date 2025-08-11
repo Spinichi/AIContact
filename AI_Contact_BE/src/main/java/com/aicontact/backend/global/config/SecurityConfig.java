@@ -1,6 +1,5 @@
 package com.aicontact.backend.global.config;
 
-
 import com.aicontact.backend.auth.jwt.JwtFilter;
 import com.aicontact.backend.auth.jwt.JwtUtil;
 import com.aicontact.backend.auth.jwt.LoginFilter;
@@ -50,18 +49,18 @@ public class SecurityConfig {
 
         // CORS
         http.cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
-                @Override
-                public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                        CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(List.of(
-                                "https://aicontact-gamma.vercel.app","http://localhost:5173"));
-                        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-                        configuration.setMaxAge(3600L);
-                        return configuration;
-                }
+            @Override
+            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(List.of(
+                        "https://aicontact-gamma.vercel.app", "http://localhost:5173"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(Collections.singletonList("*"));
+                configuration.setAllowCredentials(true);
+                configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+                configuration.setMaxAge(36000L);
+                return configuration;
+            }
         }));
 
         // CSRF / 기본 인증 비활성화 (JWT 기반)
@@ -85,21 +84,18 @@ public class SecurityConfig {
 
                 // baby chat 경로 허용
                 .requestMatchers("/chat/**").permitAll()
-
                 .requestMatchers("/summary/**").permitAll()
-
-                .requestMatchers("/comic/**").permitAll()
                 .requestMatchers("/ws-chat/**", "/ws-baby/**", "/pub/**", "/sub/**").permitAll()
 
                 // 그 외는 인증 필요
-                .anyRequest().authenticated()
-        );
+                .anyRequest().authenticated());
 
         // JWT 필터는 UsernamePasswordAuthenticationFilter 앞에 배치
         http.addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
 
         // 로그인 처리 필터는 UsernamePasswordAuthenticationFilter 위치에 배치
-        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
+                UsernamePasswordAuthenticationFilter.class);
 
         // 세션 미사용
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

@@ -46,19 +46,6 @@
   background-size: contain;
 }
 
-.title-box {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.title-box h1 {
-  font-size: 30px;
-  font-weight: bold;
-  color: #ffffff;
-  margin: 0;
-}
-
 .home-icon-img {
   position: absolute !important;
   top: 50px !important;

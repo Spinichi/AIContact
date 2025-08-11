@@ -48,12 +48,14 @@ export default function Schedule({
         className="schedule-header"
         onClick={() => setIsCollapse(!isCollapse)}
       >
-        <p className="schedule-time">{formattedTime}</p>
-        <p className="schedule-title">{title}</p>
+        <div className="schedule-time">{formattedTime}</div>
+        <div className="schedule-title">{title}</div>
       </div>
       {isCollapse && (
         <div className="schedule-content">
-          <p>{content || "등록된 메모가 없습니다."}</p>
+          <div className="schedule-memo">
+            {content || "등록된 메모가 없습니다."}
+          </div>
           <div className="schedule-buttons">
             <div onClick={handleEdit}>수정</div>
             <div onClick={handleDelete}>삭제</div>

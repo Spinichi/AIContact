@@ -129,7 +129,7 @@ export default function AddSchedule({
           <button className="cancel-btn" onClick={onCancel}>
             취소
           </button>
-          <button className="submit-btn">전송</button>
+          <button className="submit-btn">등록</button>
         </div>
       </form>
     </div>
