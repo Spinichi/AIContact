@@ -1,33 +1,39 @@
 // src/pages/Letters.tsx
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import homeIcon from "../assets/icons/homebtn.png";
 import backgroundImage from "../assets/images/talkroom_background.png";
 import Sidebar from "../components/Sidebar";
 import "../styles/LetterPage.css";
 import "../styles/MainPages.css";
 
+// ⬇️ generate 유틸만 사용 (canGenerateToday는 무제한 모드면 굳이 안 써도 됨)
+import { generateLetter as generateLetterSilentFromUtil /*, canGenerateToday */ } from "../apis/letter/generate";
+
 import { LetterApi } from "../apis/letter";
 import type { LettersResponse } from "../apis/letter";
 
-const LETTER_COOLDOWN_KEY = "lastLetterGeneratedAt"; // 로컬 스토리지 키
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+// ❌ 불필요한 import 제거 (안 쓰면 빌드 경고/에러 가능)
+// import { GreaterEqualCompare } from "three";
+
+/** [AUTO_GEN_SWITCH]
+ * 페이지 진입 시 자동으로 1회 편지 생성 시도할지 여부
+ * - 무제한 모드에서 자동 생성이면 편지가 너무 많이 쌓일 수 있어 기본 false 권장
+ * - true로 바꾸면 최초 렌더 후 1.5초 뒤 1회 생성 시도
+ */
+const AUTO_GENERATE_ON_MOUNT = false;
 
 export default function Letters() {
   const [letters, setLetters] = useState<LettersResponse>([]);
   const [selectedBody, setSelectedBody] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  // ✅ StrictMode에서 useEffect 두 번 실행되는 것 방지
+  // StrictMode 2회 실행 방지
   const didInit = useRef(false);
 
-  // 오늘 생성 가능 여부
-  const canGenerateToday = () => {
-    const last = Number(localStorage.getItem(LETTER_COOLDOWN_KEY) || 0);
-    return Date.now() - last > ONE_DAY_MS;
-  };
-
-  // ✅ 목록 조회
+  // 목록 조회
   const loadList = async () => {
     setLoading(true);
     setError(null);
@@ -49,43 +55,11 @@ export default function Letters() {
     }
   };
 
-  // ✅ 조용한 자동 생성 (클라이언트 타임아웃 + 실패 무시)
-  const generateLetterSilent = async (timeoutMs = 6500) => {
-    if (!canGenerateToday()) return;
-
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
-
-    const ctrl = new AbortController();
-    const tid = setTimeout(() => ctrl.abort("client-timeout"), timeoutMs);
-
-    try {
-      const url =
-        `${import.meta.env.VITE_API_BASE_URL}` +
-        `${import.meta.env.VITE_API_PREFIX}` +
-        `/summary/letter`;
-
-      const res = await fetch(url, {
-        method: "GET", // 백엔드 매핑이 GET
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        signal: ctrl.signal,
-      });
-
-      if (!res.ok) return; // 실패는 조용히 패스
-
-      const json = await res.json() as { success?: boolean; data?: string };
-      if (json?.success && typeof json.data === "string") {
-        // 바로 모달로 보여줄 수도 있음
-        setSelectedBody(json.data);
-        localStorage.setItem(LETTER_COOLDOWN_KEY, String(Date.now()));
-      }
-    } catch {
-      // timeout / 네트워크 실패 무시
-    } finally {
-      clearTimeout(tid);
+  // 조용한 자동 생성 (실패는 무시)
+  const generateLetterSilent = async () => {
+    const r = await generateLetterSilentFromUtil({ /* userId: meId */ silent: true });
+    if (r.ok && r.body) {
+      setSelectedBody(r.body);
     }
   };
 
@@ -95,16 +69,15 @@ export default function Letters() {
 
     let mounted = true;
     (async () => {
-      // 1) 먼저 목록
+      // 1) 목록 먼저
       await loadList();
       if (!mounted) return;
 
-      // 2) 살짝 딜레이 후 자동 생성 시도 (초기 로딩 경쟁 완화)
-      if (canGenerateToday()) {
+      // 2) [AUTO_GEN_SWITCH] true면 자동 생성 1회 시도
+      if (AUTO_GENERATE_ON_MOUNT /* && canGenerateToday(meId) */) {
         setTimeout(async () => {
           await generateLetterSilent(); // 실패해도 조용히
-          // 3) 생성 성공/실패와 무관히 목록 동기화
-          await loadList();
+          await loadList();             // 목록 동기화
         }, 1500);
       }
     })();
@@ -121,7 +94,12 @@ export default function Letters() {
         className="letter-content"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        <img src={homeIcon} alt="홈" className="letter-icon-img" />
+        <img
+          src={homeIcon}
+          alt="홈"
+          className="letter-icon-img"
+          onClick={() => navigate("/ai")}
+        />
 
         {loading && <div className="status">로딩 중...</div>}
         {error && <div className="status error">{error}</div>}
@@ -167,3 +145,12 @@ export default function Letters() {
     </div>
   );
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   [참고: 나중에 쿨타임/유저별 스코프를 다시 켤 때]
+   1) /apis/letter/generate.ts 의 COOLDOWN_ENABLED 를 true로 전환
+   2) 여기서도 meId를 가져와서:
+      - import { apiFetch } ... MeUserResponse 로 /users/me 호출 후 setMeId
+      - AUTO_GENERATE_ON_MOUNT 조건에서 canGenerateToday(meId) 체크
+      - generateLetterSilentFromUtil({ userId: meId, silent: true }) 로 호출
+────────────────────────────────────────────────────────────────────────── */
