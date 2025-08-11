@@ -7,7 +7,7 @@
 }
 
 .upload-btn-wrapper {
-  width: 75%;
+  width: 65%;
   display: flex;
   justify-content: flex-end;
 }
@@ -47,7 +47,7 @@
 
 .dictionary-book {
   position: relative;
-  width: 75%;
+  width: 65%;
   padding: 10px 50px;
   margin: 0 20px 20px;
   box-sizing: border-box;

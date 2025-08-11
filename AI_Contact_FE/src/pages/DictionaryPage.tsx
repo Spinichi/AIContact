@@ -210,8 +210,8 @@ const DictionaryPage: React.FC = () => {
                 ref={bookRef as any}
                 className="flipbook"
                 style={{}}
-                width={430}
-                height={547}
+                width={734 / 2}
+                height={467}
                 size="stretch"
                 minWidth={320}
                 maxWidth={1000}

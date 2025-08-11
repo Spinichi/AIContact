@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 40px;
+  padding: 20px 40px;
   background-color: var(--side-bar);
 }
 
@@ -24,10 +24,12 @@
   flex-direction: row;
   gap: 12px;
   align-items: baseline;
+  height: 40px;
+  align-items: flex-end;
 }
 
 .monthday {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 600;
 }
 

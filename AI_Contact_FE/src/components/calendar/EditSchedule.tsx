@@ -137,7 +137,7 @@ export default function EditSchedule({
           <div className="day">{day}</div>
         </div>
       </div>
-      <form className="modal-body" onSubmit={handleDailySchedule}>
+      <form className="calendar-modal-body" onSubmit={handleDailySchedule}>
         <input
           className="schedule-title"
           placeholder="제목"

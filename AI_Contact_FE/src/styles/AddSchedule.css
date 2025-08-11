@@ -1,40 +1,41 @@
-.add-schedule .modal-body {
+.add-schedule .calendar-modal-body {
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
-  gap: 30px;
+  justify-content: space-between;
+  padding: 40px 0 60px;
 }
 
 .add-schedule .schedule-title {
   width: 80%;
+  padding: 10px 0;
   border: 0px;
-  border-bottom: 1px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
   color: var(--primary);
 }
 
 .add-schedule .modal-content {
   width: 80%;
-  height: 240px;
+  height: 200px;
   display: flex;
-  gap: 20px;
-  justify-content: space-around;
+  gap: 40px;
+  justify-content: space-between;
   align-items: center;
 }
 
 .modal-footer {
   width: 80%;
   display: flex;
-  justify-content: space-around;
+  gap: 40px;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
 }
 
 .modal-footer > button {
-  width: 240px;
+  width: 100%;
   height: 50px;
   border-radius: 0%;
-  margin-bottom: 20px;
 }
 
 .modal-footer .cancel-btn,
@@ -61,20 +62,22 @@
 }
 
 .modal-content > div {
-  width: 45%;
-  height: 240px;
+  height: 100%;
 }
 
 .modal-content .section {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
+  gap: 20px;
 }
 
 .modal-content .title {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
+  margin: 0;
 }
 
 .modal-content .swiper {
@@ -139,8 +142,8 @@
   font-family: sans-serif;
   color: var(--text-medium);
   border: 2px solid var(--primary);
-  -ms-overflow-style: none; /* for Internet Explorer, Edge */
   scrollbar-width: none;
+  padding: 5px;
 }
 
 .section.memo .memo::placeholder {
