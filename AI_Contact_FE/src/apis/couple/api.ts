@@ -38,7 +38,7 @@ export const CouplesApi = {
     apiFetch<ApiResponse<string>>("/couples", {
       method: "DELETE",
     }),
-
+    
   /* 커플 정보 업데이트 */
   patchCouple: (payload : CoupleUpdateRequest) =>
     apiFetch<ApiResponse<string>>("/couples", {
