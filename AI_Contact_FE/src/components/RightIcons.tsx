@@ -62,12 +62,12 @@ const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
     },
     {
       key: "letters",
-      label: "편지보기",
+      label: "편지함",
       onClick: () => navigate("/letters"),
       icon: (
         <img
           src={LetterIcon}
-          alt="편지보기"
+          alt="편지함"
           style={{ width: "28px", height: "28px", objectFit: "contain" }}
         />
       ),
