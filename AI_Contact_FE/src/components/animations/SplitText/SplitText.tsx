@@ -5,7 +5,24 @@ import { useEffect, useRef } from "react";
 
 gsap.registerPlugin(ScrollTrigger, GSAPSplitText);
 
-const SplitText = ({
+type SplitKind = "lines" | "words" | "chars";
+
+interface SplitTextProps {
+  text: string;
+  className?: string;
+  delay?: number;
+  duration?: number;
+  ease?: gsap.EaseString;
+  splitType?: SplitKind;
+  from?: gsap.TweenVars;
+  to?: gsap.TweenVars;
+  threshold?: number;   // 0~1
+  rootMargin?: string;  // ex: "-100px"
+  textAlign?: React.CSSProperties["textAlign"];
+  onLetterAnimationComplete?: () => void;
+}
+
+const SplitText: React.FC<SplitTextProps> = ({
   text,
   className = "",
   delay = 100,
@@ -19,9 +36,9 @@ const SplitText = ({
   textAlign = "center",
   onLetterAnimationComplete,
 }) => {
-  const ref = useRef(null);
-  const animationCompletedRef = useRef(false);
-  const scrollTriggerRef = useRef(null);
+  const ref = useRef<HTMLParagraphElement | null>(null);
+  const animationCompletedRef = useRef<boolean>(false);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined" || !ref.current || !text) return;
@@ -45,19 +62,17 @@ const SplitText = ({
       return;
     }
 
-    let targets;
+    let targets: HTMLElement[] = [];
     switch (splitType) {
       case "lines":
-        targets = splitter.lines;
+        targets = (splitter.lines || []) as HTMLElement[];
         break;
       case "words":
-        targets = splitter.words;
-        break;
-      case "chars":
-        targets = splitter.chars;
-        break;
+        targets = (splitter.words || []) as HTMLElement[];
+        break;        
       default:
-        targets = splitter.chars;
+        targets = (splitter.chars || []) as HTMLElement[];
+        break;
     }
 
     if (!targets || targets.length === 0) {
