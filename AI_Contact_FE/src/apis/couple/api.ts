@@ -1,6 +1,6 @@
 import { apiFetch } from "../fetchClient";
 import type { ApiResponse } from "../types/common";
-import type { CoupleMatchingRequest } from "./request";
+import type { CoupleMatchingRequest, CoupleUpdateRequest  } from "./request";
 import type {
   CoupleInfoResponse,
   CoupleJoinResponse,
