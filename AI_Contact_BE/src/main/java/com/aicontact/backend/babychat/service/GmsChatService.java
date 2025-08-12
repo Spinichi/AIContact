@@ -186,13 +186,13 @@ public class GmsChatService {
 
     private String wrapAsBabyLetter(String summary) {
         return """
-                👶 내가 아빠한테 몰래 쓰는 편지 💌
+                👶 내가 엄마한테 몰래 쓰는 편지 💌
 
-                아빠, 엄마가 말이야...
+                엄마, 아빠가 말이야...
 
                 %s
 
-                우리 같이 엄마 행복하게 해주자~ 💕
+                우리 같이 아빠 행복하게 해주자~ 💕
 
                 
                 """.formatted(summary);
@@ -206,7 +206,7 @@ public class GmsChatService {
                 "model", "gpt-4o",
                 "messages", List.of(
                         Map.of("role", "system", "content",
-                                "다음 내용을 아기 입장에서 요약해서 아빠에게 편지를 쓰듯 말해줘. 문장은 3~5줄이고, 따뜻하고 순한 아기 말투로."),
+                                "연인을 엄마, 아빠로 설정하고 \"여자친구랑 서로 바빠서 일요일에만 만나는데 여자친구가 이번주는 남사친을 만나겠대. 그래서 속상해\" 이런 내용의 채팅들을 아기 입장에서 요약해서 아빠의 감정을 엄마에게 편지 쓰듯이 말해줘. 문장은 3~5줄이고, 따뜻하고 순한 아기 말투로 해줘."),
                         Map.of("role", "user", "content", prompt)
                 )
         );
