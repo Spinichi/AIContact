@@ -85,16 +85,10 @@
   border-radius: 20%; /* 원형 이미지 */
   object-fit: contain; /* 이미지 비율 유지한 상태로 박스에 꽉 채우기 */
   display: block;
-  box-shadow: 0px 0px 10px 0 rgba(115, 90, 225, 0.3),
-    0px 0px 10px 0 rgba(115, 90, 225, 0.3) inset;
-  background: conic-gradient(
-    from 315deg at 52% 52%,
-    rgba(255, 163, 139, 0.3) 0%,
-    rgba(211, 136, 181, 0.3) 25%,
-    rgba(166, 110, 224, 0.3) 50%,
-    rgba(115, 90, 225, 0.3) 75%,
-    rgba(255, 163, 139, 0.3) 100%
-  );
+  box-shadow: 4px 4px 8px 0px rgba(255, 163, 139, 0.2),
+    -4px 4px 8px 0px rgba(211, 136, 181, 0.2),
+    -4px -4px 8px 0px rgba(166, 110, 224, 0.2),
+    4px -4px 8px 0px rgba(115, 90, 225, 0.2);
 }
 
 .baby-name {

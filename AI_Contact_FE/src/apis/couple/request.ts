@@ -9,6 +9,6 @@ export type CoupleJoinRequest = {
 };
 
 export type CoupleUpdateRequest = {
-    startDate: Date;   // nullable
-    coupleName?: string | null;     // nullable
+  startDate?: string | null;
+  coupleName?: string | null;
 };

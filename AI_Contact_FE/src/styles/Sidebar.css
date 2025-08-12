@@ -10,7 +10,7 @@
   justify-content: space-between; /* 상단 메뉴와 하단 버튼을 양 끝 정렬 */
   font-family: sans-serif; /* 전체 글꼴임 */
   flex-shrink: 0;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  box-shadow: 4px 0 8px 0 rgba(115, 90, 225, 0.2);
 }
 
 /* 사이드바 타이틀 영역 로고 + 텍스트임 */

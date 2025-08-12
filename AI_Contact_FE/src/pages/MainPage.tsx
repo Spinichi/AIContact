@@ -145,7 +145,7 @@ export default function MainPage() {
         <div className="content-row">
           <EventCalendar data={dDay} />
           <BabyAvatar
-            name={child?.name || "이름 없음"}
+            name={child?.name || ""}
             imageUrl={child?.imageUrl || "Ai.png"}
             canGrow={
               !!child &&

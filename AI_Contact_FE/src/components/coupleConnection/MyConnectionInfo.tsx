@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import placeholderImg from "../../assets/images/symbol.png";
-import "../../styles/CoupleConnection.css";
-
 import { CouplesApi } from "../../apis/couple";
 import { UsersApi } from "../../apis/user";
 import type { MeUserResponse } from "../../apis/user/response";
+import placeholderImg from "../../assets/images/symbol.png";
+import "../../styles/CoupleConnection.css";
 
 export default function MyConnectionInfo() {
   const [verificationCode, setVerificationCode] = useState("");
@@ -68,12 +67,7 @@ export default function MyConnectionInfo() {
           onError={(e) => {
             (e.currentTarget as HTMLImageElement).src = placeholderImg;
           }}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            borderRadius: "50%",
-          }}
+          className="avatar-img"
         />
       </div>
 

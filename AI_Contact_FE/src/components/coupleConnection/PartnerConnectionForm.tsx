@@ -10,6 +10,7 @@ import type { ApiResponse } from "../../apis/types/common";
 import type { CoupleInfoResponse } from "../../apis/couple/response";
 import Particles from "../auth/Particles";
 import Loading from "../animations/Loading";
+import type React from "react";
 
 export default function PartnerConnectionForm() {
   const [code, setCode] = useState("");
@@ -22,7 +23,8 @@ export default function PartnerConnectionForm() {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
 
   // 백그라운드 작업의 Promise를 저장할 ref
-  const backgroundTaskPromiseRef = useRef<ApiResponse<CoupleInfoResponse> | null>(null);
+  const backgroundTaskPromiseRef = 
+      useRef<Promise<ApiResponse<CoupleInfoResponse>> | null>(null);
 
   const matchingTask = async (partnerId : number) => {
     const matchingResult = await CouplesApi.matching({ partnerId });
@@ -40,7 +42,7 @@ export default function PartnerConnectionForm() {
     });
   };
 
-  const handleStartConnection = async (e) => {
+  const handleStartConnection = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isStarting || isFinalizing) return;
 
@@ -67,9 +69,12 @@ export default function PartnerConnectionForm() {
       backgroundTaskPromiseRef.current = matchingTask(join.partnerId);
 
       setIsModalOpen(true);
-
-    } catch (e) {
-      setErrorMsg(e.message || "잘못된 코드입니다. 다시 확인해 주세요.");
+    } catch (err: unknown) {
+      const msg = 
+          err instanceof Error
+          ? err.message
+          : "잘못된 코드입니다. 다시 확인해 주세요.";
+      setErrorMsg(msg);
       console.error(e);
     } finally {
       setIsStarting(false);
@@ -123,7 +128,6 @@ export default function PartnerConnectionForm() {
     {isModalOpen &&
       createPortal(    
         <AdditionalInfoModal
-          onClose={() => setIsModalOpen(false)}
           onSubmit={handleFinalSubmit}
         />, 
       document.body)

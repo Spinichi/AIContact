@@ -189,6 +189,12 @@ export default function CalendarPage() {
     setRefetchTrigger((prev) => prev + 1);
   };
 
+  const now = () => {
+    const res = new Date();
+    res.setHours(res.getHours() + 9);
+    return res;
+  }
+
   function setModalContent(modalStatus: ModalType) {
     switch (modalStatus) {
       case "off":
@@ -285,6 +291,7 @@ export default function CalendarPage() {
                 datesSet={updateDate}
                 dateClick={openCalendarDetail}
                 eventClick={openEventDetail}
+                now={now}
               />
             </div>
           </div>
