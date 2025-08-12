@@ -1,7 +1,6 @@
 // src/pages/Letters.tsx
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import homeIcon from "../assets/icons/homebtn.png";
 import backgroundImage from "../assets/images/talkroom_background.png";
 import Sidebar from "../components/Sidebar";
 import "../styles/LetterPage.css";
@@ -9,12 +8,12 @@ import "../styles/MainPages.css";
 
 // ⬇️ generate 유틸만 사용 (canGenerateToday는 무제한 모드면 굳이 안 써도 됨)
 import {
-  generateLetter as generateLetterSilentFromUtil,
   canGenerateToday,
+  generateLetter as generateLetterSilentFromUtil,
 } from "../apis/letter/generate";
 
-import { LetterApi } from "../apis/letter";
 import type { LettersResponse } from "../apis/letter";
+import { LetterApi } from "../apis/letter";
 
 // ❌ 불필요한 import 제거 (안 쓰면 빌드 경고/에러 가능)
 // import { GreaterEqualCompare } from "three";
