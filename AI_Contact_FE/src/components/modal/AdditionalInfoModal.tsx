@@ -13,7 +13,6 @@ export interface formDataType {
 }
 
 interface ModalProps {
-  onClose: () => void;
   onSubmit: (formData: formDataType) => void;
 }
 
@@ -24,7 +23,7 @@ const todayISO = (() => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 })();
 
-export default function Modal({ onClose, onSubmit }: ModalProps) {
+export default function Modal({ onSubmit }: ModalProps) {
   const [formData, setFormData] = useState<formDataType>({
     childName: "",
     coupleName: "",

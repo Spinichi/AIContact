@@ -14,7 +14,7 @@ export interface CarouselItem {
   title: string;
   description: string;
   id: number;
-  icon: React.ReactElement;
+  icon: React.ReactNode;
 }
 
 export interface CarouselProps {

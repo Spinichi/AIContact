@@ -9,7 +9,9 @@ export default function EventCalendar(props: {data : DailyScheduleResponse[]}) {
     const convertedDate = new Date(date);
     const diff = convertedDate.getTime() - nowDate.getTime();
     const day = 60*60*24*1000;
-    if(diff <= day) return "Today";
+    console.log(convertedDate);
+    console.log(nowDate);
+    if(nowDate.toLocaleDateString() === convertedDate.toLocaleDateString()) return "Today";
     return "D-" + Math.floor(diff/day);
   }
 

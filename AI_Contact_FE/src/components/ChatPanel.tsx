@@ -23,6 +23,9 @@ interface Message {
 
 const NICKNAMES_KEY = "nicknames";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_PREFIX = import.meta.env.VITE_API_PREFIX;
+
 type FloatingHeart = {
   id: number;
   leftPct: number; // 25~75% (가로 분산)
@@ -230,10 +233,9 @@ export default function ChatPanel({
       }
     })();
   }, [coupleId]);
-
   // ---------- 소켓 ----------
   useEffect(() => {
-    const socket = new SockJS("/api/v1/ws-chat");
+    const socket = new SockJS(`${BASE_URL}${API_PREFIX}/ws-chat`);
     const stompClient = Stomp.over(socket);
 
     stompClient.connect({}, () => {

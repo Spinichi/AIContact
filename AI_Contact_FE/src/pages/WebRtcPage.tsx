@@ -36,7 +36,6 @@ function WebRtcPage() {
   const [remoteTracks, setRemoteTracks] = useState<TrackInfo[]>([]);
   const [participantName, setParticipantName] = useState("");
   const [roomName, setRoomName] = useState("");
-  const [errorMsg, setErrorMsg] = useState<string>("");
   const [pinned, setPinned] = useState<
     { kind: "local" } | { kind: "remote"; sid: string }
   >({ kind: "local" });
@@ -143,7 +142,7 @@ function WebRtcPage() {
         setRoomName(`couple-${me.coupleId}`);
       } catch (e: any) {
         if (e.name !== "AbortError")
-          setErrorMsg("내 정보를 불러오는 중 오류가 발생했습니다.");
+          alert("내 정보를 불러오는 중 오류가 발생했습니다.");
       }
     })();
     return () => controller.abort();
