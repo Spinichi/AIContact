@@ -11,4 +11,4 @@ export type CoupleJoinRequest = {
 export type CoupleUpdateRequest = {
   startDate?: string | null;
   coupleName?: string | null;
-}
+};
