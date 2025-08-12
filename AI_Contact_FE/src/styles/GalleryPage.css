@@ -270,7 +270,7 @@
   font-size: 22px; /* 20px → 22px로 증가 */
   padding: 6px 8px; /* 4px 6px → 6px 8px로 증가 */
   border-radius: 6px;
-  z-index: 1001; /* z-index 추가 */
+  z-index: 30; /* z-index 추가 */
 }
 
 /* 빈 사진 박스 스타일 */
@@ -292,7 +292,7 @@
   height: 50px;
   font-size: 20px;
   cursor: pointer;
-  z-index: 100;
+  z-index: 10;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
