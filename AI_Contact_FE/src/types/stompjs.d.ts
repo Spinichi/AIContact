@@ -1,4 +1,4 @@
-/// <reference types="node" />
+declare module 'stompjs' {
 
 export const VERSIONS: {
     V1_0: string;
@@ -75,3 +75,5 @@ export function overTCP(host: string, port: number): Client;
 export function overWS(url: string): Client;
 export function setInterval(interval: number, f: (...args: any[]) => void): NodeJS.Timer;
 export function clearInterval(id: NodeJS.Timer): void;
+
+}
