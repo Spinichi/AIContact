@@ -48,7 +48,7 @@ const NO_TRANSITION: Transition = { type: "tween", duration: 0 };
 
 export default function Carousel({
   items = DEFAULT_ITEMS,
-  baseWidth = 800,
+  baseWidth = 300,
   autoplay = false,
   autoplayDelay = 3000,
   pauseOnHover = false,
