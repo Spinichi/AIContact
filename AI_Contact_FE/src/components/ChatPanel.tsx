@@ -5,7 +5,7 @@ import { ChatApi } from "../apis/chat/api";
 import "../styles/ChatPanel.css";
 import { CouplesApi } from "../apis/couple/api";
 import { NicknameApi } from "../apis/nickname/api";
-import heartImg from "../assets/images/heart.png"; 
+import heartImg from "../assets/images/heart.png";
 
 interface ChatPanelProps {
   coupleId: number;
@@ -25,23 +25,27 @@ const NICKNAMES_KEY = "nicknames";
 
 type FloatingHeart = {
   id: number;
-  leftPct: number;   // 25~75% (가로 분산)
-  sizePx: number;    // 36~110px (크기 다양)
-  opacity: number;   // 0.5~1.0
-  duration: number;  // 1.8~3.2s (속도 다양)
-  delay: number;     // 0~0.6s (시작 지연)
-  drift1: number;    // -80~80px (중간 드리프트)
-  drift2: number;    // -120~120px (최종 드리프트)
-  bottomPx: number;  // 200~320px (더 위에서 출발)
+  leftPct: number; // 25~75% (가로 분산)
+  sizePx: number; // 36~110px (크기 다양)
+  opacity: number; // 0.5~1.0
+  duration: number; // 1.8~3.2s (속도 다양)
+  delay: number; // 0~0.6s (시작 지연)
+  drift1: number; // -80~80px (중간 드리프트)
+  drift2: number; // -120~120px (최종 드리프트)
+  bottomPx: number; // 200~320px (더 위에서 출발)
 };
 
-export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatPanelProps) {
+export default function ChatPanel({
+  coupleId,
+  senderId,
+  isOpen,
+  onClose,
+}: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [nicknames, setNicknames] = useState<string[]>([]);
   const [partnerAvatarUrl, setPartnerAvatarUrl] = useState<string | null>(null);
-
-  // ❤️ 여러 하트 상태
+  const [partnerName, setPartnerName] = useState<string>("상대");
   const [hearts, setHearts] = useState<FloatingHeart[]>([]);
 
   const stompClientRef = useRef<any>(null);
@@ -117,28 +121,34 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
 
   // ❤️ 하트 여러 개 트리거
   const triggerHearts = (count = 50) => {
-  const rand = (min: number, max: number) => Math.random() * (max - min) + min;
-  const pick = (min: number, max: number) => Math.round(rand(min, max));
+    const rand = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+    const pick = (min: number, max: number) => Math.round(rand(min, max));
 
-  const batch: FloatingHeart[] = Array.from({ length: count }).map((_, i) => ({
-    id: Date.now() + i,
-    leftPct: rand(0, 100),                   // 화면 가로폭 중앙±넓게 분산
-    sizePx: rand(10, 100),                   // 크기 다양
-    opacity: rand(0.5, 1.0),                 // 투명도 다양
-    duration: rand(1.8, 3.2),                // 속도 다양
-    delay: rand(0, 0.6),                     // 시작 시간 랜덤
-    drift1: pick(-200, 200),                   // 중간 비틀기
-    drift2: pick(-200, 200),                 // 끝에서 더 퍼짐
-    bottomPx: pick(0, 800),                // 더 위쪽에서 시작
-  }));
+    const batch: FloatingHeart[] = Array.from({ length: count }).map(
+      (_, i) => ({
+        id: Date.now() + i,
+        leftPct: rand(0, 100), // 화면 가로폭 중앙±넓게 분산
+        sizePx: rand(10, 100), // 크기 다양
+        opacity: rand(0.5, 1.0), // 투명도 다양
+        duration: rand(1.8, 3.2), // 속도 다양
+        delay: rand(0, 0.6), // 시작 시간 랜덤
+        drift1: pick(-200, 200), // 중간 비틀기
+        drift2: pick(-200, 200), // 끝에서 더 퍼짐
+        bottomPx: pick(0, 800), // 더 위쪽에서 시작
+      })
+    );
 
-  setHearts((prev) => [...prev, ...batch]);
+    setHearts((prev) => [...prev, ...batch]);
 
-    const maxLife = Math.max(...batch.map((h) => h.duration + h.delay)) * 1000 + 300;
-  setTimeout(() => {
-    setHearts((prev) => prev.filter((h) => !batch.find((b) => b.id === h.id)));
-  }, maxLife);
-};
+    const maxLife =
+      Math.max(...batch.map((h) => h.duration + h.delay)) * 1000 + 300;
+    setTimeout(() => {
+      setHearts((prev) =>
+        prev.filter((h) => !batch.find((b) => b.id === h.id))
+      );
+    }, maxLife);
+  };
 
   // ---------- 닉네임 초기화 ----------
   useEffect(() => {
@@ -164,6 +174,16 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
         const res = await CouplesApi.getPartnerInfo();
         const partner = (res as any)?.data ?? res;
         setPartnerAvatarUrl(partner?.profileImageUrl ?? null);
+
+        const name =
+          partner?.nickname ??
+          partner?.nickName ??
+          partner?.name ??
+          partner?.username ??
+          partner?.userName ??
+          partner?.displayName ??
+          "상대";
+        setPartnerName(String(name));
       } catch (err) {
         console.error("파트너 정보 불러오기 실패:", err);
       }
@@ -181,19 +201,27 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
 
         const normalized = list.map((m: any) => {
           const sid =
-            m.senderId ?? m.sender_id ??
-            m.userId ?? m.user_id ??
-            m.writerId ?? m.writer_id ??
-            m.sender?.id ?? m.user?.id;
+            m.senderId ??
+            m.sender_id ??
+            m.userId ??
+            m.user_id ??
+            m.writerId ??
+            m.writer_id ??
+            m.sender?.id ??
+            m.user?.id;
 
-        const nSid = Number(sid);
-        return {
-          senderId: Number.isFinite(nSid) ? nSid : -1,
-          content: String(m.content ?? m.message ?? m.text ?? ""),
-          messageType: "TEXT" as const,
-          sentAt:
-            m.sentAt ?? m.sent_at ?? m.createdAt ?? m.created_at ?? new Date().toISOString(),
-        };
+          const nSid = Number(sid);
+          return {
+            senderId: Number.isFinite(nSid) ? nSid : -1,
+            content: String(m.content ?? m.message ?? m.text ?? ""),
+            messageType: "TEXT" as const,
+            sentAt:
+              m.sentAt ??
+              m.sent_at ??
+              m.createdAt ??
+              m.created_at ??
+              new Date().toISOString(),
+          };
         });
 
         setMessages(normalized);
@@ -287,8 +315,8 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
   return (
     <div className={`chat-panel ${isOpen ? "open" : ""}`}>
       <div className="chat-header">
-        <span>채팅</span>
-        <button onClick={onClose}>닫기</button>
+        <span className="chat-title">{partnerName} ❤</span>
+        <button onClick={onClose}>×</button>
       </div>
 
       <div className="chat-messages" ref={messagesEndRef}>
@@ -317,26 +345,25 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
 
       {/* ❤️ 여러 하트 */}
       {hearts.map((h) => (
-  <div
-    key={h.id}
-    className="floating-heart"
-    style={
-      {
-        left: `${h.leftPct}%`,
-        ["--heart-size" as any]: `${h.sizePx}px`,
-        ["--heart-opacity" as any]: h.opacity,
-        ["--heart-duration" as any]: `${h.duration}s`,
-        ["--heart-delay" as any]: `${h.delay}s`,
-        ["--heart-drift1" as any]: `${h.drift1}px`,
-        ["--heart-drift2" as any]: `${h.drift2}px`,
-        ["--heart-bottom" as any]: `${h.bottomPx}px`,
-      } as React.CSSProperties
-    }
-  >
-    <img src={heartImg} alt="하트" />
-  </div>
-))}
-
+        <div
+          key={h.id}
+          className="floating-heart"
+          style={
+            {
+              left: `${h.leftPct}%`,
+              ["--heart-size" as any]: `${h.sizePx}px`,
+              ["--heart-opacity" as any]: h.opacity,
+              ["--heart-duration" as any]: `${h.duration}s`,
+              ["--heart-delay" as any]: `${h.delay}s`,
+              ["--heart-drift1" as any]: `${h.drift1}px`,
+              ["--heart-drift2" as any]: `${h.drift2}px`,
+              ["--heart-bottom" as any]: `${h.bottomPx}px`,
+            } as React.CSSProperties
+          }
+        >
+          <img src={heartImg} alt="하트" />
+        </div>
+      ))}
 
       <div className="chat-input">
         <input
@@ -351,7 +378,11 @@ export default function ChatPanel({ coupleId, senderId, isOpen, onClose }: ChatP
             }
           }}
         />
-        <button onClick={sendMessage} disabled={isBlank} title={isBlank ? "메시지를 입력하세요" : ""}>
+        <button
+          onClick={sendMessage}
+          disabled={isBlank}
+          title={isBlank ? "메시지를 입력하세요" : ""}
+        >
           전송
         </button>
       </div>

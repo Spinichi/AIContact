@@ -14,7 +14,7 @@
 }
 
 .calendar-container-top {
-  height: 40px;
+  height: 30px;
   background-color: var(--side-bar);
   box-shadow: 0px 4px 4px 0 rgba(115, 90, 225, 0.1) inset;
 }
@@ -28,7 +28,7 @@
 .calendar-container-bottom {
   border: 1px solid var(--text-light);
   border-top: none;
-  height: 40px;
+  height: 30px;
   background-color: var(--side-bar);
 }
 
@@ -48,12 +48,12 @@
   background-color: var(--side-bar);
 }
 
-.fc .fc-daygrid-block-event{
+.fc .fc-daygrid-block-event {
   background-color: var(--primary);
 }
 
-.fc .fc-daygrid-block-event .fc-event-title{
-  color : white;
+.fc .fc-daygrid-block-event .fc-event-title {
+  color: white;
 }
 
 .fc-theme-standard .fc-col-header-cell {
@@ -66,6 +66,7 @@
 .fc-toolbar-chunk > div {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 .fc .fc-button-primary {
@@ -104,6 +105,7 @@
   border: 2px solid var(--text-dark);
   color: var(--text-dark);
   border-radius: 14px;
+  padding: 3px 10px;
 }
 
 .fc .fc-today-button:not(:disabled).fc-button-active,
@@ -147,6 +149,7 @@
 
 .fc .fc-toolbar-title {
   color: var(--text-dark);
+  font-size: 20px;
 }
 
 .fc-day-sat .fc-daygrid-day-number {
@@ -203,10 +206,10 @@
   color: var(--text-light);
 }
 
-.fc-col-header > thead > tr > th:first-child > div > a{
-  color : #f00;
+.fc-col-header > thead > tr > th:first-child > div > a {
+  color: #f00;
 }
 
-.fc-col-header > thead > tr > th:last-child > div > a{
-  color : #00f;
+.fc-col-header > thead > tr > th:last-child > div > a {
+  color: #00f;
 }

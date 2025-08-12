@@ -94,7 +94,7 @@ function DockItem({
       aria-haspopup="true"
     >
       {Children.map(children, (child) =>
-        cloneElement(child as React.ReactElement, { isHovered })
+        cloneElement(child as React.ReactElement<{ isHovered?: MotionValue<number> }>, { isHovered })
       )}
     </motion.div>
   );
@@ -150,8 +150,6 @@ export default function Dock({
   spring = { mass: 0.1, stiffness: 150, damping: 12 },
   magnification = 70,
   distance = 200,
-  panelHeight = 68,
-  dockHeight = 256,
   baseItemSize = 50,
 }: DockProps) {
   const mouseX = useMotionValue(Infinity);

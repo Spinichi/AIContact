@@ -74,19 +74,31 @@ export default function CalendarDetail({
         </div>
       </div>
       <div className="modal-body">
-       {calendarEvents.length > 0 ? (calendarEvents.map((obj) => {
-          return (
-            <Schedule
-              key={`${obj.scheduleDate}+${obj.createdAt}`}
-              id={obj.id}
-              time={obj.scheduleDate}
-              title={obj.title}
-              content={obj.memo}
-              onDelete={onDelete}
-              onEditRequest={handleEditRequest}
-            />
-          );
-        })) : (<p style={{color:"var(--text-light)", fontSize:"24px", textAlign:"center"}}>등록된 일정이 없습니다.</p>)}
+        {calendarEvents.length > 0 ? (
+          calendarEvents.map((obj) => {
+            return (
+              <Schedule
+                key={`${obj.scheduleDate}+${obj.createdAt}`}
+                id={obj.id}
+                time={obj.scheduleDate}
+                title={obj.title}
+                content={obj.memo}
+                onDelete={onDelete}
+                onEditRequest={handleEditRequest}
+              />
+            );
+          })
+        ) : (
+          <div
+            style={{
+              color: "var(--text-light)",
+              fontSize: "16px",
+              textAlign: "center",
+            }}
+          >
+            등록된 일정이 없습니다.
+          </div>
+        )}
       </div>
     </div>
   );

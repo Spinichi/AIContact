@@ -1,7 +1,6 @@
-// Carousel.tsx
-import { useEffect, useState, useRef } from "react";
+import type { PanInfo, Transition } from "motion/react";
 import { motion, useMotionValue, useTransform } from "motion/react";
-import type { PanInfo, Transition, Spring } from "motion/react"; // ← Transition, Spring 타입 추가
+import { useEffect, useRef, useState } from "react";
 import {
   FiCircle,
   FiCode,
@@ -15,7 +14,7 @@ export interface CarouselItem {
   title: string;
   description: string;
   id: number;
-  icon: React.ReactNode; // ← ReactElement → ReactNode 로 완화
+  icon: React.ReactNode;
 }
 
 export interface CarouselProps {
@@ -31,20 +30,46 @@ export interface CarouselProps {
 }
 
 const DEFAULT_ITEMS: CarouselItem[] = [
-  { title: "Text Animations", description: "Cool text animations for your projects.", id: 1, icon: <FiFileText className="carousel-icon" /> },
-  { title: "Animations",      description: "Smooth animations for your projects.",     id: 2, icon: <FiCircle className="carousel-icon" /> },
-  { title: "Components",      description: "Reusable components for your projects.",   id: 3, icon: <FiLayers className="carousel-icon" /> },
-  { title: "Backgrounds",     description: "Beautiful backgrounds and patterns.",      id: 4, icon: <FiLayout className="carousel-icon" /> },
-  { title: "Common UI",       description: "Common UI components are coming soon!",    id: 5, icon: <FiCode className="carousel-icon" /> },
+  {
+    title: "Text Animations",
+    description: "Cool text animations for your projects.",
+    id: 1,
+    icon: <FiFileText className="carousel-icon" />,
+  },
+  {
+    title: "Animations",
+    description: "Smooth animations for your projects.",
+    id: 2,
+    icon: <FiCircle className="carousel-icon" />,
+  },
+  {
+    title: "Components",
+    description: "Reusable components for your projects.",
+    id: 3,
+    icon: <FiLayers className="carousel-icon" />,
+  },
+  {
+    title: "Backgrounds",
+    description: "Beautiful backgrounds and patterns for your projects.",
+    id: 4,
+    icon: <FiLayout className="carousel-icon" />,
+  },
+  {
+    title: "Common UI",
+    description: "Common UI components are coming soon!",
+    id: 5,
+    icon: <FiCode className="carousel-icon" />,
+  },
 ];
 
 const DRAG_BUFFER = 0;
 const VELOCITY_THRESHOLD = 500;
 const GAP = 16;
-
-// ★ 타입 고정 (string → 리터럴) 및 0초 구간은 tween
-const SPRING_OPTIONS: Spring = { type: "spring", stiffness: 300, damping: 30 };
-const NO_TRANSITION: Transition = { type: "tween", duration: 0 };
+const SPRING_OPTIONS: Transition = {
+  type: "spring",
+  stiffness: 300,
+  damping: 30,
+};
 
 export default function Carousel({
   items = DEFAULT_ITEMS,
@@ -56,8 +81,7 @@ export default function Carousel({
   round = false,
   renderItem,
 }: CarouselProps): React.JSX.Element {
-  const containerPadding = 16;
-  const itemWidth = baseWidth - containerPadding * 2;
+  const itemWidth = baseWidth;
   const trackItemOffset = itemWidth + GAP;
 
   const carouselItems = loop ? [...items, items[0]] : items;
@@ -85,16 +109,30 @@ export default function Carousel({
     if (autoplay && (!pauseOnHover || !isHovered)) {
       const timer = setInterval(() => {
         setCurrentIndex((prev) => {
-          if (prev === items.length - 1 && loop) return prev + 1;
-          if (prev === carouselItems.length - 1) return loop ? 0 : prev;
+          if (prev === items.length - 1 && loop) {
+            return prev + 1;
+          }
+          if (prev === carouselItems.length - 1) {
+            return loop ? 0 : prev;
+          }
           return prev + 1;
         });
       }, autoplayDelay);
       return () => clearInterval(timer);
     }
-  }, [autoplay, autoplayDelay, isHovered, loop, items.length, carouselItems.length, pauseOnHover]);
+  }, [
+    autoplay,
+    autoplayDelay,
+    isHovered,
+    loop,
+    items.length,
+    carouselItems.length,
+    pauseOnHover,
+  ]);
 
-  const effectiveTransition: Transition = isResetting ? NO_TRANSITION : SPRING_OPTIONS;
+  const effectiveTransition: Transition = isResetting
+    ? { duration: 0 }
+    : SPRING_OPTIONS;
 
   const handleAnimationComplete = () => {
     if (loop && currentIndex === carouselItems.length - 1) {
@@ -105,25 +143,44 @@ export default function Carousel({
     }
   };
 
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void => {
+  const handleDragEnd = (
+    _: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ): void => {
     const offset = info.offset.x;
     const velocity = info.velocity.x;
     if (offset < -DRAG_BUFFER || velocity < -VELOCITY_THRESHOLD) {
-      if (loop && currentIndex === items.length - 1) setCurrentIndex(currentIndex + 1);
-      else setCurrentIndex((prev) => Math.min(prev + 1, carouselItems.length - 1));
+      if (loop && currentIndex === items.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        setCurrentIndex((prev) => Math.min(prev + 1, carouselItems.length - 1));
+      }
     } else if (offset > DRAG_BUFFER || velocity > VELOCITY_THRESHOLD) {
-      if (loop && currentIndex === 0) setCurrentIndex(items.length - 1);
-      else setCurrentIndex((prev) => Math.max(prev - 1, 0));
+      if (loop && currentIndex === 0) {
+        setCurrentIndex(items.length - 1);
+      } else {
+        setCurrentIndex((prev) => Math.max(prev - 1, 0));
+      }
     }
   };
 
-  const dragProps = loop ? {} : { dragConstraints: { left: -trackItemOffset * (carouselItems.length - 1), right: 0 } };
+  const dragProps = loop
+    ? {}
+    : {
+        dragConstraints: {
+          left: -trackItemOffset * (carouselItems.length - 1),
+          right: 0,
+        },
+      };
 
   return (
     <div
       ref={containerRef}
       className={`carousel-container ${round ? "round" : ""}`}
-      style={{ width: `${baseWidth}px`, ...(round && { height: `${baseWidth}px`, borderRadius: "50%" }) }}
+      style={{
+        width: `${baseWidth}px`,
+        ...(round && { height: `${baseWidth}px`, borderRadius: "50%" }),
+      }}
     >
       <motion.div
         className="carousel-track"
@@ -133,7 +190,9 @@ export default function Carousel({
           width: itemWidth,
           gap: `${GAP}px`,
           perspective: 1000,
-          perspectiveOrigin: `${currentIndex * trackItemOffset + itemWidth / 2}px 50%`,
+          perspectiveOrigin: `${
+            currentIndex * trackItemOffset + itemWidth / 2
+          }px 50%`,
           x,
         }}
         onDragEnd={handleDragEnd}
@@ -142,14 +201,23 @@ export default function Carousel({
         onAnimationComplete={handleAnimationComplete}
       >
         {carouselItems.map((item, index) => {
-          const range = [-(index + 1) * trackItemOffset, -index * trackItemOffset, -(index - 1) * trackItemOffset];
-          const rotateY = useTransform(x, range, [90, 0, -90], { clamp: false });
-
+          const range = [
+            -(index + 1) * trackItemOffset,
+            -index * trackItemOffset,
+            -(index - 1) * trackItemOffset,
+          ];
+          const outputRange = [90, 0, -90];
+          const rotateY = useTransform(x, range, outputRange, { clamp: false });
           return (
             <motion.div
               key={index}
               className={`carousel-item ${round ? "round" : ""}`}
-              style={{ width: itemWidth, height: round ? itemWidth : "100%", rotateY, ...(round && { borderRadius: "50%" }) }}
+              style={{
+                width: itemWidth,
+                height: round ? itemWidth : "100%",
+                rotateY: rotateY,
+                ...(round && { borderRadius: "50%" }),
+              }}
               transition={effectiveTransition}
             >
               {renderItem ? (
@@ -158,12 +226,16 @@ export default function Carousel({
               ) : (
                 // 기본 카드 모양
                 <>
-                  <div className={`carousel-item-header ${round ? "round" : ""}`}>
+                  <div
+                    className={`carousel-item-header ${round ? "round" : ""}`}
+                  >
                     <span className="carousel-icon-container">{item.icon}</span>
                   </div>
                   <div className="carousel-item-content">
                     <div className="carousel-item-title">{item.title}</div>
-                    <p className="carousel-item-description">{item.description}</p>
+                    <p className="carousel-item-description">
+                      {item.description}
+                    </p>
                   </div>
                 </>
               )}
@@ -171,14 +243,17 @@ export default function Carousel({
           );
         })}
       </motion.div>
-
       <div className={`carousel-indicators-container ${round ? "round" : ""}`}>
         <div className="carousel-indicators">
           {items.map((_, index) => (
             <motion.div
               key={index}
-              className={`carousel-indicator ${currentIndex % items.length === index ? "active" : "inactive"}`}
-              animate={{ scale: currentIndex % items.length === index ? 1.2 : 1 }}
+              className={`carousel-indicator ${
+                currentIndex % items.length === index ? "active" : "inactive"
+              }`}
+              animate={{
+                scale: currentIndex % items.length === index ? 1.2 : 1,
+              }}
               onClick={() => setCurrentIndex(index)}
               transition={{ duration: 0.15 }}
             />
