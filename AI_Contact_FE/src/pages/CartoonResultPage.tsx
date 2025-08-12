@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ComicStripsApi } from "../apis/comicStrips";
 import downloadbtn from "../assets/icons/downloadbtn.svg";
-import WhiteLeftArrow from "../assets/icons/whiteLeftArrow.svg";
+import WhiteLeftArrow from "../assets/icons/WhiteLeftArrow.svg";
 import backgroundImage from "../assets/images/whiteboard.svg";
 import Sidebar from "../components/Sidebar";
 
