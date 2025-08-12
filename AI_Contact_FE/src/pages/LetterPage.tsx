@@ -8,7 +8,10 @@ import "../styles/LetterPage.css";
 import "../styles/MainPages.css";
 
 // ⬇️ generate 유틸만 사용 (canGenerateToday는 무제한 모드면 굳이 안 써도 됨)
-import { generateLetter as generateLetterSilentFromUtil , canGenerateToday } from "../apis/letter/generate";
+import {
+  generateLetter as generateLetterSilentFromUtil,
+  canGenerateToday,
+} from "../apis/letter/generate";
 
 import { LetterApi } from "../apis/letter";
 import type { LettersResponse } from "../apis/letter";
@@ -29,7 +32,7 @@ export default function Letters() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-    // const [meId, setMeId] = useState<number | null>(null); // ⬅️ 추가
+  // const [meId, setMeId] = useState<number | null>(null); // ⬅️ 추가
   // StrictMode 2회 실행 방지
   const didInit = useRef(false);
 
@@ -68,8 +71,8 @@ export default function Letters() {
       // 2) [AUTO_GEN_SWITCH] true면 자동 생성 1회 시도
       if (AUTO_GENERATE_ON_MOUNT && canGenerateToday()) {
         setTimeout(async () => {
-          await generateLetterSilentFromUtil({silent: true}); // 실패해도 조용히
-          await loadList();             // 목록 동기화
+          await generateLetterSilentFromUtil({ silent: true }); // 실패해도 조용히
+          await loadList(); // 목록 동기화
         }, 1500);
       }
     })();
@@ -86,12 +89,19 @@ export default function Letters() {
         className="letter-content"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        <img
-          src={homeIcon}
-          alt="홈"
-          className="letter-icon-img"
+        <div
+          className="back-ai"
           onClick={() => navigate("/ai")}
-        />
+          role="button"
+          tabIndex={0}
+        >
+          ←
+        </div>
+
+        <div className="page-header page-header-light">
+          <h4># 속마음 # 알아보기</h4>
+          <h3>편지함</h3>
+        </div>
 
         {loading && <div className="status">로딩 중...</div>}
         {error && <div className="status error">{error}</div>}
@@ -119,10 +129,7 @@ export default function Letters() {
             className="letter-modal-backdrop"
             onClick={() => setSelectedBody(null)}
           >
-            <div
-              className="letter-modal"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="letter-modal" onClick={(e) => e.stopPropagation()}>
               <button
                 className="modal-close-btn"
                 onClick={() => setSelectedBody(null)}

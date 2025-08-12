@@ -2,23 +2,17 @@ import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import HTMLFlipBook from "react-pageflip";
 import { useNavigate } from "react-router-dom";
-
 import type { ComicStripsListResponse } from "../apis/comicStrips";
 import { ComicStripsApi } from "../apis/comicStrips";
-
 import backgroundImage from "../assets/images/whiteboard.svg";
-
 import Loading from "../components/animations/Loading";
 import Particles from "../components/auth/Particles.tsx";
 import Cartoon from "../components/cartoon/Cartoon";
 import Modal from "../components/modal/Modal";
 import Sidebar from "../components/Sidebar";
-
 import "../styles/Cartoon.css";
 import "../styles/CartoonPage.css";
 import "../styles/MainPages.css";
-// 필요하면 DictionaryPage.css의 화살표 스타일을 재사용하거나 같은 CSS를 CartoonPage.css에 추가하세요.
-// import "../styles/DictionaryPage.css";
 
 // FlipBook ref에서 필요한 메서드 shape만 정의
 type FlipbookRef = {
