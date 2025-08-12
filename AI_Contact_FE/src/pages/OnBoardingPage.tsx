@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import WhiteLoginBtn from "../assets/icons/LoginBtnWhite.svg";
-import StartBtn from "../assets/icons/Startbtn.svg";
+import StartBtn from "../assets/icons/StartBtn.svg";
 import TItleMockUp from "../assets/images/TItleMockUp.png";
 import CurvedLoop from "../components/animations/CurvedLoop/CurvedLoop";
 import SplitText from "../components/animations/SplitText/SplitText";
@@ -10,6 +10,7 @@ import OnBoardingFooter from "../components/onboarding/OnBoardingFooter";
 import OnBoardingGallery from "../components/onboarding/OnBoardingGallery";
 import OnBoardingInfo from "../components/onboarding/OnBoardingInfo";
 import "../styles/OnBoardingPage.css";
+
 
 export default function OnBoardingPage() {
   const navigate = useNavigate();
