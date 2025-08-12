@@ -6,7 +6,6 @@ import backgroundImage from "../assets/images/talkroom_background.png";
 import Sidebar from "../components/Sidebar";
 import "../styles/LetterPage.css";
 import "../styles/MainPages.css";
-import { apiFetch } from "../apis/fetchClient";
 
 // ⬇️ generate 유틸만 사용 (canGenerateToday는 무제한 모드면 굳이 안 써도 됨)
 import { generateLetter as generateLetterSilentFromUtil , canGenerateToday } from "../apis/letter/generate";
@@ -53,14 +52,6 @@ export default function Letters() {
       setError("서버 에러가 발생했습니다.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  // 조용한 자동 생성 (실패는 무시)
-  const generateLetterSilent = async () => {
-    const r = await generateLetterSilentFromUtil({ silent: true });
-    if (r.ok && r.body) {
-      setSelectedBody(r.body);
     }
   };
 

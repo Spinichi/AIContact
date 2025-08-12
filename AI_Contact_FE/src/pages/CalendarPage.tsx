@@ -60,7 +60,7 @@ export default function CalendarPage() {
   useEffect(() => {
     const fetchAllInfoAndCreateEvents = async () => {
       try {
-        const [myInfoRes, partnerInfoRes, coupleInfoRes, aiChildInfoRes] = await Promise.all([
+        const [myInfoRes, partnerInfoRes, coupleInfoRes] = await Promise.all([
           UsersApi.getMe(),
           CouplesApi.getPartnerInfo(),
           CouplesApi.getCoupleInfo(),
@@ -70,7 +70,6 @@ export default function CalendarPage() {
         const myInfo = myInfoRes.data;
         const partnerInfo = partnerInfoRes.data;
         const coupleInfo = coupleInfoRes.data;
-        const aiChildInfo = aiChildInfoRes.data
 
         const events = [];
         events.push({
