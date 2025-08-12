@@ -52,8 +52,11 @@
 .save-btn {
   position: absolute;
   top: 60px;
-  right: 10px;
-  width: 50px;
+  right: 30px;
+  width: 15px;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  padding: 12px;
+  border-radius: 12px;
 }
 
 .result-image-title {

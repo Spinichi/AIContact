@@ -15,13 +15,13 @@
 
 .AIbaby-image {
   position: absolute;
-  bottom: 130px;
-  left: 80px;
-  width: auto !important;
+  bottom: 100px;
+  left: 40px;
+  width: 270px;
   height: auto;
   object-fit: contain;
-  z-index: 1;
   max-height: 100%;
+  border-radius: 50%;
 }
 
 /* 채팅 메시지 영역 */
@@ -33,8 +33,8 @@
   gap: 10px;
   width: 50%;
   overflow-y: auto;
-  margin-top: 100px;
-  margin-bottom: 150px;
+  margin: 30px;
+  height: 150px;
 }
 
 .chat-line {
@@ -73,53 +73,41 @@
 .chat-bubble.me,
 .chat-bubble.USER {
   align-self: flex-end;
-  background: #8e6ff9;
-  color: white;
+  background: var(--primary);
+  color: #ffffff;
 }
 
-/* 꼬리 만들기 (내 메시지) */
-.chat-bubble.me::after,
-.chat-bubble.USER::after {
-  content: "";
-  position: absolute;
-  right: -8px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 8px solid transparent;
-  border-left-color: #8e6ff9;
-}
-
-.chat-bubble.Ai {
+.chat-bubble.AI {
   align-self: flex-start;
   background: #ffffff;
-  color: #222;
+  color: var(--text-dark);
+  border-radius: 40px 40px 40px 0;
 }
 
-.chat-bubble.Ai::after {
-  content: "";
-  position: absolute;
-  left: -8px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 8px solid transparent;
-  border-right-color: #ffffff;
+.chat-bubble.USER {
+  border-radius: 40px 40px 0 40px;
 }
 
 .timestamp {
   font-size: 12px;
 }
 
-/* 입력창 */
-.chatroom-input-box {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+.chatroom-input-box-wrapper {
   display: flex;
   width: 50%;
-  background: white;
-  padding: 10px;
-  border-radius: 30px;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+/* 입력창 */
+.chatroom-input-box {
+  width: 450px;
+  border: 2px solid var(--primary);
+  outline: none;
+  display: flex;
+  background: #ffffff;
+  padding: 12px 20px;
+  border-radius: 0 40px 40px 40px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -127,14 +115,89 @@
   flex: 1;
   border: none;
   outline: none;
-  padding: 10px;
+  padding: 0;
+  box-shadow: none;
+  font-size: 16px;
 }
 
-.chatroom-input-box button {
-  background: #8e6ff9;
-  color: white;
+.chatroom-send-btn {
+  background: var(--secondary);
+  color: #ffffff;
   border: none;
-  border-radius: 20px;
+  border-radius: 12px;
   padding: 8px 16px;
   cursor: pointer;
+  height: fit-content;
+  width: fit-content;
+}
+
+.chatroom-create-btn {
+  background: var(--secondary);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 16px;
+  cursor: pointer;
+  height: fit-content;
+  width: 110px;
+  height: 100%;
+}
+
+/* 공통 버튼 스타일 */
+.chatroom--btn {
+  display: inline-flex;
+  flex-direction: column; /* cooldown일 때 2줄 텍스트 정렬 */
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 110px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: filter 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
+}
+
+/* 기본 비활성 스타일 */
+.chatroom--btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ── 상태별 색상 ───────────────────────── */
+
+/* 편지 생성 가능(ready) → primary */
+.chatroom--btn[data-state="ready"] {
+  background: var(--primary);
+}
+.chatroom--btn[data-state="ready"]:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+/* 쿨다운(cooldown) */
+.chatroom--btn[data-state="cooldown"] {
+  background: var(--text-light);
+  color: #ffffff;
+}
+/* disabled이지만 색 바래지 않게 유지 */
+.chatroom--btn[data-state="cooldown"]:disabled {
+  opacity: 1; /* 기본 disabled 흐림 제거 */
+  cursor: not-allowed;
+}
+
+/* 로딩(선택) */
+.chatroom--btn[data-state="loading"] {
+  background: var(--secondary);
+}
+
+/* 쿨다운 2줄 텍스트 미세 정리 */
+.chatroom--btn[data-state="cooldown"] > div:first-child {
+  font-size: 12px;
+  opacity: 0.85;
+  line-height: 1.1;
+}
+.chatroom--btn[data-state="cooldown"] > div:last-child {
+  font-weight: 600;
+  line-height: 1.1;
 }
