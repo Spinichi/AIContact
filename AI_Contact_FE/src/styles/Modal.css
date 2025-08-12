@@ -38,11 +38,12 @@
 }
 
 .content {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: 90vw;
-  max-height: 90vh;
+  /* max-width: 90vw; */
+  /* max-height: 90vh; */
 }
 
 .content img,
