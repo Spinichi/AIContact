@@ -1,7 +1,5 @@
-import type { ImgHTMLAttributes } from "react";
-
 interface GalleryImageProps {
-  img: ImgHTMLAttributes<HTMLImageElement>;
+  img: string;
   desc: string;
 }
 
