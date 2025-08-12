@@ -147,8 +147,8 @@ public class GmsChatService {
                 .collect(Collectors.joining("\n"));
 
         String prompt = """
-                다음 내용을 아기가 아빠에게 말하듯 요약해줘.
-                예: "아빠, 엄마가 말이야... 요즘 속상했대..." 이런 말투로 3~5줄 만들어줘.
+                다음 내용을 아기가 엄마에게 말하듯 요약해줘.
+                예: "엄마, 아빠가 말이야... 요즘 속상했대..." 이런 말투로 3~5줄 만들어줘.
 
                 내용:
                 %s
@@ -188,7 +188,7 @@ public class GmsChatService {
         return """
                 👶 내가 엄마한테 몰래 쓰는 편지 💌
 
-                엄마, 아빠가 말이야...
+               
 
                 %s
 
