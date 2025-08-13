@@ -16,8 +16,8 @@ interface SplitTextProps {
   splitType?: SplitKind;
   from?: gsap.TweenVars;
   to?: gsap.TweenVars;
-  threshold?: number;   // 0~1
-  rootMargin?: string;  // ex: "-100px"
+  threshold?: number; // 0~1
+  rootMargin?: string; // ex: "-100px"
   textAlign?: React.CSSProperties["textAlign"];
   onLetterAnimationComplete?: () => void;
 }
@@ -33,7 +33,6 @@ const SplitText: React.FC<SplitTextProps> = ({
   to = { opacity: 1, y: 0 },
   threshold = 0.1,
   rootMargin = "-100px",
-  textAlign = "center",
   onLetterAnimationComplete,
 }) => {
   const ref = useRef<HTMLParagraphElement | null>(null);
@@ -69,7 +68,7 @@ const SplitText: React.FC<SplitTextProps> = ({
         break;
       case "words":
         targets = (splitter.words || []) as HTMLElement[];
-        break;        
+        break;
       default:
         targets = (splitter.chars || []) as HTMLElement[];
         break;
@@ -155,7 +154,6 @@ const SplitText: React.FC<SplitTextProps> = ({
       ref={ref}
       className={`split-parent ${className}`}
       style={{
-        textAlign,
         overflow: "hidden",
         display: "inline-block",
         whiteSpace: "normal",
