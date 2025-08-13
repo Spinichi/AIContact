@@ -187,6 +187,7 @@ function WebRtcPage() {
 
     // [ADD] 오디오 구독 상황 로깅 (디버깅용)
     r.on(RoomEvent.TrackSubscribed, (track, pub, participant) => {
+      void track;
       console.log("[TrackSubscribed]", {
         kind: pub.kind,
         sid: pub.trackSid,
