@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CouplesApi } from "../../apis/couple";
 import { UsersApi } from "../../apis/user";
 import type { MeUserResponse } from "../../apis/user/response";
-import placeholderImg from "../../assets/images/symbol.png";
+import placeholderImg from "../../assets/images/symbol.svg";
 import "../../styles/CoupleConnection.css";
 
 export default function MyConnectionInfo() {

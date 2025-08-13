@@ -3,15 +3,15 @@ import { CouplesApi } from "../../apis/couple"; // 예: getPartnerInfo()
 import { UsersApi } from "../../apis/user";
 import type { MeUserResponse } from "../../apis/user/response";
 import heart from "../../assets/images/heart.png";
-import placeholderImg from "../../assets/images/symbol.png";
-import { getBackgroundTaskPromise } from '../PromiseStore';
+import placeholderImg from "../../assets/images/symbol.svg";
+import { getBackgroundTaskPromise } from "../PromiseStore";
 import { aiChildApi } from "../../apis/aiChild";
 import { useNavigate } from "react-router-dom";
 import Particles from "../auth/Particles";
 import Loading from "../animations/Loading";
 import { createPortal } from "react-dom";
 
-import '../../styles/AdditionalInfo.css';
+import "../../styles/AdditionalInfo.css";
 
 export interface formDataType {
   childName: string;
@@ -34,7 +34,7 @@ export default function AdditionalInfoPage() {
   });
 
   const [isFinalizing, setIsFinalizing] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
   // 내/연인 프로필 이미지 상태
@@ -109,21 +109,20 @@ export default function AdditionalInfoPage() {
     const childId = aiInfo.data.id;
     return aiChildApi.updateChild(childId, {
       name: childName,
-      imageUrl: aiInfo.data.imageUrl, 
-      growthLevel: aiInfo.data.growthLevel, 
-      experiencePoints: aiInfo.data.experiencePoints
+      imageUrl: aiInfo.data.imageUrl,
+      growthLevel: aiInfo.data.growthLevel,
+      experiencePoints: aiInfo.data.experiencePoints,
     });
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-
     const backgroundTaskPromise = getBackgroundTaskPromise();
 
     e.preventDefault();
     if (isFinalizing) return;
-    
+
     setIsFinalizing(true);
-    setErrorMsg('');
+    setErrorMsg("");
 
     if (!backgroundTaskPromise) {
       setErrorMsg("오류: 이전 단계의 작업이 시작되지 않았습니다.");
@@ -137,8 +136,8 @@ export default function AdditionalInfoPage() {
 
       // 2. 두 번째 작업(커플 정보 수정) 실행
       await CouplesApi.patchCouple({
-        coupleName: formData.coupleName, 
-        startDate: formData.coupleDate
+        coupleName: formData.coupleName,
+        startDate: formData.coupleDate,
       });
 
       // 3. 세 번째 작업(아이 정보 수정) 실행
@@ -146,12 +145,11 @@ export default function AdditionalInfoPage() {
 
       alert("연결 및 모든 설정이 완료되었습니다!");
       navigate("/ai"); // 최종 목적지로 이동
-
     } catch (err: unknown) {
-      const msg = 
+      const msg =
         err instanceof Error
-        ? err.message
-        : "최종 설정 중 오류가 발생했습니다. 다시 시도해 주세요.";
+          ? err.message
+          : "최종 설정 중 오류가 발생했습니다. 다시 시도해 주세요.";
       setErrorMsg(msg);
       console.error(err);
     } finally {
@@ -161,23 +159,24 @@ export default function AdditionalInfoPage() {
 
   return (
     <>
-      {isFinalizing && createPortal(
-        <div className="loading-background">
-          <Particles
-            particleColors={["#735AE1", "#A66EE0", "#ffffff"]}
-            particleCount={300}
-            particleSpread={10}
-            speed={0.2}
-            particleBaseSize={1000}
-            moveParticlesOnHover={true}
-            alphaParticles={false}
-            disableRotation={false}
-            cameraDistance={10}
-          />
-          <Loading />
-        </div>,
-        document.body
-      )}  
+      {isFinalizing &&
+        createPortal(
+          <div className="loading-background">
+            <Particles
+              particleColors={["#735AE1", "#A66EE0", "#ffffff"]}
+              particleCount={300}
+              particleSpread={10}
+              speed={0.2}
+              particleBaseSize={1000}
+              moveParticlesOnHover={true}
+              alphaParticles={false}
+              disableRotation={false}
+              cameraDistance={10}
+            />
+            <Loading />
+          </div>,
+          document.body
+        )}
       <div className="main-layout additional-info">
         <div className="left-layout">
           {/* 내 이미지 */}
