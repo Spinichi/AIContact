@@ -1,3 +1,11 @@
+.gallery-container-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
 .photobook-wrapper {
   position: relative;
   width: 100%;
@@ -25,15 +33,12 @@
   font-weight: bold;
   background: transparent;
   padding: 0;
-  z-index: 5;
 }
 
 .photobook {
   position: relative;
-  width: 80%;
-  max-width: 1000px;
-  aspect-ratio: 16 / 9;
-  height: auto;
+  width: 100%;
+  height: 100%;
   padding: 0;
   box-sizing: border-box;
   margin: 0 auto;
@@ -47,7 +52,6 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  z-index: 1; /* z-index를 1로 복구 */
 }
 
 /* 스프링 영역 */
@@ -66,50 +70,34 @@
   background: transparent;
 }
 
+.gallery-flip-page {
+  padding: 20px 20px;
+}
+
 /* 사진 그리드 */
 .photo-grid {
-  position: absolute;
+  height: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
   gap: 6px; /* gap 줄임 */
-  z-index: 5; /* 배경보다 위에 */
-  padding: 8px; /* 패딩 조정 */
 }
 
 .photo-grid.left {
-  top: 10%; /* 여백 조정 */
-  bottom: 15%; /* 여백 조정 */
-  left: 10%; /* 여백 조정 */
-  width: calc(40% - var(--spring-width) / 2); /* 너비 조정 */
-  border: 1px solid rgba(0, 0, 0, 0.2); /* 테두리 조정 */
   background: rgba(255, 255, 255, 0.05); /* 배경 조정 */
-  z-index: 10; /* 배경보다 위에 */
-  padding: 8px; /* 패딩 증가 */
 }
 
 .photo-grid.right {
-  top: 10%;
-  bottom: 15%;
-  right: 10%; /* 여백 조정 */
-  width: calc(40% - var(--spring-width) / 2); /* 너비 조정 */
-  border: 1px solid rgba(0, 0, 0, 0.2); /* 테두리 조정 */
   background: rgba(255, 255, 255, 0.05); /* 배경 조정 */
-  z-index: 10; /* 배경보다 위에 */
-  padding: 8px; /* 패딩 증가 */
 }
 
 .photo-box {
   background: #ffffff;
   overflow: hidden;
-  border-radius: 4px;
-  width: 100%;
-  height: 100%;
-  z-index: 20;
-  border: 1px solid #ddd;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
   position: relative;
   min-height: 50px;
+  padding: 5px 5px 20px 5px;
 }
 
 .photo-box img {
@@ -124,15 +112,25 @@
   transform: scale(1.02);
 }
 
+.gallery-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 /* 업로드 버튼 */
 .upload-label {
-  display: inline-block;
-  margin-top: 16px;
   background: var(--primary);
-  color: white;
+  color: #ffffff;
   padding: 10px 20px;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 16px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  display: flex;
 }
 
 .upload-label input {
@@ -166,27 +164,22 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 90%;
-  max-width: 1200px;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  padding: 15px 20px;
-  /* 배경과 테두리 제거 */
+  width: 65%;
 }
 
 .gallery-tabs {
   display: flex;
   align-items: center;
+  gap: 15px;
 }
 
 .gallery-tabs button {
   font-size: 18px;
   background: none;
   border: none;
-  margin-right: 20px;
   cursor: pointer;
   font-weight: 500;
-  color: #666;
+  color: var(--text-light);
   padding: 8px 12px;
   display: inline-flex; /* 중앙 정렬을 위해 추가 */
   align-items: center; /* 세로 중앙 정렬 */
@@ -209,13 +202,13 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   padding: 8px 12px;
   border-radius: 6px;
-  color: #666;
-  display: inline-flex; /* 중앙 정렬을 위해 추가 */
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: center; /* 가로 중앙 정렬 */
+  color: var(--text-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sort-btn.active {
@@ -223,27 +216,15 @@
   font-weight: 600;
 }
 
-.sort-btn:hover,
-.calendar-btn:hover {
-  background: #ffffff;
+.fav-btn {
+  transition: box-shadow 0.2s ease;
 }
 
-.upload-label {
-  background: var(--primary);
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  border: none;
-  display: inline-flex; /* inline-block → inline-flex로 변경 */
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: center; /* 가로 중앙 정렬 */
-  gap: 6px; /* 이모지와 텍스트 사이 간격 */
-}
-
-.upload-label:hover {
-  background: var(--primary);
+.fav-btn:hover,
+.sort-btn:hover {
+  box-shadow: 0 0 1px 2px var(--primary) inset;
+  color: var(--primary);
+  font-weight: 600;
 }
 
 .dropdown-item {
@@ -275,8 +256,9 @@
 
 /* 빈 사진 박스 스타일 */
 .photo-box:empty {
-  background: #ffffff;
-  border: 1px dashed #ccc;
+  background: none;
+  border: none;
+  box-shadow: none;
 }
 
 /* 페이지 네비게이션 버튼 */
@@ -321,21 +303,6 @@
 .page-nav-btn:disabled:hover {
   transform: translateY(-50%);
 }
-@media (max-width: 768px) {
-  .photobook {
-    width: 95%;
-  }
-
-  .gallery-top-bar {
-    width: 95%;
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .photo-grid {
-    gap: 4px;
-  }
-}
 
 /* 달력 드롭다운 스타일 업데이트 */
 .calendar-dropdown {
@@ -351,13 +318,9 @@
   z-index: 1000;
 }
 
-/* 타입 필터 래퍼 추가 */
-.type-filter-wrapper {
-  position: relative;
-}
-
 /* 타입 필터 버튼 - opacity 제거 */
 .type-filter-btn {
+  height: 32px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -365,8 +328,6 @@
   padding: 6px 8px;
   border-radius: 6px;
   transition: all 0.2s ease;
-  min-width: 40px;
-  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
