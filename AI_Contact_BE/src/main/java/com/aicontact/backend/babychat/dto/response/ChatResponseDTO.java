@@ -1,4 +1,4 @@
-package com.aicontact.backend.babychat.dto;
+package com.aicontact.backend.babychat.dto.response;
 
 import com.aicontact.backend.babychat.entity.AiMessageType;
 import com.aicontact.backend.babychat.entity.BabyChatMessage;
