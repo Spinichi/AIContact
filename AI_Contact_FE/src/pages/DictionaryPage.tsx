@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import HTMLFlipBook from "react-pageflip";
-import dictionarybook from "../assets/images/dictionary.png";
 import Modal from "../components/modal/Modal";
 import Sidebar from "../components/Sidebar";
 import "../styles/DictionaryPage.css";

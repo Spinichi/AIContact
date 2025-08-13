@@ -45,6 +45,10 @@
   gap: 12px;
 }
 
+.arrow-white {
+  color: #ffffff;
+}
+
 .dictionary-book {
   position: relative;
   width: 65%;
@@ -74,16 +78,18 @@
 }
 
 .flip-page:nth-child(odd) {
+  background: #ffffff;
   box-shadow: -4px 4px 10px 0 rgba(115, 90, 225, 0.2),
-    -4px 0px 8px 0 rgba(0, 0, 0, 0.2) inset,
+    -4px 0px 4px 0 rgba(0, 0, 0, 0.2) inset,
     -20px 0px 8px 0 rgba(0, 0, 0, 0.1) inset,
     8px 0px 8px 0 rgba(115, 90, 225, 0.1) inset;
   border-right: 1px solid var(--text-light);
 }
 
 .flip-page:nth-child(even) {
+  background: #ffffff;
   box-shadow: 4px 4px 10px 0 rgba(115, 90, 225, 0.2),
-    4px 0px 8px 0 rgba(0, 0, 0, 0.2) inset,
+    4px 0px 4px 0 rgba(0, 0, 0, 0.2) inset,
     20px 0px 8px 0 rgba(0, 0, 0, 0.1) inset,
     -8px 0px 8px 0 rgba(115, 90, 225, 0.1) inset;
   border-left: none;

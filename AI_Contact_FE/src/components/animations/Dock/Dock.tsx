@@ -13,7 +13,6 @@ import React, {
   Children,
   cloneElement,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -155,7 +154,6 @@ export default function Dock({
 }: DockProps) {
   const mouseX = useMotionValue(Infinity);
   const isHovered = useMotionValue(0);
-
 
   return (
     <motion.div className="dock-outer">

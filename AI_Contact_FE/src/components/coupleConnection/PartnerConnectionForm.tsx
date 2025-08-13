@@ -128,7 +128,6 @@ export default function PartnerConnectionForm() {
     {isModalOpen &&
       createPortal(    
         <AdditionalInfoModal
-          onClose={() => setIsModalOpen(false)}
           onSubmit={handleFinalSubmit}
         />, 
       document.body)

@@ -147,12 +147,20 @@ public class GmsChatService {
                 .collect(Collectors.joining("\n"));
 
         String prompt = """
-                다음 내용을 아기가 아빠에게 말하듯 요약해줘.
-                예: "아빠, 엄마가 말이야... 요즘 속상했대..." 이런 말투로 3~5줄 만들어줘.
+        너는 5살 아이 역할이야.
+        - 아빠와 엄마는 연인 관계다.
+        - 아빠가 속상하거나 바라는 점을 너(아기)가 대신 엄마에게 편지로 전한다.
+        - 문장은 3~5줄, 반말, 짧고 순한 아기 말투.
+        - 반드시 '엄마'라고만 부르고, '여자친구', '남자친구' 등의 단어는 절대 쓰지 않는다.
+        - '아빠, 엄마가 말이야' 같은 표현은 금지.
+        - 어르신식 감탄사(아이고, 어머, 어휴 등)는 금지.
+        - 필요하면 😊, 🥺 같은 간단한 이모지만 사용.
 
-                내용:
-                %s
-                """.formatted(combined);
+        아래 내용을 바탕으로, 아빠가 엄마에게 전하고 싶은 마음을 요약해서 편지로 써줘.
+
+        내용:
+        %s
+        """.formatted(combined);
 
         String summary = summarize(prompt);
 
@@ -186,13 +194,13 @@ public class GmsChatService {
 
     private String wrapAsBabyLetter(String summary) {
         return """
-                👶 내가 아빠한테 몰래 쓰는 편지 💌
+                👶 내가 엄마한테 몰래 쓰는 편지 💌
 
-                아빠, 엄마가 말이야...
+               
 
                 %s
 
-                우리 같이 엄마 행복하게 해주자~ 💕
+                우리 같이 아빠 행복하게 해주자~ 💕
 
                 
                 """.formatted(summary);
@@ -206,7 +214,10 @@ public class GmsChatService {
                 "model", "gpt-4o",
                 "messages", List.of(
                         Map.of("role", "system", "content",
-                                "다음 내용을 아기 입장에서 요약해서 아빠에게 편지를 쓰듯 말해줘. 문장은 3~5줄이고, 따뜻하고 순한 아기 말투로."),
+                                "아기의 1인칭 시점으로 '엄마'에게 말하듯 편지 형태로 요약해줘. " +
+                                        "문장은 3~5줄, 따뜻하고 순한 아기 말투(반말)로, 짧은 문장 위주. " +
+                                        "금지: '아빠, 엄마가 말이야' 같은 표현 및 어르신식 감탄사(아이고, 어머 등). " +
+                                        "가능하면 간단한 이모지(😊, 🥺)를 적절히 사용하되 과하지 않게."),
                         Map.of("role", "user", "content", prompt)
                 )
         );
