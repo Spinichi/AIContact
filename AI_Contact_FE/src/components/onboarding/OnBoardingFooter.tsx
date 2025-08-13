@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import StartBtn from "../../assets/icons/StartBtn.svg";
-import Symbol from "../../assets/images/symbol.png";
+import Symbol from "../../assets/images/symbol.svg";
 
 export default function OnBoardingFooter() {
   const navigate = useNavigate();

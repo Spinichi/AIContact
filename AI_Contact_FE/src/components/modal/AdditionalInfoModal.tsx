@@ -3,7 +3,7 @@ import { CouplesApi } from "../../apis/couple"; // 예: getPartnerInfo()
 import { UsersApi } from "../../apis/user";
 import type { MeUserResponse } from "../../apis/user/response";
 import heart from "../../assets/images/heart.png";
-import placeholderImg from "../../assets/images/symbol.png";
+import placeholderImg from "../../assets/images/symbol.svg";
 import "../../styles/Modal.css";
 
 export interface formDataType {
