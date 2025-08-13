@@ -13,6 +13,7 @@ import MyPage from "./pages/MyPage";
 import OnBoardingPage from "./pages/OnBoardingPage";
 import TalkPage from "./pages/TalkRoomPage";
 import WebRtcPage from "./pages/WebRtcPage";
+import AdditionalInfoPage from "./components/coupleConnection/AdditionalInfoPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/auth" element={<AuthPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/connection" element={<CoupleConnectionPage />} />
+          <Route path="/additional-info" element={<AdditionalInfoPage />} /> 
           <Route path="/ai" element={<MainPage />} />
           <Route path="/talk" element={<TalkPage />} />
           <Route path="/webrtc" element={<WebRtcPage />} />

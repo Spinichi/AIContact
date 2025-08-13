@@ -31,10 +31,16 @@ export default function MyConnectionInfo() {
 
         const me: MeUserResponse = meRes.data;
         const code = codeRes.data.verificationCode;
+        const coupleInfo = (await CouplesApi.getCoupleInfo()).data;
 
-        // 커플 연결된 경우 리다이렉트
+        // 커플 연결된 경우 진행 척도에 따라 리다이렉트
         if (me.coupleStatus === "COUPLED") {
-          navigate("/ai", { replace: true });
+          if(coupleInfo.matchedAt == null || coupleInfo.coupleName == null){
+            navigate("/additional-info", { replace: true });
+          }
+          else{
+            navigate("/ai", { replace: true });
+          }
           return;
         }
 
