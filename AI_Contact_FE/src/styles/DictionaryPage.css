@@ -47,6 +47,12 @@
 
 .arrow-white {
   color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.arrow-white:hover {
+  /* color: var(--primary); */
+  transform: scale(1.5);
 }
 
 .dictionary-book {

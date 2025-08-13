@@ -25,7 +25,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { dailySchedulesApi } from "../apis/dailySchedule";
 import type { DailyScheduleResponse } from "../apis/dailySchedule/response";
 import EditSchedule from "../components/calendar/EditSchedule";
-import rrulePlugin from '@fullcalendar/rrule';
+import rrulePlugin from "@fullcalendar/rrule";
 import { UsersApi } from "../apis/user";
 import { CouplesApi } from "../apis/couple";
 import { aiChildApi } from "../apis/aiChild";
@@ -64,7 +64,7 @@ export default function CalendarPage() {
           UsersApi.getMe(),
           CouplesApi.getPartnerInfo(),
           CouplesApi.getCoupleInfo(),
-          aiChildApi.getMyChildren()
+          aiChildApi.getMyChildren(),
         ]);
 
         const myInfo = myInfoRes.data;
@@ -76,29 +76,28 @@ export default function CalendarPage() {
           title: `🎂 ${myInfo.name}의 생일`,
           rrule: {
             dtstart: myInfo.birthDate,
-            freq: 'yearly',
-            until: '2099-12-31'
+            freq: "yearly",
+            until: "2099-12-31",
           },
         });
         events.push({
           title: `🎂 ${partnerInfo.name}의 생일`,
           rrule: {
             dtstart: partnerInfo.birthDate,
-            freq: 'yearly',
-            until: '2099-12-31'
+            freq: "yearly",
+            until: "2099-12-31",
           },
         });
         events.push({
           title: `❤️ 우리 기념일`,
           rrule: {
             dtstart: coupleInfo.startDate,
-            freq: 'yearly',
-            until: '2099-12-31'
+            freq: "yearly",
+            until: "2099-12-31",
           },
         });
-        
-        setRecurringEvents(events);
 
+        setRecurringEvents(events);
       } catch (error) {
         console.error("정보를 불러오는 중 오류가 발생했습니다:", error);
       }
@@ -108,7 +107,7 @@ export default function CalendarPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {    
+      try {
         const response = await dailySchedulesApi.getSchedulesByMonth(
           year,
           month
@@ -193,7 +192,7 @@ export default function CalendarPage() {
     const res = new Date();
     res.setHours(res.getHours() + 9);
     return res;
-  }
+  };
 
   function setModalContent(modalStatus: ModalType) {
     switch (modalStatus) {
@@ -203,19 +202,35 @@ export default function CalendarPage() {
         return (
           <Modal
             onClose={() => setModalStatus("off")}
-            hasNext={true}
-            hasPrev={true}
-            onPrev={handlePrevDay}
-            onNext={handleNextDay}
+            hasNext={false}
+            hasPrev={false}
           >
-            {clickedDateInfo && (
-              <CalendarDetail
-                dateInfo={clickedDateInfo.date}
-                onAdd={() => setModalStatus("add")}
-                onDelete={handleDailyScheduleDelete}
-                onEdit={handleScheduleEdit}
-              />
-            )}
+            <div className="dictionary-container">
+              <button
+                className="arrow left arrow-white"
+                onClick={handlePrevDay}
+                aria-label="이전 날짜"
+              >
+                〈
+              </button>
+
+              {clickedDateInfo && (
+                <CalendarDetail
+                  dateInfo={clickedDateInfo.date}
+                  onAdd={() => setModalStatus("add")}
+                  onDelete={handleDailyScheduleDelete}
+                  onEdit={handleScheduleEdit}
+                />
+              )}
+
+              <button
+                className="arrow right arrow-white"
+                onClick={handleNextDay}
+                aria-label="다음 날짜"
+              >
+                〉
+              </button>
+            </div>
           </Modal>
         );
       case "add":
@@ -271,7 +286,12 @@ export default function CalendarPage() {
             <div className="calendar-container-top"></div>
             <div className="calendar-container-mid">
               <FullCalendar
-                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, rrulePlugin]}
+                plugins={[
+                  dayGridPlugin,
+                  timeGridPlugin,
+                  interactionPlugin,
+                  rrulePlugin,
+                ]}
                 initialView="dayGridMonth"
                 editable={false}
                 events={events}

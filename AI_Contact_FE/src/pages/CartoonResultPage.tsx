@@ -6,6 +6,7 @@ import WhiteLeftArrow from "../assets/icons/WhiteLeftArrow.svg";
 import backgroundImage from "../assets/images/whiteboard.svg";
 import Sidebar from "../components/Sidebar";
 
+
 import "../styles/CartoonPage.css";
 import "../styles/CartoonResultPage.css";
 import "../styles/MainPages.css";
