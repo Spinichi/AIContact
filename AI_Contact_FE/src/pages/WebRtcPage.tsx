@@ -5,7 +5,7 @@ import {
   RoomEvent,
 } from "livekit-client";
 import type { RemoteAudioTrack } from "livekit-client";
-
+import type { Participant, ConnectionQuality } from "livekit-client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UsersApi } from "../apis/user";
@@ -24,7 +24,6 @@ import VideoComponent from "../components/webrtc/VideoComponent";
 import "../styles/WebRtcPage.css";
 import { normalizeToken } from "../utils/token";
 import AudioComponent from "../components/webrtc/AudioComponent";
-
 
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_WS_URL;
 
@@ -154,18 +153,63 @@ function WebRtcPage() {
 
   async function joinRoom() {
     const r = new Room();
+
+    // [ADD] 연결 상태/오류 로깅
+    r.on(RoomEvent.ConnectionStateChanged, (state) => {
+      console.log("[ConnectionStateChanged]", state);
+    });
+    r.on(RoomEvent.SignalConnected, () => {
+      console.log("[SignalConnected] signaling OK");
+    });
+    r.on(RoomEvent.Reconnecting, () => {
+      console.warn("[Reconnecting]");
+    });
+    r.on(RoomEvent.Reconnected, () => {
+      console.log("[Reconnected]");
+    });
+    r.on(RoomEvent.Disconnected, (reason) => {
+      console.error("[Disconnected]", reason);
+    });
+    r.on(
+      RoomEvent.ConnectionQualityChanged,
+      (quality: ConnectionQuality , participant: Participant) => {
+        console.log("[ConnectionQualityChanged]", participant.identity, quality);
+      }
+    );
+    r.on(RoomEvent.TrackSubscriptionFailed, (sid, err) => {
+      console.error("[TrackSubscriptionFailed]", sid, err);
+    });
+    r.on(RoomEvent.MediaDevicesError, (err) => {
+      console.error("[MediaDevicesError]", err);
+    });
+
     setAndStoreRoom(r);
 
-    r.on(RoomEvent.TrackSubscribed, (_track, publication, participant) => {
-      setRemoteTracks((prev) => [
-        ...prev,
-        {
-          trackPublication: publication,
-          participantIdentity: participant.identity,
-        },
-      ]);
+    // [ADD] 오디오 구독 상황 로깅 (디버깅용)
+    r.on(RoomEvent.TrackSubscribed, (track, pub, participant) => {
+      console.log("[TrackSubscribed]", {
+        kind: pub.kind,
+        sid: pub.trackSid,
+        identity: participant.identity,
+        hasTrack: !!pub.track,
+        isMuted: pub.isMuted,
+      });
+      setRemoteTracks((prev) => {
+        if (prev.some((t) => t.trackPublication.trackSid === pub.trackSid)) {
+          return prev;
+        }
+        return [
+          ...prev,
+          {
+            trackPublication: pub,
+            participantIdentity: participant.identity,
+          },
+        ];
+      });
     });
-    r.on(RoomEvent.TrackUnsubscribed, (_track, publication) => {
+
+    r.on(RoomEvent.TrackUnsubscribed, (_track, publication, participant) => {
+      console.log("[TrackUnsubscribed]", publication.kind, publication.trackSid, "from", participant.identity);
       setRemoteTracks((prev) =>
         prev.filter((t) => t.trackPublication.trackSid !== publication.trackSid)
       );
@@ -175,6 +219,18 @@ function WebRtcPage() {
           : cur
       );
     });
+
+    // [ADD] 뮤트/발화 로그
+    r.on(RoomEvent.TrackMuted, (pub, participant) => {
+      console.log("[TrackMuted]", pub.kind, "by", participant.identity);
+    });
+    r.on(RoomEvent.TrackUnmuted, (pub, participant) => {
+      console.log("[TrackUnmuted]", pub.kind, "by", participant.identity);
+    });
+    r.on(RoomEvent.ActiveSpeakersChanged, (speakers) => {
+      console.log("[ActiveSpeakers]", speakers.map((s) => s.identity));
+    });
+
     try {
       const accessToken = normalizeToken(
         localStorage.getItem("accessToken") || ""
@@ -184,8 +240,10 @@ function WebRtcPage() {
         accessToken
       );
       const token = res.data.token;
+
       await r.connect(LIVEKIT_URL, token);
 
+      // [ADD] 브라우저 자동재생 정책 해제
       try {
         await r.startAudio();
       } catch (e) {
@@ -193,6 +251,7 @@ function WebRtcPage() {
       }
 
       await r.localParticipant.enableCameraAndMicrophone();
+
       const vpub = r.localParticipant.videoTrackPublications
         .values()
         .next().value;
@@ -301,6 +360,7 @@ function WebRtcPage() {
               />
             )}
           </div>
+
           <div className="remote-strip">
             {thumbnails.map((t) => (
               <div
@@ -317,6 +377,7 @@ function WebRtcPage() {
               </div>
             ))}
           </div>
+
           <div id="room-btn-menu">
             {isVolumeVisible && (
               <div className="volume-popup">
@@ -336,6 +397,8 @@ function WebRtcPage() {
             <img src={isMicOn ? WebrtcMicOn : WebrtcMicOff} onClick={onMic} />
             <img src={WebrtcCallEnd} onClick={leaveRoom} />
           </div>
+
+          {/* [ADD] 원격 오디오 트랙 렌더 (숨김) */}
           <div style={{ display: "none" }}>
             {remoteTracks
               .map((t) => t.trackPublication)
@@ -349,7 +412,6 @@ function WebRtcPage() {
                 />
               ))}
           </div>
-
         </div>
       )}
     </>
