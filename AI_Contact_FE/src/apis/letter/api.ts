@@ -8,4 +8,10 @@ export const LetterApi = {
 
 
   create: () => apiFetch<ApiResponse<string>>("/summary/letter", {method: "GET"}),
+
+  markAsRead: async (letterId: number) => {
+    return await apiFetch(`/summary/letters/${letterId}/read`, {
+      method: 'PATCH'
+    });
+  }
 };
