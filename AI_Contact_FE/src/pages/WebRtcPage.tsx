@@ -4,6 +4,8 @@ import {
   Room,
   RoomEvent,
 } from "livekit-client";
+import type { RemoteAudioTrack } from "livekit-client";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UsersApi } from "../apis/user";
@@ -21,6 +23,8 @@ import WebrtcSound from "../assets/icons/WebrtcSound.svg";
 import VideoComponent from "../components/webrtc/VideoComponent";
 import "../styles/WebRtcPage.css";
 import { normalizeToken } from "../utils/token";
+import AudioComponent from "../components/webrtc/AudioComponent";
+
 
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_WS_URL;
 
@@ -87,7 +91,7 @@ function WebRtcPage() {
       r.localParticipant.audioTrackPublications.forEach((pub) =>
         pub.track?.stop()
       );
-    } catch {}
+    } catch { }
   }
 
   async function leaveRoom() {
@@ -101,7 +105,7 @@ function WebRtcPage() {
     hardStopLocalMedia(r);
     try {
       await r.disconnect();
-    } catch {}
+    } catch { }
     setAndStoreRoom(undefined);
     setLocalTrack(undefined);
     setRemoteTracks([]);
@@ -151,6 +155,7 @@ function WebRtcPage() {
   async function joinRoom() {
     const r = new Room();
     setAndStoreRoom(r);
+
     r.on(RoomEvent.TrackSubscribed, (_track, publication, participant) => {
       setRemoteTracks((prev) => [
         ...prev,
@@ -180,6 +185,13 @@ function WebRtcPage() {
       );
       const token = res.data.token;
       await r.connect(LIVEKIT_URL, token);
+
+      try {
+        await r.startAudio();
+      } catch (e) {
+        console.warn("startAudio failed (autoplay policy):", e);
+      }
+
       await r.localParticipant.enableCameraAndMicrophone();
       const vpub = r.localParticipant.videoTrackPublications
         .values()
@@ -215,13 +227,13 @@ function WebRtcPage() {
       const others = remoteVideoThumbs.filter((r) => r.sid !== pinned.sid);
       const localThumb = localTrack
         ? [
-            {
-              kind: "local" as const,
-              key: "local",
-              label: participantName,
-              onClick: () => setPinned({ kind: "local" }),
-            },
-          ]
+          {
+            kind: "local" as const,
+            key: "local",
+            label: participantName,
+            onClick: () => setPinned({ kind: "local" }),
+          },
+        ]
         : [];
       const remoteThumbs = others.map((r) => ({
         kind: "remote" as const,
@@ -324,6 +336,20 @@ function WebRtcPage() {
             <img src={isMicOn ? WebrtcMicOn : WebrtcMicOff} onClick={onMic} />
             <img src={WebrtcCallEnd} onClick={leaveRoom} />
           </div>
+          <div style={{ display: "none" }}>
+            {remoteTracks
+              .map((t) => t.trackPublication)
+              .filter((pub) => pub.kind === "audio" && !!pub.track)
+              .map((pub) => (
+                <AudioComponent
+                  key={pub.trackSid}
+                  track={pub.track as RemoteAudioTrack}
+                  volume={volume}
+                  muted={false}
+                />
+              ))}
+          </div>
+
         </div>
       )}
     </>
