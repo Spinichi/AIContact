@@ -17,7 +17,7 @@ import {
 import type { ApiResponse } from "../apis/types/common";
 import type { MeUserResponse } from "../apis/user/response";
 import babyImage from "../assets/images/AIbaby.png";
-import backgroundImage from "../assets/images/talkroom_background.png";
+import backgroundImage from "../assets/images/Talkroom.png";
 import Sidebar from "../components/Sidebar";
 import "../styles/MainPages.css";
 import "../styles/TalkRoom.css";

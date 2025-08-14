@@ -1,5 +1,3 @@
-import prvBtn from "../assets/icons/CaretLeft.svg";
-import nxtBtn from "../assets/icons/CaretRight.svg";
 import closeBtn from "../assets/icons/WhiteLeftArrow.svg";
 import "../styles/Modal.css"; // 기존 Modal.css 재사용
 
@@ -49,11 +47,23 @@ export default function PhotoBookModal({
       {/* 모달 오버레이 */}
       <div className="modal-overlay">
         {hasPrev && (
-          <img src={prvBtn} className="move-btn" onClick={onPrev} alt="이전" />
+          <button
+            className="arrow-white arrow left"
+            onClick={onPrev}
+            aria-label="이전 페이지"
+          >
+            〈
+          </button>
         )}
-        <div className="content">{children}</div>
+        <div className="content-photo">{children}</div>
         {hasNext && (
-          <img src={nxtBtn} className="move-btn" onClick={onNext} alt="다음" />
+          <button
+            className="arrow-white arrow right"
+            onClick={onNext}
+            aria-label="다음 페이지"
+          >
+            〉
+          </button>
         )}
       </div>
     </>

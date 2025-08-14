@@ -39,6 +39,10 @@ public class BabyLetter {
     @Column(name = "conversation_session_id", length = 36)
     private String conversationSessionId;
 
+    @Column(name = "is_read", nullable = false)
+    @Builder.Default
+    private Boolean isRead = false;
+
     @Column(name = "created_at")
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();

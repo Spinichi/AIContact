@@ -4,7 +4,7 @@ import HTMLFlipBook from "react-pageflip";
 import { useNavigate } from "react-router-dom";
 import type { ComicStripsListResponse } from "../apis/comicStrips";
 import { ComicStripsApi } from "../apis/comicStrips";
-import backgroundImage from "../assets/images/whiteboard.svg";
+import backgroundImage from "../assets/images/Cartoon.png";
 import Loading from "../components/animations/Loading";
 import Particles from "../components/auth/Particles.tsx";
 import Cartoon from "../components/cartoon/Cartoon";
@@ -235,8 +235,8 @@ export default function CartoonPage() {
 
         <div className="board-box">
           <div className="board-box-title">
-            <div>한 단어 또는 짧은 문장으로 오늘 하루를 표현해주세요!</div>
-            <div>그럼 제가 4컷 만화로 표현해 드릴게요!</div>
+            <h3>한 단어 또는 짧은 문장으로 오늘 하루를 표현해주세요!</h3>
+            <h3>그럼 제가 4컷 만화로 표현해 드릴게요!</h3>
           </div>
 
           <div className="input-overlay">

@@ -1,4 +1,4 @@
-package com.aicontact.backend.babychat.dto;
+package com.aicontact.backend.babychat.dto.request;
 
 import lombok.*;
 
