@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUnreadLettersCount } from "../apis/letter/useUnreadLettersCounts";
 import backgroundImage from "../assets/images/Letter.png";
 import Sidebar from "../components/Sidebar";
 import "../styles/LetterPage.css";
 import "../styles/MainPages.css";
-import { useUnreadLettersCount} from "../apis/letter/useUnreadLettersCounts";
 // ⬇generate 유틸만 사용 (canGenerateToday는 무제한 모드면 굳이 안 써도 됨)
 import {
   canGenerateToday,
   generateLetter as generateLetterSilentFromUtil,
 } from "../apis/letter/generate";
+import LetterBottomIcon from "../assets/icons/LetterBottomIcon.svg";
+import LetterTopIcon from "../assets/icons/LetterTopIcon.svg";
 
 import type { LettersResponse } from "../apis/letter";
 import { LetterApi } from "../apis/letter";
@@ -34,8 +36,8 @@ export default function Letters() {
   // StrictMode 2회 실행 방지
   const didInit = useRef(false);
 
-  // 로컬에서 읽음 처리 함수 
-  const {markOneAsRead } =  useUnreadLettersCount({ userId: null });
+  // 로컬에서 읽음 처리 함수
+  const { markOneAsRead } = useUnreadLettersCount({ userId: null });
 
   // 목록 조회
   const loadList = async () => {
@@ -60,61 +62,22 @@ export default function Letters() {
     }
   };
 
-  // const markAsRead = async (letterId: number) => {
-  //   try {
-  //     await LetterApi.markAsRead(letterId);
-      
-  //     전체 목록을 다시 불러오지 말고, 로컬 상태만 업데이트
-  //     setLetters(prevLetters => 
-  //       prevLetters.map(letter => 
-  //         letter.id === letterId 
-  //           ? { ...letter, isRead: true }
-  //           : letter
-  //       )
-  //     );
-  //   } catch (err) {
-  //     console.error('읽음 처리 실패:', err);
-  //     에러 발생시에만 목록 다시 불러오기
-  //     await loadList();
-  //   }
-  // };
-
-  // const markAsRead = async (letterId: number) => {
-  //   try {
-  //     await LetterApi.markAsRead(letterId);
-  //   } catch(err) {
-  //       console.warn("서버 읽음 처리 실패:", err);
-  //   }
-  //   try {
-  //     await markOneAsRead(letterId);
-  //     setLetters(prev => 
-  //       prev.map(l => (l.id === letterId ? { ...l, isRead: true } : l))
-  //     );
-  //   } catch (err) {
-  //     console.error("로컬 읽음 처리 실패: ",err );
-  //   }
-  // };
-
-const markAsRead = async (letterId: number) => {
-  try { await LetterApi.markAsRead(letterId); } catch (e) { console.warn(e); }
-  try {
-    await markOneAsRead(letterId);
-    setLetters(prev => prev.map(l => l.id === letterId ? { ...l, isRead: true } : l));
-+   await loadList(); // ← 서버 값이 정말 true로 바뀌었는지 즉시 확인
-  } catch (e) { console.error(e); }
-};
-
-
-  // const markAsRead = async (letterId: number) => {
-  //   try {
-  //     await markOneAsRead(letterId);
-  //     setLetters(prev =>
-  //       prev.map(l => (l.id === letterId ? { ...l, isRead: true } : l))
-  //     );
-  //   } catch (err) {
-  //     console.error("로컬 읽음 처리 실패: ", err);
-  //   }
-  // };
+  const markAsRead = async (letterId: number) => {
+    try {
+      await LetterApi.markAsRead(letterId);
+    } catch (e) {
+      console.warn(e);
+    }
+    try {
+      await markOneAsRead(letterId);
+      setLetters((prev) =>
+        prev.map((l) => (l.id === letterId ? { ...l, isRead: true } : l))
+      );
+      +(await loadList()); // ← 서버 값이 정말 true로 바뀌었는지 즉시 확인
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     if (didInit.current) return;
@@ -179,7 +142,18 @@ const markAsRead = async (letterId: number) => {
                     setSelectedBody(letter.content);
                     markAsRead(letter.id);
                   }}
+                  style={{
+                    backgroundImage: `url(${LetterBottomIcon})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "bottom center",
+                    backgroundSize: "contain",
+                  }}
                 >
+                  <img
+                    alt="편지봉투 위"
+                    src={LetterTopIcon}
+                    className="letter-top"
+                  />
                   <h4>{`편지 ${idx + 1}`}</h4>
                 </div>
               );
