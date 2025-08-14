@@ -1,5 +1,6 @@
 package com.aicontact.backend.global.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -16,5 +17,6 @@ public abstract class BaseCreatedEntity {
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'+09:00'", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 }
