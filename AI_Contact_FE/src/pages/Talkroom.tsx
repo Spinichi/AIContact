@@ -105,7 +105,7 @@ export default function Letters() {
         {error && <div className="status error">{error}</div>}
 
         {!loading && !error && letters.length === 0 && (
-          <div className="status">📭 도착한 편지가 없습니다.</div>
+          <h3 className="status">📭 도착한 편지가 없습니다.</h3>
         )}
 
         {!loading && !error && letters.length > 0 && (

@@ -115,7 +115,7 @@
   flex: 1;
   border: none;
   outline: none;
-  padding: 0;
+  padding-right: 10px;
   box-shadow: none;
   font-size: 16px;
 }

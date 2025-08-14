@@ -59,17 +59,15 @@ export default function Letters() {
   const markAsRead = async (letterId: number) => {
     try {
       await LetterApi.markAsRead(letterId);
-      
+
       // 전체 목록을 다시 불러오지 말고, 로컬 상태만 업데이트
-      setLetters(prevLetters => 
-        prevLetters.map(letter => 
-          letter.id === letterId 
-            ? { ...letter, isRead: true }
-            : letter
+      setLetters((prevLetters) =>
+        prevLetters.map((letter) =>
+          letter.id === letterId ? { ...letter, isRead: true } : letter
         )
       );
     } catch (err) {
-      console.error('읽음 처리 실패:', err);
+      console.error("읽음 처리 실패:", err);
       // 에러 발생시에만 목록 다시 불러오기
       await loadList();
     }
@@ -124,25 +122,25 @@ export default function Letters() {
         {error && <div className="status error">{error}</div>}
 
         {!loading && !error && letters.length === 0 && (
-          <div className="status">📭 도착한 편지가 없습니다.</div>
+          <h3 className="status">📭 도착한 편지가 없습니다.</h3>
         )}
 
         {!loading && !error && letters.length > 0 && (
           <div className="letters-container">
             {letters.map((letter, idx) => {
-            return (
-              <div
-                key={letter.id}
-                className="letter-box"
-                onClick={() => {
-                  setSelectedBody(letter.content);
-                  markAsRead(letter.id);
-                }}
-              >
-                <h4>{`편지 ${idx + 1}`}</h4>
-              </div>
-            );
-          })}
+              return (
+                <div
+                  key={letter.id}
+                  className="letter-box"
+                  onClick={() => {
+                    setSelectedBody(letter.content);
+                    markAsRead(letter.id);
+                  }}
+                >
+                  <h4>{`편지 ${idx + 1}`}</h4>
+                </div>
+              );
+            })}
           </div>
         )}
 
