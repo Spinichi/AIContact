@@ -2,6 +2,7 @@ package com.aicontact.backend.chat.entity;
 
 import com.aicontact.backend.couple.entity.CoupleEntity;
 import com.aicontact.backend.user.entity.UserEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -34,5 +35,7 @@ public class Chat {
     private String content;
 
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime sentAt = LocalDateTime.now();
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'+09:00'", timezone = "Asia/Seoul")
+    private LocalDateTime sentAt;
+
 }
