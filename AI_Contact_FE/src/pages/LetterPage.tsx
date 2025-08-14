@@ -4,7 +4,7 @@ import backgroundImage from "../assets/images/Letter.png";
 import Sidebar from "../components/Sidebar";
 import "../styles/LetterPage.css";
 import "../styles/MainPages.css";
-import { useUnreadLettersCount, effectiveLettersForUI } from "../apis/letter/useUnreadLettersCounts";
+import { useUnreadLettersCount} from "../apis/letter/useUnreadLettersCounts";
 // ⬇generate 유틸만 사용 (canGenerateToday는 무제한 모드면 굳이 안 써도 됨)
 import {
   canGenerateToday,
@@ -46,7 +46,6 @@ export default function Letters() {
       if (res.success) {
         setLetters(res.data);
         console.log("[DEBUG] effective data from API layer:", res.data);
-        // setLetters(effectiveLettersForUI(res.data, null));
         if (res.data.length === 0) {
           console.log("📭 도착한 편지가 없습니다.");
         }
