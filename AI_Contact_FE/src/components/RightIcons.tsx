@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CartoonIcon from "../assets/icons/CartoonIcon.svg";
@@ -7,6 +7,8 @@ import LetterIcon from "../assets/icons/LetterIcon.svg";
 import WebrtcIcon from "../assets/icons/WebrtcIcon.svg";
 
 import Dock from "../components/animations/Dock/Dock";
+// import { LetterApi } from "../apis/letter"; 
+import { useUnreadLettersCount } from "../apis/letter/useUnreadLettersCounts";
 import "../styles/RightIcons.css";
 
 interface RightIconsProps {
@@ -20,8 +22,47 @@ type DockItem = {
   onClick: () => void;
 };
 
+
 const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
   const navigate = useNavigate();
+  // const {count} = useUnreadLettersCount({ pollMs: 60000 })
+
+  // const [unread, setUnread] = useState<number>(0);
+
+  // 최초 1회 + 주기적으로 갱신(60초)
+  // useEffect(() => {
+  //   let mounted = true;
+
+  //   const fetchUnread = async () => {
+  //     try {
+  //       const res = await LetterApi.unreadCount();
+  //       if (mounted && res?.success && typeof res.data === "number") {
+  //         setUnread(res.data);
+  //       }
+  //     } catch {
+  //       // 실패 시 조용히 무시(원하면 토스트/로그 추가)
+  //     }
+  //   };
+
+  //   fetchUnread();
+  //   const id = setInterval(fetchUnread, 60_000);
+  //   return () => {
+  //     mounted = false;
+  //     clearInterval(id);
+  //   };
+  // }, []);
+  const {count} = useUnreadLettersCount({pollMs:60000})
+  // 뱃지 유틸(필요한 아이콘에만 래핑)
+  const withBadge = (node: React.ReactNode, count: number) => (
+    <div className="icon-with-badge">
+      {node}
+      {count > 0 && (
+        <span className="badge" aria-label={`안 읽은 편지 ${count}개`}>
+          {count > 99 ? "99+" : count}
+        </span>
+      )}
+    </div>
+  );
 
   const items: DockItem[] = [
     {
@@ -64,12 +105,13 @@ const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
       key: "letters",
       label: "편지함",
       onClick: () => navigate("/letters"),
-      icon: (
+      icon: withBadge(
         <img
           src={LetterIcon}
           alt="편지함"
           style={{ width: "28px", height: "28px", objectFit: "contain" }}
-        />
+        />,
+        count
       ),
     },
   ];
@@ -79,7 +121,7 @@ const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
       items={items}
       panelHeight={68}
       baseItemSize={50}
-      magnification={70} // Dock 구현에 맞춰 필요 시 조절
+      magnification={70}
     />
   );
 };
