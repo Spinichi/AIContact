@@ -41,7 +41,7 @@ public class ChatService {
                 dto.getCoupleId(),
                 dto.getSenderId(),
                 dto.getContent(),
-                LocalDateTime.now().toString()
+                chat.getSentAt()
         );
 
         messagingTemplate.convertAndSend("/sub/chat/" + dto.getCoupleId(), response);
