@@ -1,3 +1,5 @@
+
+export type UnreadLettersCountResponse = number;
 export type LettersResponse = BabyLetterResponse[];
 
 type BabyLetterResponse = {
@@ -6,3 +8,4 @@ type BabyLetterResponse = {
   isRead: boolean;
   createdAt: string;
 };
+
