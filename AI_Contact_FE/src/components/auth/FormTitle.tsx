@@ -1,4 +1,4 @@
-import symbol from "../../assets/images/symbol.png";
+import symbol from "../../assets/images/symbol.svg";
 
 const FormTitle = () => {
   return (

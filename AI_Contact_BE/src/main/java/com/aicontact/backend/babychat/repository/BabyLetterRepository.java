@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface BabyLetterRepository extends JpaRepository<BabyLetter, Long> {
     List<BabyLetter> findBySenderUserOrderByCreatedAtDesc(UserEntity senderUser);
+    int countBySenderUserAndIsReadFalse(UserEntity senderUser);
 }

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthApi } from "../../apis/auth";
 import { UsersApi } from "../../apis/user";
 import { normalizeToken } from "../../utils/token";
+import { CouplesApi } from "../../apis/couple";
 
 interface LoginFormProps {
   onToggle: () => void;
@@ -31,12 +32,18 @@ export default function LoginForm({ onToggle }: LoginFormProps) {
           Accept: "application/json",
         },
       });
+      const myCoupleInfo = (await CouplesApi.getCoupleInfo()).data;
 
       const me = meRes.data;
       console.log(meRes);
       console.log(me);
       if (me.coupleStatus === "COUPLED") {
-        navigate("/ai", { replace: true });
+        if(myCoupleInfo.startDate == null || myCoupleInfo.coupleName == null){
+          navigate("/additional-info", { replace: true });
+        }
+        else{
+          navigate("/ai", { replace: true });
+        }
       } else {
         navigate("/connection", { replace: true });
       }

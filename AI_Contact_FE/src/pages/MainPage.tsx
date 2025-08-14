@@ -9,6 +9,8 @@ import Loading from "../components/animations/Loading";
 import "../styles/MainPages.css";
 import "../styles/UserInfo.css";
 
+import { aiChildApi } from "../apis/aiChild";
+import type { AiChildResponse } from "../apis/aiChild/response";
 import { CouplesApi } from "../apis/couple";
 import type {
   CoupleInfoResponse,
@@ -18,9 +20,6 @@ import { dailySchedulesApi } from "../apis/dailySchedule";
 import type { DailyScheduleResponse } from "../apis/dailySchedule/response";
 import { UsersApi } from "../apis/user/api";
 import type { MeUserResponse } from "../apis/user/response";
-
-import { aiChildApi } from "../apis/aiChild";
-import type { AiChildResponse } from "../apis/aiChild/response";
 import Particles from "../components/auth/Particles";
 
 export default function MainPage() {

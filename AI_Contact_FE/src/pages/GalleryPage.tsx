@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import photobook from "../assets/images/photobook.png";
-import PhotoBookModal from "../components/PhotoBookModal"; // Modal 가져오기
+// GalleryPage.tsx
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import HTMLFlipBook from "react-pageflip";
+import PhotoBookModal from "../components/PhotoBookModal";
 import Sidebar from "../components/Sidebar";
 import "../styles/GalleryPage.css";
 import "../styles/MainPages.css";
@@ -13,35 +14,68 @@ import type {
   PaginationInfo,
 } from "../apis/media/response";
 
+// id 기반 시드 랜덤 (0~1)
+const seededRandom = (seed: number) => {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+};
+
+const rotationFromId = (id: number) => {
+  // -10° ~ 10° 범위 각도 반환
+  //   return Math.round((seededRandom(id) * 20 - 10) * 10) / 10;
+  // -20° ~ 20° 범위 각도 반환
+  return Math.round((seededRandom(id) * 40 - 20) * 10) / 10;
+};
+
+// FlipBook ref에서 필요한 메서드 shape만 정의 (DictionaryPage와 동일)
+type FlipbookRef = {
+  pageFlip(): {
+    flipNext(): void;
+    flipPrev(): void;
+    turnToPage: (index: number) => void;
+  };
+};
+
 export default function PhotoBook() {
+  // ----- 필터/정렬 상태
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState("전체");
   const [isTypeDropDownOpen, setIsTypeDropDownOpen] = useState(false);
   const [selectedType, setSelectedType] = useState("전체");
-
-  // --- 페이지네이션 상태 수정
-  const [currentPage, setCurrentPage] = useState(0);
-  const [limit] = useState(24);
-  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
-
-  // --- 썸네일 리스트
-  const [thumbs, setThumbs] = useState<MediaThumbnailDto[]>([]);
-
-  // --- 모달용 상세 이미지 & index
-  const [fullMedia, setFullMedia] = useState<MediaFileDto | null>(null);
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
-
   const [viewMode, setViewMode] = useState<"all" | "favorite">("all");
   const [sortDir, setSortDir] = useState<"desc" | "asc">("desc");
 
-  // 업로드 상태 추가
+  // ----- 업로드 상태
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({
     current: 0,
     total: 0,
   });
 
-  // 드롭다운 외부 클릭 감지
+  // ----- 페이지네이션
+  const [limit] = useState(24); // 서버 페이지당 24개 (좌12 + 우12)
+  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
+
+  // ----- FlipBook 관련 (flip 페이지 index)
+  const bookRef = useRef<FlipbookRef | null>(null);
+  const [activeFlipPage, setActiveFlipPage] = useState(0); // flip-book 기준 페이지 index
+
+  // 서버 페이지별 썸네일 캐시: { 0: MediaThumbnailDto[0..23], 1: ..., ... }
+  const [pagesCache, setPagesCache] = useState<
+    Record<number, MediaThumbnailDto[]>
+  >({});
+
+  // ----- 모달 상태
+  const [fullMedia, setFullMedia] = useState<MediaFileDto | null>(null);
+  const [currentIndexInSide, setCurrentIndexInSide] = useState<number | null>(
+    null
+  );
+
+  // ----- 연도/타입 목록
+  const years = ["전체", "2025년", "2024년", "2023년", "2022년"];
+  const types = ["전체", "이미지", "비디오"];
+
+  // 외부 클릭으로 드롭다운 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
@@ -58,16 +92,25 @@ export default function PhotoBook() {
         setIsTypeDropDownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 1) 컴포넌트 마운트 시 & 페이지 변경 시 썸네일 로드
+  // 필터/정렬 변경 시: 책을 첫 페이지로 리셋 + 캐시 초기화
   useEffect(() => {
-    // selectedYear 가 "2024년" 같은 형태일 때
+    setPagesCache({});
+    setActiveFlipPage(0);
+    void loadServerPage(0, { replace: true });
+  }, [viewMode, sortDir, selectedYear, selectedType]);
+
+  // 초기 로드
+  useEffect(() => {
+    if (!(0 in pagesCache)) void loadServerPage(0, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ------ 유틸: 현재 필터를 API 파라미터로 변환
+  const buildQuery = (page: number) => {
     let dateFrom: string | undefined;
     let dateTo: string | undefined;
     if (selectedYear !== "전체") {
@@ -75,225 +118,271 @@ export default function PhotoBook() {
       dateFrom = `${year}-01-01`;
       dateTo = `${year}-12-31`;
     }
-
-    // selectedType에 따른 fileType 설정
     let fileType: "IMAGE" | "VIDEO" | undefined;
-    if (selectedType === "이미지") {
-      fileType = "IMAGE";
-    } else if (selectedType === "비디오") {
-      fileType = "VIDEO";
-    } else {
-      fileType = undefined; // "전체"인 경우
-    }
+    if (selectedType === "이미지") fileType = "IMAGE";
+    else if (selectedType === "비디오") fileType = "VIDEO";
 
-    MediaApi.fetchThumbnails({
-      page: currentPage,
+    return {
+      page,
       limit,
       sortDir,
       favoriteOnly: viewMode === "favorite",
-      dateFrom, // undefined 이면 쿼리에 아예 빠집니다
+      dateFrom,
       dateTo,
-      fileType, // 새로 추가된 필터
-    })
-      .then((res: MediaThumbnailListResponse) => {
-        const mapped = res.mediaFiles
-          .map((item) => ({ ...item, isFavorite: item.favorite }))
-          .sort((a, b) => {
-            // 서버에서 이미 정렬해 줄 경우 이 라인은 지워도 무방
-            return sortDir === "desc"
-              ? new Date(b.createdAt).getTime() -
-                  new Date(a.createdAt).getTime()
-              : new Date(a.createdAt).getTime() -
-                  new Date(b.createdAt).getTime();
-          });
-        setThumbs(mapped);
-        setPagination(res.pagination);
-      })
-      .catch(console.error);
-  }, [currentPage, limit, viewMode, sortDir, selectedYear, selectedType]);
-
-  // 페이지 이동 함수들
-  const handlePrevPage = () => {
-    if (pagination?.hasPrevious) {
-      setCurrentPage(currentPage - 1);
-    }
+      fileType,
+    } as const;
   };
 
-  const handleNextPage = () => {
-    if (pagination?.hasNext) {
-      setCurrentPage(currentPage + 1);
+  // ------ 서버 페이지 로더(지연 로딩 & 캐시)
+  async function loadServerPage(
+    serverPage: number,
+    opts?: { replace?: boolean }
+  ) {
+    try {
+      const params = buildQuery(serverPage);
+      const res: MediaThumbnailListResponse = await MediaApi.fetchThumbnails(
+        params
+      );
+      const mapped = res.mediaFiles
+        .map((item) => ({ ...item, isFavorite: item.favorite }))
+        .sort((a, b) =>
+          sortDir === "desc"
+            ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+
+      setPagination(res.pagination);
+      setPagesCache((prev) => {
+        const next = opts?.replace ? {} : { ...prev };
+        next[serverPage] = mapped;
+        return next;
+      });
+    } catch (e) {
+      console.error("페이지 로드 실패:", e);
     }
+  }
+
+  // ------ flip-page → serverPage/side 계산
+  const flipToServer = (flipIdx: number) => {
+    const serverPage = Math.floor(flipIdx / 2);
+    const side: "left" | "right" = flipIdx % 2 === 0 ? "left" : "right";
+    return { serverPage, side };
   };
 
-  // 2) 업로드 (이미지/비디오 통합, 순차 업로드)
+  // ------ FlipBook: 페이지 전환 시점에 로딩 (서버 페이지 기준으로 프리패치)
+  const handleFlip = (e: any) => {
+    const targetFlip = e.data as number;
+    setActiveFlipPage(targetFlip);
+
+    const { serverPage } = flipToServer(targetFlip);
+    if (!(serverPage in pagesCache)) void loadServerPage(serverPage);
+
+    // 이웃 flip 페이지들에 해당하는 서버 페이지를 프리패치
+    const neighbors = [targetFlip - 1, targetFlip + 1].filter((i) => i >= 0);
+    const neighborServerPages = new Set(
+      neighbors.map((i) => Math.floor(i / 2))
+    );
+    neighborServerPages.forEach((sp) => {
+      if (!(sp in pagesCache)) void loadServerPage(sp);
+    });
+  };
+
+  // ------ 업로드 처리(끝나면 현재 서버 페이지만 새로고침)
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-
     const files = Array.from(e.target.files);
     const allowedVideoExtensions = ["mp4", "mov", "3gp", "mkv"];
 
-    // 파일 검증
     const validFiles = files.filter((file) => {
-      if (file.type.startsWith("image/")) {
-        return true; // 모든 이미지 허용
-      }
-
+      if (file.type.startsWith("image/")) return true;
       if (file.type.startsWith("video/")) {
-        const extension = file.name.split(".").pop()?.toLowerCase();
-        if (extension && allowedVideoExtensions.includes(extension)) {
-          return true;
-        } else {
-          alert(
-            `${file.name}: 지원하지 않는 비디오 형식입니다. (mp4, mov, 3gp, mkv만 가능)`
-          );
-          return false;
-        }
+        const ext = file.name.split(".").pop()?.toLowerCase();
+        if (ext && allowedVideoExtensions.includes(ext)) return true;
+        alert(
+          `${file.name}: 지원하지 않는 비디오 형식입니다. (mp4, mov, 3gp, mkv만 가능)`
+        );
+        return false;
       }
-
       alert(`${file.name}: 지원하지 않는 파일 형식입니다.`);
       return false;
     });
-
     if (validFiles.length === 0) return;
 
-    // 업로드 시작
     setIsUploading(true);
     setUploadProgress({ current: 0, total: validFiles.length });
 
     let successCount = 0;
     let failCount = 0;
-
-    // 파일을 하나씩 순차적으로 업로드
     for (let i = 0; i < validFiles.length; i++) {
-      const file = validFiles[i];
-
+      const f = validFiles[i];
       try {
-        console.log(`업로드 중... ${i + 1}/${validFiles.length}: ${file.name}`);
         setUploadProgress({ current: i + 1, total: validFiles.length });
-
-        await MediaApi.uploadImage({ file });
+        await MediaApi.uploadImage({ file: f });
         successCount++;
-        console.log(`✅ 업로드 완료: ${file.name}`);
-      } catch (error) {
+      } catch (err) {
+        console.error("업로드 실패:", f.name, err);
         failCount++;
-        console.error(`❌ 업로드 실패: ${file.name}`, error);
       }
     }
-
-    // 업로드 완료
     setIsUploading(false);
 
-    // 모든 업로드 완료 후 목록 갱신
-    try {
-      const res = await MediaApi.fetchThumbnails({ page: currentPage, limit });
-      const sorted = [...res.mediaFiles].sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-      setThumbs(sorted);
-      setPagination(res.pagination);
-
-      console.log(`업로드 완료: 성공 ${successCount}개, 실패 ${failCount}개`);
-      alert(`업로드 완료!\n성공: ${successCount}개\n실패: ${failCount}개`);
-    } catch (error) {
-      console.error("목록 갱신 실패:", error);
-    }
-
-    // 파일 input 초기화
+    const { serverPage } = flipToServer(activeFlipPage);
+    await loadServerPage(serverPage);
+    alert(`업로드 완료!\n성공: ${successCount}개\n실패: ${failCount}개`);
     e.target.value = "";
   };
 
-  // 3) 썸네일 클릭 → 상세 로드 & 모달 오픈
-  const handleThumbnailClick = (id: number, idx: number) => {
+  // ------ 썸네일 클릭 → 상세 로드 & 모달
+  const handleThumbnailClick = (id: number, idxInSide: number) => {
     MediaApi.fetchMedia(id)
       .then((media) => {
-        setFullMedia({
-          ...media,
-          favorite: media.favorite,
-        });
-        setCurrentIndex(idx);
+        setFullMedia({ ...media, favorite: media.favorite });
+        setCurrentIndexInSide(idxInSide);
       })
       .catch(console.error);
   };
 
-  // 4) 모달 이전/다음
-  const handlePrev = () => {
-    if (currentIndex == null) return;
-    const prev = (currentIndex + thumbs.length - 1) % thumbs.length;
-    handleThumbnailClick(thumbs[prev].id, prev);
-  };
-  const handleNext = () => {
-    if (currentIndex == null) return;
-    const next = (currentIndex + 1) % thumbs.length;
-    handleThumbnailClick(thumbs[next].id, next);
+  // ------ 현재 flip-page의 side 목록(12개) 계산
+  const useSideList = () => {
+    const { serverPage, side } = flipToServer(activeFlipPage);
+    const list = pagesCache[serverPage] ?? [];
+    const slice = side === "left" ? list.slice(0, 12) : list.slice(12, 24);
+    return { serverPage, side, slice };
   };
 
-  const years = ["전체", "2025년", "2024년", "2023년", "2022년"];
-  const types = ["전체", "이미지", "비디오"];
+  // ------ 모달 내 좌우 이동(현재 side의 12개 내에서만)
+  const handlePrevInModal = () => {
+    if (currentIndexInSide == null) return;
+    const { slice } = useSideList();
+    if (slice.length === 0) return;
+    const prev = (currentIndexInSide + slice.length - 1) % slice.length;
+    const id = slice[prev]?.id;
+    if (id) handleThumbnailClick(id, prev);
+  };
+  const handleNextInModal = () => {
+    if (currentIndexInSide == null) return;
+    const { slice } = useSideList();
+    if (slice.length === 0) return;
+    const next = (currentIndexInSide + 1) % slice.length;
+    const id = slice[next]?.id;
+    if (id) handleThumbnailClick(id, next);
+  };
 
-  // 5) 모달 닫기
+  // ------ 모달 닫기
   const handleClose = () => {
-    setCurrentIndex(null);
+    setCurrentIndexInSide(null);
     setFullMedia(null);
   };
 
-  // 6) 즐겨찾기 업데이트 핸들러 (API 호출)
+  // ------ 즐겨찾기 토글(캐시 & 모달 동기화)
   const handleFavoriteUpdate = async (mediaId: number) => {
     try {
       const response = await MediaApi.toggleFavorite(mediaId);
-      const newFav = response.favorite; // ★ response.isFavorite → response.favorite 로
+      const newFav = response.favorite;
 
-      setThumbs((prev) =>
-        prev.map((t) => (t.id === mediaId ? { ...t, isFavorite: newFav } : t))
-      );
+      const { serverPage } = flipToServer(activeFlipPage);
+      setPagesCache((prev) => {
+        const copy = { ...prev };
+        const list = copy[serverPage];
+        if (list) {
+          copy[serverPage] = list.map((t) =>
+            t.id === mediaId ? { ...t, isFavorite: newFav } : t
+          );
+        }
+        return copy;
+      });
 
-      if (fullMedia?.id === mediaId) {
+      if (fullMedia?.id === mediaId)
         setFullMedia({ ...fullMedia, favorite: newFav });
-      }
-
-      console.log(`즐겨찾기 ${newFav ? "추가" : "해제"} 완료`);
-    } catch (error) {
-      console.error("즐겨찾기 토글 실패:", error);
+    } catch (e) {
+      console.error("즐겨찾기 토글 실패:", e);
     }
   };
 
-  // 7) 삭제 핸들러 (API 호출)
+  // ------ 삭제(현재 서버 페이지에서 제거 후 재로드)
   const handleDelete = async () => {
     if (!fullMedia) return;
-
-    const confirmDelete = window.confirm("정말로 이 사진을 삭제하시겠습니까?");
-    if (!confirmDelete) return;
+    if (!window.confirm("정말로 이 사진을 삭제하시겠습니까?")) return;
 
     try {
       await MediaApi.deleteMedia(fullMedia.id);
-
-      // 썸네일 리스트에서 삭제된 항목 제거
-      setThumbs((prev) => prev.filter((t) => t.id !== fullMedia.id));
-
-      // 모달 닫기
       handleClose();
 
-      console.log("삭제 완료");
-      alert("사진이 삭제되었습니다.");
-
-      // 목록 새로고침 (옵션)
-      const res = await MediaApi.fetchThumbnails({
-        page: currentPage,
-        limit,
-        sortDir,
-        favoriteOnly: viewMode === "favorite",
+      const { serverPage } = flipToServer(activeFlipPage);
+      setPagesCache((prev) => {
+        const copy = { ...prev };
+        const list = copy[serverPage] ?? [];
+        copy[serverPage] = list.filter((t) => t.id !== fullMedia.id);
+        return copy;
       });
-      const mapped = res.mediaFiles.map((item) => ({
-        ...item,
-        isFavorite: item.favorite,
-      }));
-      setThumbs(mapped);
-      setPagination(res.pagination);
-    } catch (error) {
-      console.error("삭제 실패:", error);
+
+      await loadServerPage(serverPage);
+      alert("사진이 삭제되었습니다.");
+    } catch (e) {
+      console.error("삭제 실패:", e);
       alert("삭제 중 오류가 발생했습니다.");
     }
   };
+
+  // ------ 포토그리드 렌더(한 페이지=12칸만)
+  const renderPhotoGrid = (
+    list: MediaThumbnailDto[] | undefined,
+    side: "left" | "right"
+  ) => {
+    const all = list ?? [];
+    const slice = side === "left" ? all.slice(0, 12) : all.slice(12, 24);
+
+    return (
+      <div className={`photobook single ${side}`}>
+        <div className={`photo-grid ${side}`}>
+          {Array.from({ length: 12 }).map((_, i) => {
+            const item = slice[i];
+            const rot = item ? rotationFromId(item.id) : 0;
+            return (
+              <div
+                className="photo-box"
+                key={`${side}-${i}`}
+                style={item ? { transform: `rotate(${rot}deg)` } : undefined}
+              >
+                {item && (
+                  <img
+                    src={item.thumbnailUrl}
+                    alt={`thumb-${item.id}`}
+                    onClick={() => handleThumbnailClick(item.id, i)}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // 총 flip 페이지 수 = 서버 totalPages * 2 (좌/우)
+  const totalFlipPages = Math.max((pagination?.totalPages ?? 1) * 2, 2);
+
+  // FlipBook 재생성 키
+  const pagesKey = useMemo(() => {
+    return [
+      "flip",
+      viewMode,
+      sortDir,
+      selectedYear,
+      selectedType,
+      totalFlipPages,
+    ].join("|");
+  }, [viewMode, sortDir, selectedYear, selectedType, totalFlipPages]);
+
+  // 좌/우 화살표 (책장 넘기기)
+  const flipPrev = () => bookRef.current?.pageFlip().flipPrev();
+  const flipNext = () => bookRef.current?.pageFlip().flipNext();
+
+  const canPrev = activeFlipPage > 0;
+  const canNext = activeFlipPage < totalFlipPages - 1;
+
+  // 화면 상단 "페이지 정보"는 서버 페이지 기준으로 표기
+  const serverPageDisplay = Math.floor(activeFlipPage / 2) + 1;
 
   return (
     <div className="main-layout">
@@ -303,203 +392,222 @@ export default function PhotoBook() {
           <h4># 기록 # 공유 </h4>
           <h3>갤러리 📸</h3>
         </div>
-        {/* 필터 / 정렬 / 업로드 영역 */}
-        <div className="gallery-top-bar">
-          <div className="gallery-tabs">
-            <button
-              className={viewMode === "all" ? "active" : ""}
-              onClick={() => {
-                setViewMode("all");
-                setCurrentPage(0);
-              }}
-            >
-              전체
-            </button>
-            <button
-              className={viewMode === "favorite" ? "active" : ""}
-              onClick={() => {
-                setViewMode("favorite");
-                setCurrentPage(0);
-              }}
-            >
-              즐겨찾기
-            </button>
-          </div>
-          <div className="gallery-actions">
-            <button
-              className={`sort-btn ${sortDir === "desc" ? "active" : ""}`}
-              onClick={() => {
-                setSortDir("desc");
-                setCurrentPage(0);
-              }}
-            >
-              최신순
-            </button>
-            <button
-              className={`sort-btn ${sortDir === "asc" ? "active" : ""}`}
-              onClick={() => {
-                setSortDir("asc");
-                setCurrentPage(0);
-              }}
-            >
-              오래된순
-            </button>
-
-            {/* 달력 버튼 */}
-            <button
-              className="calendar-btn"
-              onClick={() => {
-                setIsDropDownOpen((o) => !o);
-                setIsTypeDropDownOpen(false); // 다른 드롭다운 닫기
-              }}
-            >
-              📅
-              {isDropDownOpen && (
-                <div className="calendar-dropdown">
-                  {years.map((year) => (
-                    <div
-                      key={year}
-                      className={`dropdown-item ${
-                        selectedYear === year ? "selected" : ""
-                      }`}
-                      onClick={() => {
-                        setSelectedYear(year);
-                        setIsDropDownOpen(false);
-                        setCurrentPage(0);
-                      }}
-                    >
-                      {year}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </button>
-
-            {/* 타입 필터 영역 - 드롭다운을 버튼 밖으로 이동 */}
-            <div className="type-filter-wrapper">
+        <div className="gallery-container-wrapper">
+          {" "}
+          {/* 상단 액션 바(필터/정렬/업로드) */}
+          <div className="gallery-top-bar">
+            <div className="gallery-tabs">
               <button
-                className={`type-filter-btn ${
-                  isTypeDropDownOpen ? "active" : ""
-                }`}
+                className={viewMode === "all" ? "fav-btn active" : "fav-btn"}
+                onClick={() => {
+                  setViewMode("all");
+                  setPagesCache({});
+                  setActiveFlipPage(0);
+                  void loadServerPage(0, { replace: true });
+                  bookRef.current?.pageFlip().turnToPage(0);
+                }}
+              >
+                전체
+              </button>
+              <button
+                className={
+                  viewMode === "favorite" ? "fav-btn active" : "fav-btn"
+                }
+                onClick={() => {
+                  setViewMode("favorite");
+                  setPagesCache({});
+                  setActiveFlipPage(0);
+                  void loadServerPage(0, { replace: true });
+                  bookRef.current?.pageFlip().turnToPage(0);
+                }}
+              >
+                즐겨찾기
+              </button>
+            </div>
+
+            <div className="gallery-actions">
+              <button
+                className={`sort-btn ${sortDir === "desc" ? "active" : ""}`}
+                onClick={() => {
+                  setSortDir("desc");
+                  setPagesCache({});
+                  setActiveFlipPage(0);
+                  void loadServerPage(0, { replace: true });
+                  bookRef.current?.pageFlip().turnToPage(0);
+                }}
+              >
+                최신순
+              </button>
+              <button
+                className={`sort-btn ${sortDir === "asc" ? "active" : ""}`}
+                onClick={() => {
+                  setSortDir("asc");
+                  setPagesCache({});
+                  setActiveFlipPage(0);
+                  void loadServerPage(0, { replace: true });
+                  bookRef.current?.pageFlip().turnToPage(0);
+                }}
+              >
+                오래된순
+              </button>
+
+              {/* 연도 필터 */}
+              <button
+                className="calendar-btn"
+                onClick={() => {
+                  setIsDropDownOpen((o) => !o);
+                  setIsTypeDropDownOpen(false);
+                }}
+              >
+                📅
+                {isDropDownOpen && (
+                  <div className="calendar-dropdown">
+                    {years.map((year) => (
+                      <div
+                        key={year}
+                        className={`dropdown-item ${
+                          selectedYear === year ? "selected" : ""
+                        }`}
+                        onClick={() => {
+                          setSelectedYear(year);
+                          setIsDropDownOpen(false);
+                        }}
+                      >
+                        {year}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </button>
+
+              {/* 타입 필터 */}
+              <button
+                className={`calendar-btn ${isTypeDropDownOpen ? "active" : ""}`}
                 onClick={() => {
                   setIsTypeDropDownOpen((o) => !o);
-                  setIsDropDownOpen(false); // 다른 드롭다운 닫기
+                  setIsDropDownOpen(false);
                 }}
               >
                 📁
+                {isTypeDropDownOpen && (
+                  <div className="type-dropdown">
+                    {types.map((type) => (
+                      <div
+                        key={type}
+                        className={`dropdown-item ${
+                          selectedType === type ? "selected" : ""
+                        }`}
+                        onClick={() => {
+                          setSelectedType(type);
+                        }}
+                      >
+                        {type === "전체" && "📁 전체"}
+                        {type === "이미지" && "🖼️ 이미지"}
+                        {type === "비디오" && "🎬 비디오"}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </button>
-              {isTypeDropDownOpen && (
-                <div className="type-dropdown">
-                  {types.map((type) => (
-                    <div
-                      key={type}
-                      className={`dropdown-item ${
-                        selectedType === type ? "selected" : ""
-                      }`}
-                      onClick={() => {
-                        setSelectedType(type);
-                        // setIsTypeDropDownOpen(false); // 이 줄 제거 - 드롭다운 유지
-                        setCurrentPage(0);
-                      }}
-                    >
-                      {type === "전체" && "📁 전체"}
-                      {type === "이미지" && "🖼️ 이미지"}
-                      {type === "비디오" && "🎬 비디오"}
-                    </div>
-                  ))}
-                </div>
-              )}
+
+              {/* 업로드 */}
+              <label className="upload-label">
+                🖼️ 업로드
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleUpload}
+                />
+              </label>
+              <label className="upload-label">
+                🎬 업로드
+                <input
+                  type="file"
+                  multiple
+                  accept=".mp4,.mov,.3gp,.mkv"
+                  onChange={handleUpload}
+                />
+              </label>
             </div>
-
-            <label className="upload-label">
-              🖼️ 업로드
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleUpload}
-              />
-            </label>
-
-            <label className="upload-label">
-              🎬 업로드
-              <input
-                type="file"
-                multiple
-                accept=".mp4,.mov,.3gp,.mkv"
-                onChange={handleUpload}
-              />
-            </label>
           </div>
-        </div>
+          {/* 책처럼 넘기는 포토북 (flip-page 당 12칸) */}
+          <div className="gallery-wrapper">
+            <div className="dictionary-container">
+              <button
+                className="arrow left"
+                onClick={flipPrev}
+                disabled={!canPrev}
+              >
+                〈
+              </button>
 
-        {/* 앨범 */}
-        <div className="photobook-wrapper">
-          <div className="photobook">
-            {/* 이전 페이지 버튼 */}
-            <button
-              className="page-nav-btn prev"
-              onClick={handlePrevPage}
-              disabled={!pagination?.hasPrevious}
-            >
-              &#8249;
-            </button>
-
-            {/* 왼쪽 사진 - 항상 12개 박스 렌더링 */}
-            <div className="photo-grid left">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div className="photo-box" key={`left-${i}`}>
-                  {thumbs[i] && (
-                    <img
-                      src={thumbs[i].thumbnailUrl}
-                      alt={`thumb-${thumbs[i].id}`}
-                      onClick={() => handleThumbnailClick(thumbs[i].id, i)}
-                    />
-                  )}
+              <div className="dictionary-book">
+                <div className="dictionary-page-mock">
+                  <div className="flip-page mock-page"></div>
+                  <div className="flip-page mock-page"></div>
                 </div>
-              ))}
+
+                <HTMLFlipBook
+                  style={{}}
+                  key={pagesKey}
+                  ref={bookRef as any}
+                  className="flipbook"
+                  width={734 / 2}
+                  height={467}
+                  size="stretch"
+                  minWidth={320}
+                  maxWidth={1000}
+                  minHeight={420}
+                  maxHeight={1400}
+                  startPage={0}
+                  flippingTime={700}
+                  startZIndex={10}
+                  drawShadow={true}
+                  maxShadowOpacity={0.3}
+                  autoSize={true}
+                  showCover={false}
+                  mobileScrollSupport={true}
+                  usePortrait={true}
+                  useMouseEvents={false}
+                  swipeDistance={30}
+                  clickEventForward={true}
+                  showPageCorners={false}
+                  disableFlipByClick={true}
+                  onFlip={handleFlip}
+                >
+                  {Array.from({ length: totalFlipPages }).map((_, flipIdx) => {
+                    const { serverPage, side } = flipToServer(flipIdx);
+                    const list = pagesCache[serverPage];
+                    return (
+                      <div
+                        key={`flip-${flipIdx}`}
+                        className="gallery-flip-page flip-page photobook-page"
+                      >
+                        {renderPhotoGrid(list, side)}
+                      </div>
+                    );
+                  })}
+                </HTMLFlipBook>
+              </div>
+
+              <button
+                className="arrow right"
+                onClick={flipNext}
+                disabled={!canNext}
+              >
+                〉
+              </button>
             </div>
 
-            {/* 오른쪽 사진 - 항상 12개 박스 렌더링 */}
-            <div className="photo-grid right">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div className="photo-box" key={`right-${i}`}>
-                  {thumbs[i + 12] && (
-                    <img
-                      src={thumbs[i + 12].thumbnailUrl}
-                      alt={`thumb-${thumbs[i + 12].id}`}
-                      onClick={() =>
-                        handleThumbnailClick(thumbs[i + 12].id, i + 12)
-                      }
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* 다음 페이지 버튼 */}
-            <button
-              className="page-nav-btn next"
-              onClick={handleNextPage}
-              disabled={!pagination?.hasNext}
-            >
-              &#8250;
-            </button>
-
-            {/* 배경 */}
-            <img
-              src={photobook}
-              alt="photobook background"
-              className="photobook-bg"
-            />
+            {/* 페이지 정보: 서버 페이지 기준 */}
+            {pagination && (
+              <div className="page-info">
+                {pagination.totalPages == 0 ? 0 : serverPageDisplay} /{" "}
+                {pagination.totalPages}
+              </div>
+            )}
           </div>
-
-          {/* 페이지 정보 표시 */}
-          {pagination && pagination.totalPages > 1 && (
-            <div className="page-info">
-              {pagination.currentPage + 1} / {pagination.totalPages}
-            </div>
-          )}
         </div>
       </div>
 
@@ -518,7 +626,7 @@ export default function PhotoBook() {
                       (uploadProgress.current / uploadProgress.total) * 100
                     }%`,
                   }}
-                ></div>
+                />
               </div>
               <p>
                 {uploadProgress.current} / {uploadProgress.total} 완료
@@ -529,14 +637,14 @@ export default function PhotoBook() {
         </div>
       )}
 
-      {/* PhotoBook 전용 모달 사용 */}
-      {currentIndex !== null && fullMedia && (
+      {/* 모달 */}
+      {currentIndexInSide !== null && fullMedia && (
         <PhotoBookModal
           onClose={handleClose}
           hasPrev={true}
           hasNext={true}
-          onPrev={handlePrev}
-          onNext={handleNext}
+          onPrev={handlePrevInModal}
+          onNext={handleNextInModal}
           isFavorite={fullMedia.favorite}
           onFavoriteToggle={() => handleFavoriteUpdate(fullMedia.id)}
           onDelete={handleDelete}
