@@ -22,6 +22,8 @@ services:
       # LiveKit 환경변수 추가
       LIVEKIT_API_KEY: "${LIVEKIT_API_KEY:-devkey}"
       LIVEKIT_API_SECRET: "${LIVEKIT_API_SECRET:-secret}"
+      # 시간대 설정 추가
+      TZ: Asia/Seoul
     restart: always
 
   # 순수 LiveKit 서버 (친구 방식)

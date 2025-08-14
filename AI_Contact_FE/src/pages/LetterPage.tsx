@@ -166,25 +166,25 @@ const markAsRead = async (letterId: number) => {
         {error && <div className="status error">{error}</div>}
 
         {!loading && !error && letters.length === 0 && (
-          <div className="status">📭 도착한 편지가 없습니다.</div>
+          <h3 className="status">📭 도착한 편지가 없습니다.</h3>
         )}
 
         {!loading && !error && letters.length > 0 && (
           <div className="letters-container">
             {letters.map((letter, idx) => {
-            return (
-              <div
-                key={letter.id}
-                className="letter-box"
-                onClick={() => {
-                  setSelectedBody(letter.content);
-                  markAsRead(letter.id);
-                }}
-              >
-                <h4>{`편지 ${idx + 1}`}</h4>
-              </div>
-            );
-          })}
+              return (
+                <div
+                  key={letter.id}
+                  className="letter-box"
+                  onClick={() => {
+                    setSelectedBody(letter.content);
+                    markAsRead(letter.id);
+                  }}
+                >
+                  <h4>{`편지 ${idx + 1}`}</h4>
+                </div>
+              );
+            })}
           </div>
         )}
 

@@ -26,32 +26,21 @@
   object-fit: contain;
 }
 
-
-
-.icon-with-badge {
-  position: relative;
-  display: inline-block; 
-}
-
-
-.icon-with-badge {
-  position: relative;
-  display: inline-block;
-}
-
 .badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 999px;
+  top: -7px;
+  right: -7px;
+  width: 15px;
+  height: 15px;
+  padding: 3px;
+  border-radius: 50%;
   background: #ff3b30;
-  color: #fff;
-  font-size: 11px;
+  color: #ffffff;
+  font-size: 10px;
   line-height: 18px;
-  text-align: center;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
   box-shadow: 0 0 0 2px #fff;
 }

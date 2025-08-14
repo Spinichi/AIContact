@@ -105,22 +105,22 @@ export default function Letters() {
         {error && <div className="status error">{error}</div>}
 
         {!loading && !error && letters.length === 0 && (
-          <div className="status">📭 도착한 편지가 없습니다.</div>
+          <h3 className="status">📭 도착한 편지가 없습니다.</h3>
         )}
 
         {!loading && !error && letters.length > 0 && (
-          <div className="letters-container">
-            {letters.map((body, idx) => (
-              <div
-                key={idx}
-                className="letter-box"
-                onClick={() => setSelectedBody(body)}
-              >
-                <h4>{`편지 ${idx + 1}`}</h4>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="letters-container">
+          {letters.map((letter, idx) => (
+            <div
+              key={letter.id} // 가능하면 id 사용
+              className="letter-box"
+              onClick={() => setSelectedBody(letter.content)} // ← content 필드만 저장
+            >
+              <h4>{`편지 ${idx + 1}`}</h4>
+            </div>
+          ))}
+        </div>
+      )}
 
         {selectedBody && (
           <div
