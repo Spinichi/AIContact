@@ -136,6 +136,7 @@ export default function CalendarPage() {
   // 이벤트 클릭 → detail
   function openEventDetail(arg: EventClickArg) {
     const date = arg.event.start ?? new Date(arg.event.startStr);
+    date.setHours(date.getHours()-9); // KST -> UTC로 변경
     setClickedDateInfo({ date, dateStr: date.toISOString() });
     setModalStatus("detail");
   }
@@ -143,7 +144,7 @@ export default function CalendarPage() {
   const handleDayCellContent = (e: DayCellContentArg) => {
     const dayNumber = e.dayNumberText.replace("일", "");
     return dayNumber;
-  };
+  }
 
   const handleNextDay = () => {
     if (!clickedDateInfo) return;
