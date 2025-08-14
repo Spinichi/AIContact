@@ -1,5 +1,3 @@
-import prvBtn from "../assets/icons/CaretLeft.svg";
-import nxtBtn from "../assets/icons/CaretRight.svg";
 import closeBtn from "../assets/icons/WhiteLeftArrow.svg";
 import "../styles/Modal.css"; // 기존 Modal.css 재사용
 
