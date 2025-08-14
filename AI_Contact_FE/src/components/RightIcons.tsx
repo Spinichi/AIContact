@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect}from "react";
 import { useNavigate } from "react-router-dom";
 
 import CartoonIcon from "../assets/icons/CartoonIcon.svg";
@@ -62,7 +62,7 @@ const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
       window.addEventListener(LETTER_SEEN_UPDATED, onUpdate);
       return () => window.removeEventListener(LETTER_SEEN_UPDATED, onUpdate);
   }, [refetch]);
-  
+
   // 뱃지 유틸(필요한 아이콘에만 래핑)
   const withBadge = (node: React.ReactNode, count: number) => (
     <div className="icon-with-badge">
