@@ -32,12 +32,12 @@ export default function LoginForm({ onToggle }: LoginFormProps) {
           Accept: "application/json",
         },
       });
-      const myCoupleInfo = (await CouplesApi.getCoupleInfo()).data;
 
       const me = meRes.data;
       console.log(meRes);
       console.log(me);
       if (me.coupleStatus === "COUPLED") {
+        const myCoupleInfo = (await CouplesApi.getCoupleInfo()).data;
         if(myCoupleInfo.startDate == null || myCoupleInfo.coupleName == null){
           navigate("/additional-info", { replace: true });
         }
