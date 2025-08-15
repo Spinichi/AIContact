@@ -142,19 +142,23 @@ export default function Letters() {
                     setSelectedBody(letter.content);
                     markAsRead(letter.id);
                   }}
-                  style={{
-                    backgroundImage: `url(${LetterBottomIcon})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "bottom center",
-                    backgroundSize: "contain",
-                  }}
                 >
+                  {letter.isRead ? (
+                    <></>
+                  ) : (
+                    <div className="letter-badge ">N</div>
+                  )}
+                  <img
+                    alt="편지봉투 아래"
+                    src={LetterBottomIcon}
+                    className="letter-bottom"
+                  />
                   <img
                     alt="편지봉투 위"
                     src={LetterTopIcon}
                     className="letter-top"
                   />
-                  <h4>{`편지 ${idx + 1}`}</h4>
+                  <h4>{`편지 ${idx + 1}번`}</h4>
                 </div>
               );
             })}
@@ -173,7 +177,7 @@ export default function Letters() {
               >
                 ×
               </button>
-              <pre className="modal-body">{selectedBody}</pre>
+              <pre className="letter-modal-body">{selectedBody}</pre>
             </div>
           </div>
         )}
