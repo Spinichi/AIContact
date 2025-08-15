@@ -45,7 +45,6 @@ function WebRtcPage() {
   >({ kind: "local" });
   const [isVolumeVisible, setIsVolumeVisible] = useState(false);
   const [volume, setVolume] = useState(50);
-  const [isAiOn, setIsAiOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
   const navigate = useNavigate();
@@ -64,7 +63,6 @@ function WebRtcPage() {
   };
 
   const onSound = () => setIsVolumeVisible((prev) => !prev);
-  const onAi = () => setIsAiOn((prev) => !prev);
   const onCam = () => {
     const r = roomRef.current;
     if (!r) return;
