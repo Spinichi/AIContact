@@ -12,6 +12,7 @@ import {
 } from "../apis/letter/generate";
 import LetterBottomIcon from "../assets/icons/LetterBottomIcon.svg";
 import LetterTopIcon from "../assets/icons/LetterTopIcon.svg";
+import letterPaper from "../assets/images/LetterPaper.png";
 
 import type { LettersResponse } from "../apis/letter";
 import { LetterApi } from "../apis/letter";
@@ -170,7 +171,11 @@ export default function Letters() {
             className="letter-modal-backdrop"
             onClick={() => setSelectedBody(null)}
           >
-            <div className="letter-modal" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="letter-modal"
+              onClick={(e) => e.stopPropagation()}
+              style={{ backgroundImage: `url(${letterPaper})` }}
+            >
               <button
                 className="modal-close-btn"
                 onClick={() => setSelectedBody(null)}

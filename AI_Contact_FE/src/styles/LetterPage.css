@@ -97,29 +97,27 @@
   width: 400px;
   height: 500px;
   position: relative;
-  box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.25),
-    4px 4px 8px 0 rgba(115, 90, 225, 0.5) inset,
-    0px 0px 50px 0 rgba(115, 90, 225, 0.5) inset;
   border: 1px solid var(--primary);
 }
 
 .modal-close-btn {
   position: absolute;
-  top: 20px;
-  right: 30px;
+  top: 40px;
+  right: 40px;
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0;
-  color: var(--primary);
 }
 
 .letter-modal-body {
   white-space: pre-wrap;
-  font-size: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  text-decoration: var(--primary);
   text-decoration-line: underline;
-  text-underline-offset: 5px;
+  text-underline-offset: 8px;
   color: var(--text-dark);
   margin: 0;
 }
