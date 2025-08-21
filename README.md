@@ -212,7 +212,7 @@ logging.level.org.hibernate.SQL=DEBUG
 
 **docker ps 결과 : SpringBoot 서버(Backend 서버) , Livekit(화상 통화 서버)**
 
-[docker_ps.png 이미지]
+<img src="https://lab.ssafy.com/s13-webmobile1-sub1/S13P11A702/img/docker_ps.png">
 
 **docker-compose.yml**
 
@@ -428,7 +428,7 @@ pipeline {
 
 **Credential 관리** : 빌드에 필요한 설정 파일들을 저장해두고 배포 시 특정 경로에 파일을 옮겨 서버에 올린다.
 
-[Credentials.png 이미지]
+<img src="https://lab.ssafy.com/s13-webmobile1-sub1/S13P11A702/img/Credentials.png">
 
 - **gitlab-https** : gitlab의 프로젝트를 clone 해오기위한 credential (gitlab API 토큰)
 - **ec2-ssh** : jenkins에서 우리의 aws ec2의 ssh에 접속하기 위한 credential
