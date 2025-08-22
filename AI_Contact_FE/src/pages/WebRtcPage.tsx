@@ -1,18 +1,19 @@
+import type {
+  ConnectionQuality,
+  Participant,
+  RemoteAudioTrack,
+} from "livekit-client";
 import {
   LocalVideoTrack,
   RemoteTrackPublication,
   Room,
   RoomEvent,
 } from "livekit-client";
-import type { RemoteAudioTrack } from "livekit-client";
-import type { Participant, ConnectionQuality } from "livekit-client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UsersApi } from "../apis/user";
 import { WebRtcApi } from "../apis/webrtc";
 import ArrowLeft from "../assets/icons/ArrowLeft.svg";
-import WebrtcAiOff from "../assets/icons/WebrtcAiOff.svg";
-import WebrtcAiOn from "../assets/icons/WebrtcAiOn.svg";
 import WebrtcCallEnd from "../assets/icons/WebrtcCallEnd.svg";
 import WebrtcCallStart from "../assets/icons/WebrtcCallStart.svg";
 import WebrtcCamOff from "../assets/icons/WebrtcCamOff.svg";
@@ -20,10 +21,10 @@ import WebrtcCamOn from "../assets/icons/WebrtcCamOn.svg";
 import WebrtcMicOff from "../assets/icons/WebrtcMicOff.svg";
 import WebrtcMicOn from "../assets/icons/WebrtcMicOn.svg";
 import WebrtcSound from "../assets/icons/WebrtcSound.svg";
+import AudioComponent from "../components/webrtc/AudioComponent";
 import VideoComponent from "../components/webrtc/VideoComponent";
 import "../styles/WebRtcPage.css";
 import { normalizeToken } from "../utils/token";
-import AudioComponent from "../components/webrtc/AudioComponent";
 
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_WS_URL;
 
@@ -44,7 +45,6 @@ function WebRtcPage() {
   >({ kind: "local" });
   const [isVolumeVisible, setIsVolumeVisible] = useState(false);
   const [volume, setVolume] = useState(50);
-  const [isAiOn, setIsAiOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
   const navigate = useNavigate();
@@ -63,7 +63,6 @@ function WebRtcPage() {
   };
 
   const onSound = () => setIsVolumeVisible((prev) => !prev);
-  const onAi = () => setIsAiOn((prev) => !prev);
   const onCam = () => {
     const r = roomRef.current;
     if (!r) return;
@@ -90,7 +89,7 @@ function WebRtcPage() {
       r.localParticipant.audioTrackPublications.forEach((pub) =>
         pub.track?.stop()
       );
-    } catch { }
+    } catch {}
   }
 
   async function leaveRoom() {
@@ -104,7 +103,7 @@ function WebRtcPage() {
     hardStopLocalMedia(r);
     try {
       await r.disconnect();
-    } catch { }
+    } catch {}
     setAndStoreRoom(undefined);
     setLocalTrack(undefined);
     setRemoteTracks([]);
@@ -172,8 +171,12 @@ function WebRtcPage() {
     });
     r.on(
       RoomEvent.ConnectionQualityChanged,
-      (quality: ConnectionQuality , participant: Participant) => {
-        console.log("[ConnectionQualityChanged]", participant.identity, quality);
+      (quality: ConnectionQuality, participant: Participant) => {
+        console.log(
+          "[ConnectionQualityChanged]",
+          participant.identity,
+          quality
+        );
       }
     );
     r.on(RoomEvent.TrackSubscriptionFailed, (sid, err) => {
@@ -210,7 +213,13 @@ function WebRtcPage() {
     });
 
     r.on(RoomEvent.TrackUnsubscribed, (_track, publication, participant) => {
-      console.log("[TrackUnsubscribed]", publication.kind, publication.trackSid, "from", participant.identity);
+      console.log(
+        "[TrackUnsubscribed]",
+        publication.kind,
+        publication.trackSid,
+        "from",
+        participant.identity
+      );
       setRemoteTracks((prev) =>
         prev.filter((t) => t.trackPublication.trackSid !== publication.trackSid)
       );
@@ -229,7 +238,10 @@ function WebRtcPage() {
       console.log("[TrackUnmuted]", pub.kind, "by", participant.identity);
     });
     r.on(RoomEvent.ActiveSpeakersChanged, (speakers) => {
-      console.log("[ActiveSpeakers]", speakers.map((s) => s.identity));
+      console.log(
+        "[ActiveSpeakers]",
+        speakers.map((s) => s.identity)
+      );
     });
 
     try {
@@ -287,13 +299,13 @@ function WebRtcPage() {
       const others = remoteVideoThumbs.filter((r) => r.sid !== pinned.sid);
       const localThumb = localTrack
         ? [
-          {
-            kind: "local" as const,
-            key: "local",
-            label: participantName,
-            onClick: () => setPinned({ kind: "local" }),
-          },
-        ]
+            {
+              kind: "local" as const,
+              key: "local",
+              label: participantName,
+              onClick: () => setPinned({ kind: "local" }),
+            },
+          ]
         : [];
       const remoteThumbs = others.map((r) => ({
         kind: "remote" as const,
@@ -393,7 +405,6 @@ function WebRtcPage() {
               </div>
             )}
             <img src={WebrtcSound} onClick={onSound} />
-            <img src={isAiOn ? WebrtcAiOn : WebrtcAiOff} onClick={onAi} />
             <img src={isCamOn ? WebrtcCamOn : WebrtcCamOff} onClick={onCam} />
             <img src={isMicOn ? WebrtcMicOn : WebrtcMicOff} onClick={onMic} />
             <img src={WebrtcCallEnd} onClick={leaveRoom} />

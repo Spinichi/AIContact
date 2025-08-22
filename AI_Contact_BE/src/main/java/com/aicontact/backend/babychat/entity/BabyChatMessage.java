@@ -2,6 +2,7 @@ package com.aicontact.backend.babychat.entity;
 
 import com.aicontact.backend.aiChild.entity.AiChildEntity;
 import com.aicontact.backend.user.entity.UserEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,6 +40,7 @@ public class BabyChatMessage {
 
     @Column(name = "created_at")
     @Builder.Default
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'+09:00'", timezone = "Asia/Seoul")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @PrePersist

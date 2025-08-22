@@ -401,9 +401,6 @@ export default function PhotoBook() {
                 className={viewMode === "all" ? "fav-btn active" : "fav-btn"}
                 onClick={() => {
                   setViewMode("all");
-                  setPagesCache({});
-                  setActiveFlipPage(0);
-                  void loadServerPage(0, { replace: true });
                   bookRef.current?.pageFlip().turnToPage(0);
                 }}
               >
@@ -414,10 +411,7 @@ export default function PhotoBook() {
                   viewMode === "favorite" ? "fav-btn active" : "fav-btn"
                 }
                 onClick={() => {
-                  setViewMode("favorite");
-                  setPagesCache({});
-                  setActiveFlipPage(0);
-                  void loadServerPage(0, { replace: true });
+                  setViewMode("favorite"); 
                   bookRef.current?.pageFlip().turnToPage(0);
                 }}
               >
@@ -430,9 +424,6 @@ export default function PhotoBook() {
                 className={`sort-btn ${sortDir === "desc" ? "active" : ""}`}
                 onClick={() => {
                   setSortDir("desc");
-                  setPagesCache({});
-                  setActiveFlipPage(0);
-                  void loadServerPage(0, { replace: true });
                   bookRef.current?.pageFlip().turnToPage(0);
                 }}
               >
@@ -442,9 +433,6 @@ export default function PhotoBook() {
                 className={`sort-btn ${sortDir === "asc" ? "active" : ""}`}
                 onClick={() => {
                   setSortDir("asc");
-                  setPagesCache({});
-                  setActiveFlipPage(0);
-                  void loadServerPage(0, { replace: true });
                   bookRef.current?.pageFlip().turnToPage(0);
                 }}
               >
@@ -512,20 +500,11 @@ export default function PhotoBook() {
 
               {/* 업로드 */}
               <label className="upload-label">
-                🖼️ 업로드
+                추억 업로드 ( 🖼️ / 🎬 )
                 <input
                   type="file"
                   multiple
-                  accept="image/*"
-                  onChange={handleUpload}
-                />
-              </label>
-              <label className="upload-label">
-                🎬 업로드
-                <input
-                  type="file"
-                  multiple
-                  accept=".mp4,.mov,.3gp,.mkv"
+                  accept="image/*,.mp4,.mov,.3gp,.mkv"
                   onChange={handleUpload}
                 />
               </label>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect}from "react";
 import { useNavigate } from "react-router-dom";
 
 import CartoonIcon from "../assets/icons/CartoonIcon.svg";
@@ -8,7 +8,7 @@ import WebrtcIcon from "../assets/icons/WebrtcIcon.svg";
 
 import Dock from "../components/animations/Dock/Dock";
 // import { LetterApi } from "../apis/letter"; 
-import { useUnreadLettersCount } from "../apis/letter/useUnreadLettersCounts";
+import { useUnreadLettersCount, LETTER_SEEN_UPDATED } from "../apis/letter/useUnreadLettersCounts";
 import "../styles/RightIcons.css";
 
 interface RightIconsProps {
@@ -51,7 +51,18 @@ const RightIcons: React.FC<RightIconsProps> = ({ onChatClick }) => {
   //     clearInterval(id);
   //   };
   // }, []);
-  const {count} = useUnreadLettersCount({pollMs:60000})
+  const currentUserId = null;
+  const {count, refetch} = useUnreadLettersCount({
+    pollMs:60000,
+    userId: currentUserId,
+  })
+  // 읽음 처리 이벤트 수신
+  useEffect(() => {
+      const onUpdate = () => refetch();
+      window.addEventListener(LETTER_SEEN_UPDATED, onUpdate);
+      return () => window.removeEventListener(LETTER_SEEN_UPDATED, onUpdate);
+  }, [refetch]);
+
   // 뱃지 유틸(필요한 아이콘에만 래핑)
   const withBadge = (node: React.ReactNode, count: number) => (
     <div className="icon-with-badge">

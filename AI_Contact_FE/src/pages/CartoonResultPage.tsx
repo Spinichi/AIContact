@@ -3,9 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ComicStripsApi } from "../apis/comicStrips";
 import downloadbtn from "../assets/icons/downloadbtn.svg";
 import WhiteLeftArrow from "../assets/icons/WhiteLeftArrow.svg";
-import backgroundImage from "../assets/images/whiteboard.svg";
+import backgroundImage from "../assets/images/Cartoon.png";
 import Sidebar from "../components/Sidebar";
-
 
 import "../styles/CartoonPage.css";
 import "../styles/CartoonResultPage.css";
